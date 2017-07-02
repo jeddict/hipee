@@ -42,7 +42,7 @@ spec:
         ports:
         - name: web
           containerPort: 8080
-        readinessProbe:
+<#--    readinessProbe:
           httpGet:
             path: /management/health
             port: web
@@ -51,3 +51,4 @@ spec:
             path: /management/health
             port: web
           initialDelaySeconds: 180
+-->

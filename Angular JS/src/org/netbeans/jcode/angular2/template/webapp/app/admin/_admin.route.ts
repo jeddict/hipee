@@ -27,14 +27,18 @@ import {
     <%_ if (enableConfiguration) { _%>
     configurationRoute,
     <%_ } _%>
+    <%_ if (enableDocs) { _%>
     docsRoute,
+    <%_ } _%>
     <%_ if (enableHealth) { _%>
     healthRoute,
     <%_ } _%>
     <%_ if (enableLogs) { _%>
     logsRoute,
     <%_ } _%>
+    <%_ if (enableMetrics) { _%>
     metricsRoute,
+    <%_ } _%>
     <%_ if (applicationType === 'gateway') { _%>
     gatewayRoute,
     <%_ } _%>
@@ -56,7 +60,9 @@ let ADMIN_ROUTES = [
     <%_ if (enableConfiguration) { _%>
     configurationRoute,
     <%_ } _%>
+    <%_ if (enableDocs) { _%>
     docsRoute,
+    <%_ } _%>
     <%_ if (enableHealth) { _%>
     healthRoute,
     <%_ } _%>
@@ -72,7 +78,9 @@ let ADMIN_ROUTES = [
     <%_ if (!skipUserManagement) { _%>
     ...userMgmtRoute,
     <%_ } _%>
+    <%_ if (enableMetrics) { _%>
     metricsRoute
+    <%_ } _%>
 ];
 
 

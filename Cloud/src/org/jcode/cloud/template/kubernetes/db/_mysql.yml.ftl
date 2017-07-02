@@ -36,6 +36,8 @@ spec:
           value: ${DB_USER}
         - name: MYSQL_PASSWORD
           value: ${DB_PASSWORD}
+        - name: MYSQL_ROOT_PASSWORD
+          value: ${DB_PASSWORD}
         - name: MYSQL_DATABASE
           value: ${DB_NAME}
         ports:

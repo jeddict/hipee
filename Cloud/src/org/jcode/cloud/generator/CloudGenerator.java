@@ -52,7 +52,7 @@ public final class CloudGenerator extends DockerGenerator implements Generator {
     }
     
     private void generateKubernetes(){
-        if (dockerConfig.isDockerActivated() && cloudConfig.getKubernetesConfigData().isEnabled()) {
+        if (config.isDockerActivated() && cloudConfig.getKubernetesConfigData().isEnabled()) {
             try {
                 handler.progress(Console.wrap(CloudGenerator.class, "MSG_Progress_Kubernetes_Generating", FG_RED, BOLD, UNDERLINE));
                 FileObject targetFolder = project.getProjectDirectory().getFileObject("k8s");
@@ -62,12 +62,12 @@ public final class CloudGenerator extends DockerGenerator implements Generator {
                 String applicationName = getApplicationName();
                 Map<String, Object> params = getParams();
                 params.put("NAMESPACE", cloudConfig.getKubernetesConfigData().getNamespace());
-                params.put("DOCKER_IMAGE", dockerConfig.getDockerNamespace().replace("${project.groupId}", getPOMManager().getGroupId()) 
+                params.put("DOCKER_IMAGE", config.getDockerNamespace().replace("${project.groupId}", getPOMManager().getGroupId()) 
                         + "/" + applicationName
                         + ":"  + getPOMManager().getVersion());
                 params.put("APP_NAME", applicationName);
 
-                handler.progress(expandTemplate(TEMPLATE + "kubernetes/db/_" + dockerConfig.getDatabaseType().name().toLowerCase() + ".yml.ftl", targetFolder, getApplicationName()+"_"+dockerConfig.getDatabaseType().name().toLowerCase()+".yml", params));
+                handler.progress(expandTemplate(TEMPLATE + "kubernetes/db/_" + config.getDatabaseType().name().toLowerCase() + ".yml.ftl", targetFolder, getApplicationName()+"_"+config.getDatabaseType().name().toLowerCase()+".yml", params));
                 handler.progress(expandTemplate(TEMPLATE + "kubernetes/_deployment.yml.ftl", targetFolder, getApplicationName()+"_deployment.yml", params));
                 handler.progress(expandTemplate(TEMPLATE + "kubernetes/_service.yml.ftl", targetFolder, getApplicationName()+"_service.yml", params));
             } catch (IOException ex) {

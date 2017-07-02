@@ -198,9 +198,8 @@ public class CloudConfigPanel extends LayerConfigPanel<CloudConfigData> {
                     kubernetesButton.setEnabled(false);
                 }
             }
-        } else {
-            kubernetesButton.setEnabled(false);
         }
+        kubernetesButton.setEnabled(openSetting);
         if (openSetting) {
             KubernetesPanel kubernetesPanel = new KubernetesPanel(this.getConfigData().getKubernetesConfigData());
             kubernetesPanel.setVisible(true);
