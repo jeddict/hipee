@@ -121,6 +121,7 @@ public class Angular2Generator extends AngularGenerator {
                 generateNgHome(parser);
 
                 addMavenDependencies("pom/_pom.xml");
+                appConfigData.addProfile("webpack");
             }
 
             updateNgEntityNeedle(applicationConfig, ngEntities);
@@ -144,6 +145,59 @@ public class Angular2Generator extends AngularGenerator {
 
         parser.setImportTemplate(templateLib);
         parser.eval("function toArrayString(array) { return '[\\'' + array.join('\\',\\'') + '\\']' }");//external util function
+        parser.eval("  function generateEntityQueries(relationships, entityInstance, dto) {\n" +
+"        var queries = [];\n" +
+"        var variables = [];\n" +
+"        var hasManyToMany = false;\n" +
+"        relationships.forEach(function(relationship) {\n" +
+"            var query;\n" +
+"            var variableName;\n" +
+"            hasManyToMany = hasManyToMany || relationship.relationshipType === 'many-to-many';\n" +
+"            if (relationship.relationshipType === 'one-to-one' && relationship.ownerSide === true && relationship.otherEntityName !== 'user') {\n" +
+"                variableName = relationship.relationshipFieldNamePlural.toLowerCase();\n" +
+"                if (variableName === entityInstance) {\n" +
+"                    variableName += 'Collection';\n" +
+"                }\n" +
+"                var relationshipFieldName = \"this.\" + entityInstance + \".\" + relationship.relationshipFieldName;\n" +
+"                var relationshipFieldNameIdCheck = dto === 'no' ?\n" +
+"                    \"!\"+ relationshipFieldName + \" || !\"+ relationshipFieldName+\".id\" :\n" +
+"                    \"!\"+ relationshipFieldName+\"Id\";\n" +
+"\n" +
+"                query =\n" +
+"        \"this.\"+relationship.otherEntityName+\"Service\" +\n" +
+"            \".query({filter: '\"+relationship.otherEntityRelationshipName.toLowerCase()+\"}-is-null'})\"+\n" +
+"            \".subscribe((res: ResponseWrapper) => {\"+\n" +
+"                \"if (\"+relationshipFieldNameIdCheck+\") {\"\n" +
+"                    \"this.\"+ variableName + \" = res.json;\"+\n" +
+"                \"} else {\"+\n" +
+"                    \"this.\"+relationship.otherEntityName+\"Service\"+\n" +
+"                        \".find(\"+relationshipFieldName + (dto === 'no' ? '.id' : 'Id') + \")\"+\n" +
+"                        \".subscribe((subRes: \"+relationship.otherEntityAngularName+\") => {\"+\n" +
+"                            \"this.\"+variableName+\" = [subRes].concat(res.json);\"+\n" +
+"                        \"}, (subRes: ResponseWrapper) => this.onError(subRes.json));\"+\n" +
+"                \"}\"+\n" +
+"            \"}, (res: ResponseWrapper) => this.onError(res.json));\";\n" +
+"            } else if (relationship.relationshipType !== 'one-to-many') {\n" +
+"                variableName = relationship.otherEntityNameCapitalizedPlural.toLowerCase();\n" +
+"                if (variableName === entityInstance) {\n" +
+"                    variableName += 'Collection';\n" +
+"                }\n" +
+"                query =\n" +
+"        \"this.\"+relationship.otherEntityName+\"Service.query()\"+\n" +
+"            \".subscribe((res: ResponseWrapper) => { this.\"+variableName+\" = res.json; }, (res: ResponseWrapper) => this.onError(res.json));\";\n" +
+"            }\n" +
+"            if (variableName && !this.contains(queries, query)) {\n" +
+"                queries.push(query);\n" +
+"                variables.push(variableName+\": \"+ relationship.otherEntityAngularName+\"[];\");\n" +
+"            }\n" +
+"        });\n" +
+"        return {\n" +
+"            queries : queries,\n" +
+"            variables : variables,\n" +
+"            hasManyToMany : hasManyToMany\n" +
+"        }" +
+"    }\n" +
+"");
         copyDynamicResource(getParserManager(parser), getTemplatePath() + "entity-resources.zip", webRoot, getEntityPathResolver(entity), handler);
     }
 
@@ -173,53 +227,26 @@ public class Angular2Generator extends AngularGenerator {
     private void updateNgEntityNeedle(NGApplicationConfig applicationConfig, List<NGEntity> ngEntities) {
         for (NeedleFile needleFilefile : getNeedleFiles()) {
             for (String file : needleFilefile.getFile()) {
-                needleFilefile.getNeedles().stream()
-                        .forEach(needle -> insertNeedle(webRoot, file, needle.getInsertPointer(), needle.getTemplate(applicationConfig, ngEntities), handler));
+                needleFilefile.getNeedles().forEach(needle -> 
+                        insertNeedle(file.startsWith("/") ? projectRoot:webRoot, 
+                                file, needle.getInsertPointer(), 
+                                needle.getTemplate(applicationConfig, 
+                                file.startsWith("/") ?null:ngEntities), handler)
+                );
             }
         }
     }
 
     private List<NeedleFile> getNeedleFiles() {
         NeedleFile ENTITY_MODULE_TS = new NeedleFile("app/entities/entity.module.ts");
-        ENTITY_MODULE_TS.setNeedles(Arrays.asList(//                new Needle("needle-add-entity-to-module-import", "\t\t${entityClass}Service,\n"
-                //                        + "\t\t${entityAngularJSName}Component,\n"
-                //                        + "\t\t${entityAngularJSName}DetailComponent,\n"
-                //                        + "\t\t${entityAngularJSName}DialogComponent,\n"
-                //                        + "\t\t${entityAngularJSName}DeleteDialogComponent,\n"
-                //                        + "\t\t${entityInstance}State,\n"
-                //                        + "\t\t${entityInstance}DetailState,\n"
-                //                        + "\t\t${entityInstance}NewState,\n"
-                //                        + "\t\t${entityInstance}EditState,\n"
-                //                        + "\t\t${entityInstance}DeleteState,"),
-                //                new Needle("needle-add-entity-to-module-states", "\t\t${entityInstance}State,\n"
-                //                        + "\t\t${entityInstance}NewState,\n"
-                //                        + "\t\t${entityInstance}DetailState,\n"
-                //                        + "\t\t${entityInstance}EditState,\n"
-                //                        + "\t\t${entityInstance}DeleteState,"),
-                //                new Needle("needle-add-entity-to-module-declarations", "\t\t\t\t${entityAngularJSName}Component,\n"
-                //                        + "\t\t\t\t${entityAngularJSName}DetailComponent,\n"
-                //                        + "\t\t\t\t${entityAngularJSName}DialogComponent,\n"
-                //                        + "\t\t\t\t${entityAngularJSName}DeleteDialogComponent,"),
-                //                new Needle("needle-add-entity-to-module-entryComponents", "\t\t\t\t${entityAngularJSName}DialogComponent,\n"
-                //                        + "\t\t\t\t${entityAngularJSName}DeleteDialogComponent,"),
-                //                new Needle("needle-add-entity-to-module-providers", "\t\t\t\t${entityClass}Service,"),
-                //appName -> getAngular2AppName
-                new Needle("needle-add-entity-module-import", "import { ${appName}${entityAngularJSName}Module } from './${entityFolderName}/${entityFileName}.module';"),
-                new Needle("needle-add-entity-module", "\t${appName}${entityAngularJSName}Module,")
+        ENTITY_MODULE_TS.setNeedles(Arrays.asList(
+                //appName -> getAngularXAppName
+                new Needle("needle-add-entity-module-import", "import { ${appName}${entityAngularName}Module } from './${entityFolderName}/${entityFileName}.module';\n"),
+                new Needle("needle-add-entity-module", "        ${appName}${entityAngularName}Module,\n")
         ));
-
-//        NeedleFile INDEX_TS = new NeedleFile("app/entities/index.ts");
-//        INDEX_TS.setNeedles(Arrays.asList(
-//                new Needle("needle-add-entity-to-index-model-export", "export * from './${entityFolderName}/${entityFileName}.model';"),
-//                new Needle("needle-add-entity-to-index-service-export", "export * from './${entityFolderName}/${entityFileName}.service';"),
-//                new Needle("needle-add-entity-to-index-export", "export * from './${entityFolderName}/${entityFileName}-dialog.component';\n"
-//                        + "export * from './${entityFolderName}/${entityFileName}-delete-dialog.component';\n"
-//                        + "export * from './${entityFolderName}/${entityFileName}-detail.component';\n"
-//                        + "export * from './${entityFolderName}/${entityFileName}.component';\n"
-//                        + "export * from './${entityFolderName}/${entityFileName}.state';")
-//        ));
         NeedleFile NAVBAR_COMPONENT_HTML = new NeedleFile("app/layouts/navbar/navbar.component.html");
-        NAVBAR_COMPONENT_HTML.setNeedles(Arrays.asList(new Needle("needle-add-entity-to-menu",
+        NAVBAR_COMPONENT_HTML.setNeedles(Arrays.asList(
+                new Needle("needle-add-entity-to-menu",
                 "                    <li uiSrefActive=\"active\">\n"
                 + "                        <a class=\"dropdown-item\" routerLink=\"${routerName}\" (click)=\"collapseNavbar()\">\n"
                 + "                            <i class=\"fa fa-fw fa-asterisk\" aria-hidden=\"true\"></i>\n"
@@ -229,15 +256,18 @@ public class Angular2Generator extends AngularGenerator {
         ));
 
         NeedleFile GLOBAL_JSON = new NeedleFile("i18n/en/global.json");
-        GLOBAL_JSON.setNeedles(Arrays.asList(//                new Needle("needle-menu-add-entry", "\t\t\t\t\t\t\t\t\"${camelCase_routerName}\" : \"${startCase_routerName}\",")
+        GLOBAL_JSON.setNeedles(Arrays.asList(
                 new Needle("needle-menu-add-entry", "\t\t\t\t\t\t\t\t\"${entityTranslationKeyMenu}\": \"${startCase_entityClass}\",")
         ));
 
-//        NeedleFile LANGUAGE_CONSTANTS_TS = new NeedleFile("app/shared/language/language.constants.ts");
-//        LANGUAGE_CONSTANTS_TS.setNeedles(Arrays.asList(
-//                new Needle("needle-i18n-language-constant", "\"${camelCase_routerName}\" : \"${startCase_routerName}\",")
-//        ));
-        return Arrays.asList(ENTITY_MODULE_TS, NAVBAR_COMPONENT_HTML, GLOBAL_JSON);
+        NeedleFile LANGUAGE_WEBPACK = new NeedleFile("/webpack/webpack.common.js");
+        LANGUAGE_WEBPACK.setNeedles(Arrays.asList(
+                new Needle("needle-i18n-language-webpack", 
+                        "        <#list languages as language>\n" +
+                        "                { pattern: \"./${srcDir}i18n/${language}/*.json\", fileName: \"./i18n/${language}.json\" },\n" +
+                        "        </#list>")
+        ));
+        return Arrays.asList(ENTITY_MODULE_TS, NAVBAR_COMPONENT_HTML, GLOBAL_JSON, LANGUAGE_WEBPACK);
     }
 
     private void addMavenDependencies(String pom) {
@@ -277,7 +307,7 @@ public class Angular2Generator extends AngularGenerator {
 
     protected void generateNgApplication(EJSParser parser) throws IOException {
         handler.append(Console.wrap(AngularGenerator.class, "MSG_Copying_Application_Files", FG_RED, BOLD, UNDERLINE));
-        List<String> skipList = Arrays.asList("_language.pipe.ts");//charset issue
+        List<String> skipList = Arrays.asList("_find-language-from-key.pipe.ts");//charset issue 
         copyDynamicResource(getParserManager(parser, skipList), getTemplatePath() + "web-resources.zip", webRoot, PATH_RESOLVER, handler);
     }
 
@@ -327,8 +357,8 @@ public class Angular2Generator extends AngularGenerator {
     }
 
     @Override
-    public NGApplicationConfig getNGApplicationConfig() {
-        return new NG2ApplicationConfig();
+    public NGApplicationConfig getNGApplicationConfig(String baseName) {
+        return new NG2ApplicationConfig(baseName);
     }
 
     @Override

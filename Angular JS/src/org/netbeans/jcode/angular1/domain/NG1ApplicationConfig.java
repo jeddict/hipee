@@ -66,8 +66,9 @@ public class NG1ApplicationConfig implements NGApplicationConfig {
     //i18n
     public boolean enableTranslation;
     public String nativeLanguage = "en";
-    private Set<String> languages = new HashSet<>(Arrays.asList("en"));
-
+    private Set<String> languages;
+    private boolean enableI18nRTL;
+    
     public String jhiPrefix;
     public String jhiPrefixCapitalized;
 
@@ -99,6 +100,10 @@ public class NG1ApplicationConfig implements NGApplicationConfig {
     private boolean enableAudits;
     private boolean enableProfile;
     private boolean enableDocs;
+
+    public NG1ApplicationConfig(String baseName) {
+        this.baseName = baseName;
+    }
 
     /**
      * @return the jhiPrefixCapitalized
@@ -351,6 +356,20 @@ public class NG1ApplicationConfig implements NGApplicationConfig {
     public void setLanguages(Set<String> languages) {
         this.languages = languages;
     }
+    
+    /**
+     * @return the enableI18nRTL
+     */
+    public boolean isEnableI18nRTL() {
+        return enableI18nRTL;
+    }
+
+    /**
+     * @param enableI18nRTL the enableI18nRTL to set
+     */
+    public void setEnableI18nRTL(boolean enableI18nRTL) {
+        this.enableI18nRTL = enableI18nRTL;
+    }
 
     /**
      * @return the applicationPath
@@ -530,14 +549,20 @@ public class NG1ApplicationConfig implements NGApplicationConfig {
 
     public String getDIST_DIR() {
         if (DIST_DIR == null) {
+            DIST_DIR = getBUILD_DIR() + CLIENT_DIST_DIR;
+        }
+        return DIST_DIR;
+    }
+    
+    public String getBUILD_DIR() {
+        if (BUILD_DIR == null) {
             if ("maven".equals(this.buildTool)) {
                 this.BUILD_DIR = "target/";
             } else {
                 this.BUILD_DIR = "build/";
             }
-            DIST_DIR = this.BUILD_DIR + CLIENT_DIST_DIR;
         }
-        return DIST_DIR;
+        return BUILD_DIR;
     }
 
     /**
@@ -595,5 +620,22 @@ public class NG1ApplicationConfig implements NGApplicationConfig {
     public void setSkipServer(boolean skipServer) {
         this.skipServer = skipServer;
     }
+
+    public String getSrcDir(){
+        return MAIN_SRC_DIR;
+    }
+    
+    public String getTestDir(){
+        return TEST_SRC_DIR;
+    }
+    
+    public String getBuildDir(){
+        return getBUILD_DIR();
+    }
+    
+    public String getDistDir(){
+        return getDIST_DIR();
+    }
+
 
 }

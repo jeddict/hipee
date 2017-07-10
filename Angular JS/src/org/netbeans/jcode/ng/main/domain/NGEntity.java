@@ -28,19 +28,9 @@ public interface NGEntity {
     void addRelationship(NGRelationship relationship);
 
     /**
-     * @return the differentRelationships
+     * @return the entityAngularName
      */
-    List<NGRelationship> getDifferentRelationships();
-
-    /**
-     * @return the differentTypes
-     */
-    List<String> getDifferentTypes();
-
-    /**
-     * @return the entityAngularJSName
-     */
-    String getEntityAngularJSName();
+    String getEntityAngularName();
 
     /**
      * @return the entityApiUrl
@@ -195,16 +185,6 @@ public interface NGEntity {
     void removeField(NGField field);
 
     void removeRelationship(NGRelationship relationship);
-
-    /**
-     * @param differentTypes the differentTypes to set
-     */
-    void setDifferentTypes(List<String> differentTypes);
-
-    /**
-     * @param entityAngularJSName the entityAngularJSName to set
-     */
-    void setEntityAngularJSName(String entityAngularJSName);
 
     /**
      * @param entityApiUrl the entityApiUrl to set

@@ -75,7 +75,7 @@ public class NG2Field implements NGField{
         Pattern pattern = (Pattern) constraints.get(Pattern.class.getSimpleName());
         if (pattern != null && pattern.getSelected()) {
             validationRules.add("pattern");
-            fieldValidateRulesMin = pattern.getRegexp();
+            fieldValidateRulesPattern = pattern.getRegexp();
         }
         
         Min min = (Min) constraints.get(Min.class.getSimpleName());
@@ -94,11 +94,11 @@ public class NG2Field implements NGField{
             Size size = (Size) constraints.get(Size.class.getSimpleName());
             if (size.getMax() != null) {
                 fieldValidateRulesMaxlength = String.valueOf(size.getMax());
-                validationRules.add("max");
+                validationRules.add("maxlength");
             }
             if (size.getMin() != null) {
                 fieldValidateRulesMinlength = String.valueOf(size.getMin());
-                validationRules.add("min");
+                validationRules.add("minlength");
             }
         }
         setFieldValidate(validationRules);
@@ -134,11 +134,8 @@ public class NG2Field implements NGField{
      * @param fieldType the fieldType to set
      */
     public void setFieldType(String fieldType, String databaseType) {
-        if ("DateTime".equals(fieldType)) {
-            fieldType = "ZonedDateTime";
-        }
-        if ("Date".equals(fieldType)) {
-            fieldType = "ZonedDateTime";
+        if ("DateTime".equals(fieldType) || "Date".equals(fieldType)) {
+            fieldType = "Instant";
         }
         this.fieldType = fieldType;
     }
@@ -233,19 +230,19 @@ public class NG2Field implements NGField{
      * @return the fieldInJavaBeanMethod
      */
     public String getFieldInJavaBeanMethod() {
-//        if (fieldInJavaBeanMethod == null) {
-//                    if (fieldName.length() > 1) {
-//                        Character firstLetter = fieldName.charAt(0);
-//                        Character secondLetter = fieldName.charAt(1);
-//                        if (firstLetter == firstLetter.toLowerCase() && secondLetter == secondLetter.toUpperCase()) {
-//                            field.fieldInJavaBeanMethod = firstLetter.toLowerCase() + field.fieldName.slice(1);
-//                        } else {
-//                            field.fieldInJavaBeanMethod = _.firstUpper(field.fieldName);
-//                        }
-//                    } else {
-//                        field.fieldInJavaBeanMethod = _.firstUpper(field.fieldName);
-//                    }
-//                }
+        if (fieldInJavaBeanMethod == null) {
+                    if (fieldName.length() > 1) {
+                        Character firstLetter = fieldName.charAt(0);
+                        Character secondLetter = fieldName.charAt(1);
+                        if (firstLetter == Character.toLowerCase(firstLetter) && secondLetter == Character.toUpperCase(secondLetter)) {
+                            fieldInJavaBeanMethod = Character.toLowerCase(firstLetter) + fieldName.substring(1);
+                        } else {
+                            fieldInJavaBeanMethod = firstUpper(fieldName);
+                        }
+                    } else {
+                        fieldInJavaBeanMethod = firstUpper(fieldName);
+                    }
+                }
         return fieldInJavaBeanMethod;
     }
 
@@ -291,3 +288,19 @@ public class NG2Field implements NGField{
     }
 
 }
+
+//
+//if (_.isUndefined(field.fieldValidateRulesPatternJava)) {
+//                    field.fieldValidateRulesPatternJava = field.fieldValidateRulesPattern ?
+//                        field.fieldValidateRulesPattern.replace(/\\/g, '\\\\').replace(/"/g, '\\"') : field.fieldValidateRulesPattern;
+//                }
+//
+//                if (_.isArray(field.fieldValidateRules) && field.fieldValidateRules.length >= 1) {
+//                    field.fieldValidate = true;
+//                } else {
+//                    field.fieldValidate = false;
+//                }
+////
+//                if (field.fieldValidate) {
+//                    this.validation = true;
+//                }

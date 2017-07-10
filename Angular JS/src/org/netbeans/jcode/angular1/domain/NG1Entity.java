@@ -109,6 +109,10 @@ public class NG1Entity implements NGEntity {
 
     }
 
+    public String getEntityAngularName(){
+        return entityAngularJSName;
+    }
+    
     public void addRelationship(NGRelationship relationship) {
         getRelationships().add(relationship);
         // Load in-memory data for root
@@ -581,13 +585,6 @@ public class NG1Entity implements NGEntity {
      */
     public List<String> getDifferentTypes() {
         return differentTypes;
-    }
-
-    /**
-     * @param differentTypes the differentTypes to set
-     */
-    public void setDifferentTypes(List<String> differentTypes) {
-        this.differentTypes = differentTypes;
     }
 
     /**

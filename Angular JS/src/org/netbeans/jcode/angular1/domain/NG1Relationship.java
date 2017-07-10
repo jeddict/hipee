@@ -284,14 +284,6 @@ public class NG1Relationship implements NGRelationship{
     }
 
     /**
-     * @param otherEntityRelationshipName the otherEntityRelationshipName to set
-     */
-    @Override
-    public void setOtherEntityRelationshipName(String otherEntityRelationshipName) {
-        this.otherEntityRelationshipName = otherEntityRelationshipName;
-    }
-
-    /**
      * @return the relationshipValidateRules
      */
     @Override

@@ -18,6 +18,7 @@ package org.netbeans.jcode.ng.main.domain;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.netbeans.jcode.angular2.domain.NG2ApplicationConfig;
 import static org.netbeans.jcode.core.util.FileUtil.expandTemplate;
 import static org.netbeans.jcode.core.util.StringHelper.camelCase;
 import static org.netbeans.jcode.core.util.StringHelper.startCase;
@@ -28,8 +29,8 @@ import static org.netbeans.jcode.core.util.StringHelper.startCase;
  */
 public class Needle {
 
-    private String insertPointer;
-    private String template;
+    private final String insertPointer;
+    private final String template;
 
     public Needle(String insertPointer, String template) {
         this.insertPointer = insertPointer;
@@ -52,22 +53,31 @@ public class Needle {
     
     public String getTemplate(NGApplicationConfig applicationConfig, List<NGEntity> ngEntities) {
         StringBuilder content = new StringBuilder();
-        for (NGEntity entity : ngEntities) {
+        if (ngEntities != null) {
+            for (NGEntity entity : ngEntities) {
+                Map<String, Object> param = new HashMap<>();
+                param.put("entityFolderName", entity.getEntityFolderName());
+                param.put("entityFileName", entity.getEntityFileName());
+                param.put("entityClass", entity.getEntityClass());
+                param.put("entityAngularJSName", entity.getEntityAngularName());
+                param.put("entityAngularName", entity.getEntityAngularName());
+                param.put("entityInstance", entity.getEntityInstance());
+                param.put("routerName", entity.getEntityStateName());
+                param.put("enableTranslation", applicationConfig.isEnableTranslation());
+                param.put("camelCase_routerName", camelCase(entity.getEntityStateName()));
+                param.put("startCase_routerName", startCase(entity.getEntityStateName()));
+                param.put("entityTranslationKeyMenu", entity.getEntityTranslationKeyMenu());
+                param.put("startCase_entityClass", startCase(entity.getEntityClass()));
+                if(applicationConfig instanceof NG2ApplicationConfig){
+                    param.put("appName", ((NG2ApplicationConfig)applicationConfig).getAngularXAppName());
+                }
+                param.put("prefix", applicationConfig.getJhiPrefix());
+                content.append(expandTemplate(template, param));
+            }
+        } else {
             Map<String, Object> param = new HashMap<>();
-            param.put("entityFolderName", entity.getEntityFolderName());
-            param.put("entityFileName", entity.getEntityFileName());
-            param.put("entityClass", entity.getEntityClass());
-            param.put("entityAngularJSName", entity.getEntityAngularJSName());
-            param.put("entityInstance", entity.getEntityInstance());
-            param.put("routerName", entity.getEntityStateName());
-            param.put("enableTranslation", applicationConfig.isEnableTranslation());
-            param.put("camelCase_routerName", camelCase(entity.getEntityStateName()));
-            param.put("startCase_routerName", startCase(entity.getEntityStateName()));
-            param.put("entityTranslationKeyMenu", entity.getEntityTranslationKeyMenu());
-            param.put("startCase_entityClass", startCase(entity.getEntityClass()));
-            param.put("appName", applicationConfig.getAngularAppName());
-            param.put("prefix", applicationConfig.getJhiPrefix());
-            
+            param.put("srcDir", applicationConfig.getSrcDir());
+            param.put("languages", applicationConfig.getLanguages());
             content.append(expandTemplate(template, param));
         }
         return content.toString();

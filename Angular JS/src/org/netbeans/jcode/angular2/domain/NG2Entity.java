@@ -15,9 +15,13 @@
  */
 package org.netbeans.jcode.angular2.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.netbeans.jcode.ng.main.domain.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import static org.netbeans.jcode.core.util.StringHelper.camelCase;
 import static org.netbeans.jcode.core.util.StringHelper.firstLower;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
@@ -28,6 +32,7 @@ import static org.netbeans.jcode.ng.main.domain.NGRelationship.MANY_TO_MANY;
 import static org.netbeans.jcode.ng.main.domain.NGRelationship.MANY_TO_ONE;
 import static org.netbeans.jcode.ng.main.domain.NGRelationship.ONE_TO_MANY;
 import static org.netbeans.jcode.ng.main.domain.NGRelationship.ONE_TO_ONE;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -49,16 +54,17 @@ public class NG2Entity implements NGEntity{
     public String entityPluralFileName;
     public String entityServiceFileName;
     public String entityAngularName;
-    public String entityAngularJSName;
     public String entityStateName;
     public String entityUrl;
     public String entityTranslationKey;
     public String entityTranslationKeyMenu;
 
+    private boolean fieldsContainInstant;
     public boolean fieldsContainZonedDateTime;
     public boolean fieldsContainLocalDate;
     public boolean fieldsContainBigDecimal;
     public boolean fieldsContainBlob;
+    private boolean fieldsContainImageBlob;
     public boolean validation;
     public boolean fieldsContainOwnerManyToMany;
     public boolean fieldsContainNoOwnerOneToOne;
@@ -68,10 +74,10 @@ public class NG2Entity implements NGEntity{
     public List<String> differentTypes = new ArrayList<>();
     public final List<NGField> fields = new ArrayList<>();
     public final List<NGRelationship> relationships = new ArrayList<>();
-    private final List<NGRelationship> differentRelationships = new ArrayList<>();
+    private final Map<String,List<NGRelationship>> differentRelationships = new HashMap<>();
     private String pkType;
 
-    public NG2Entity(String name, String entityAngularJSSuffix) {
+    public NG2Entity(String name, String entityAngularSuffix) {
         String entityNameSpinalCased = kebabCase(firstLower(name));
         String entityNamePluralizedAndSpinalCased = kebabCase(firstLower(pluralize(name)));
 
@@ -83,32 +89,23 @@ public class NG2Entity implements NGEntity{
         this.entityClassPluralHumanized = startCase(this.entityClassPlural);
         this.entityInstance = firstLower(name);
         this.entityInstancePlural = pluralize(this.entityInstance);
-        this.entityApiUrl = entityNameSpinalCased; 
+        this.entityApiUrl = entityNameSpinalCased;// entityNamePluralizedAndSpinalCased;
         this.entityFolderName = entityNameSpinalCased;
-        this.entityFileName = kebabCase(this.entityNameCapitalized + firstUpper(entityAngularJSSuffix));
-        this.entityPluralFileName = entityNamePluralizedAndSpinalCased + entityAngularJSSuffix;
+        this.entityFileName = kebabCase(this.entityNameCapitalized + firstUpper(entityAngularSuffix));
+        this.entityPluralFileName = entityNamePluralizedAndSpinalCased + entityAngularSuffix;
         this.entityServiceFileName = this.entityFileName;
-        this.entityAngularName = this.entityClass + firstUpper(camelCase(entityAngularJSSuffix));
-        this.entityAngularJSName = this.entityClass + firstUpper(camelCase(entityAngularJSSuffix));
+        this.entityAngularName = this.entityClass + firstUpper(camelCase(entityAngularSuffix));
         this.entityStateName = kebabCase(entityAngularName);
         this.entityUrl = this.entityStateName;
         this.entityTranslationKey = this.entityInstance;
         this.entityTranslationKeyMenu = camelCase(this.entityStateName);
-
-        this.fieldsContainZonedDateTime = false;
-        this.fieldsContainLocalDate = false;
-        this.fieldsContainBigDecimal = false;
-        this.fieldsContainBlob = false;
-        this.validation = false;
-        this.fieldsContainOwnerManyToMany = false;
-        this.fieldsContainNoOwnerOneToOne = false;
-        this.fieldsContainOwnerOneToOne = false;
-        this.fieldsContainOneToMany = false;
-        this.fieldsContainManyToOne = false;
         this.differentTypes.add(this.entityClass);
-
     }
 
+    public String getEntityAngularName(){
+        return entityAngularName;
+    }
+    
     @Override
     public void addRelationship(NGRelationship relationship) {
         getRelationships().add(relationship);
@@ -132,10 +129,14 @@ public class NG2Entity implements NGEntity{
         }
 
         String entityType = relationship.getOtherEntityNameCapitalized();
-        if (!differentTypes.contains(entityType)) {
+        if (!getDifferentTypes().contains(entityType)) {
             getDifferentTypes().add(entityType);
-            getDifferentRelationships().add(relationship);
         }
+        
+        if (!differentRelationships.containsKey(entityType)) {
+            differentRelationships.put(entityType, new ArrayList<>());
+        }
+        differentRelationships.get(entityType).add(relationship);
     }
 
     @Override
@@ -148,6 +149,9 @@ public class NG2Entity implements NGEntity{
         getFields().add(field);
         if (null != field.getFieldType()) {
             switch (field.getFieldType()) {
+                case "Instant":
+                    setFieldsContainInstant(true);
+                    break;
                 case "ZonedDateTime":
                     setFieldsContainZonedDateTime(true);
                     break;
@@ -160,7 +164,10 @@ public class NG2Entity implements NGEntity{
                 case "byte[]":
                 case "ByteBuffer":
                     setFieldsContainBlob(true);
-                    break;
+//                    if (field.fieldTypeBlobContent === 'image') { //image // text //any
+//                    this.setFieldsContainImageBlob(true);
+//                    }
+                    break;                   
                 default:
                     break;
             }
@@ -397,22 +404,6 @@ public class NG2Entity implements NGEntity{
     }
 
     /**
-     * @return the entityAngularJSName
-     */
-    @Override
-    public String getEntityAngularJSName() {
-        return entityAngularJSName;
-    }
-
-    /**
-     * @param entityAngularJSName the entityAngularJSName to set
-     */
-    @Override
-    public void setEntityAngularJSName(String entityAngularJSName) {
-        this.entityAngularJSName = entityAngularJSName;
-    }
-
-    /**
      * @return the entityStateName
      */
     @Override
@@ -477,6 +468,20 @@ public class NG2Entity implements NGEntity{
     }
 
     /**
+     * @return the fieldsContainInstant
+     */
+    public boolean isFieldsContainInstant() {
+        return fieldsContainInstant;
+    }
+
+    /**
+     * @param fieldsContainInstant the fieldsContainInstant to set
+     */
+    public void setFieldsContainInstant(boolean fieldsContainInstant) {
+        this.fieldsContainInstant = fieldsContainInstant;
+    }
+
+    /**
      * @return the fieldsContainZonedDateTime
      */
     @Override
@@ -538,6 +543,20 @@ public class NG2Entity implements NGEntity{
     @Override
     public void setFieldsContainBlob(boolean fieldsContainBlob) {
         this.fieldsContainBlob = fieldsContainBlob;
+    }
+
+    /**
+     * @return the fieldsContainImageBlob
+     */
+    public boolean isFieldsContainImageBlob() {
+        return fieldsContainImageBlob;
+    }
+
+    /**
+     * @param fieldsContainImageBlob the fieldsContainImageBlob to set
+     */
+    public void setFieldsContainImageBlob(boolean fieldsContainImageBlob) {
+        this.fieldsContainImageBlob = fieldsContainImageBlob;
     }
 
     /**
@@ -641,27 +660,22 @@ public class NG2Entity implements NGEntity{
     /**
      * @return the differentTypes
      */
-    @Override
     public List<String> getDifferentTypes() {
         return differentTypes;
     }
 
     /**
-     * @param differentTypes the differentTypes to set
-     */
-    @Override
-    public void setDifferentTypes(List<String> differentTypes) {
-        this.differentTypes = differentTypes;
-    }
-
-    /**
      * @return the differentRelationships
      */
-    @Override
-    public List<NGRelationship> getDifferentRelationships() {
-        return differentRelationships;
+    public String getDifferentRelationshipsJSON() {
+        try {
+            //map issue in nashorn
+            return new ObjectMapper().writeValueAsString(differentRelationships);
+        } catch (JsonProcessingException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return "{}";
     }
-
 
     /**
      * @return the pkType

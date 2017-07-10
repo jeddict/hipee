@@ -113,8 +113,6 @@ public class Angular2Panel extends LayerConfigPanel<AngularData> {
         return ((ComboBoxValue<PaginationType>) paginationComboBox.getSelectedItem()).getValue();
     }
 
-
-
     public String getModule() {
         return angularModuleTextField.getText().trim();
     }

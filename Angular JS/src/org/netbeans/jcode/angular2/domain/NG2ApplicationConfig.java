@@ -16,8 +16,6 @@
 package org.netbeans.jcode.angular2.domain;
 
 import org.netbeans.jcode.ng.main.domain.*;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -41,13 +39,14 @@ public class NG2ApplicationConfig implements NGApplicationConfig  {
     public String CLIENT_DIST_DIR = "www/";
     public String ANGULAR_DIR = MAIN_DIR + "webapp/app/";
     public String BUILD_DIR;
-    public String DIST_DIR;
-
+    public String DIST_DIR;  
+    
     private String applicationPath;//rest path
     public String buildTool;
     private String clientPackageManager;
 
-    public String angular2AppName;
+    public String angularAppName;
+    public String angularXAppName;
     public String applicationType;//gateway , monolith
     public String serverPort = "8080";
     public String microserviceAppName;
@@ -63,8 +62,9 @@ public class NG2ApplicationConfig implements NGApplicationConfig  {
     //i18n
     public boolean enableTranslation;
     public String nativeLanguage = "en";
-    private Set<String> languages = new HashSet<>(Arrays.asList("en"));
-
+    private Set<String> languages;
+    private boolean enableI18nRTL;
+    
     public String jhiPrefix;
     public String jhiPrefixCapitalized;
 
@@ -96,6 +96,10 @@ public class NG2ApplicationConfig implements NGApplicationConfig  {
     private boolean enableAudits;
     private boolean enableProfile;
     private boolean enableDocs;
+
+    public NG2ApplicationConfig(String baseName) {
+        this.baseName = baseName;
+    }
 
     /**
      * @return the jhiPrefixCapitalized
@@ -152,22 +156,6 @@ public class NG2ApplicationConfig implements NGApplicationConfig  {
     @Override
     public void setEnableTranslation(boolean enableTranslation) {
         this.enableTranslation = enableTranslation;
-    }
-
-    /**
-     * @return the angularAppName
-     */
-    @Override
-    public String getAngularAppName() {
-        return angular2AppName;
-    }
-
-    /**
-     * @param angularAppName the angularAppName to set
-     */
-    @Override
-    public void setAngularAppName(String angularAppName) {
-        this.angular2AppName = angularAppName;
     }
 
     /**
@@ -276,14 +264,6 @@ public class NG2ApplicationConfig implements NGApplicationConfig  {
     }
 
     /**
-     * @param baseName the baseName to set
-     */
-    @Override
-    public void setBaseName(String baseName) {
-        this.baseName = baseName;
-    }
-
-    /**
      * @return the capitalizedBaseName
      */
     @Override
@@ -303,13 +283,6 @@ public class NG2ApplicationConfig implements NGApplicationConfig  {
             camelizedBaseName = camelCase(baseName);
         }
         return camelizedBaseName;
-    }
-
-    public String getAngular2AppName() {
-        if (angular2AppName == null) {
-            angular2AppName = firstUpper(getCamelizedBaseName());
-        }
-        return angular2AppName;
     }
 
     @Override
@@ -385,6 +358,20 @@ public class NG2ApplicationConfig implements NGApplicationConfig  {
     @Override
     public void setLanguages(Set<String> languages) {
         this.languages = languages;
+    }
+
+    /**
+     * @return the enableI18nRTL
+     */
+    public boolean isEnableI18nRTL() {
+        return enableI18nRTL;
+    }
+
+    /**
+     * @param enableI18nRTL the enableI18nRTL to set
+     */
+    public void setEnableI18nRTL(boolean enableI18nRTL) {
+        this.enableI18nRTL = enableI18nRTL;
     }
 
     /**
@@ -589,19 +576,23 @@ public class NG2ApplicationConfig implements NGApplicationConfig  {
         this.buildTool = buildTool;
     }
 
-    @Override
     public String getDIST_DIR() {
         if (DIST_DIR == null) {
+            DIST_DIR = getBUILD_DIR() + CLIENT_DIST_DIR;
+        }
+        return DIST_DIR;
+    }
+
+    public String getBUILD_DIR() {
+        if (BUILD_DIR == null) {
             if ("maven".equals(this.buildTool)) {
                 this.BUILD_DIR = "target/";
             } else {
                 this.BUILD_DIR = "build/";
             }
-            DIST_DIR = this.BUILD_DIR + CLIENT_DIST_DIR;
         }
-        return DIST_DIR;
+        return BUILD_DIR;
     }
-
     /**
      * @return the protractorTests
      */
@@ -665,5 +656,44 @@ public class NG2ApplicationConfig implements NGApplicationConfig  {
     public void setSkipServer(boolean skipServer) {
         this.skipServer = skipServer;
     }
+    
+    public String getSrcDir(){
+        return MAIN_SRC_DIR;
+    }
+    
+    public String getTestDir(){
+        return TEST_SRC_DIR;
+    }
+    
+    public String getBuildDir(){
+        return getBUILD_DIR();
+    }
+    
+    public String getDistDir(){
+        return getDIST_DIR();
+    }
+    
+        /**
+     * get the Angular application name.
+     */
+    public String getAngularAppName() {
+        if (angularAppName == null) {
+            angularAppName = camelCase(baseName) + (baseName.endsWith("App") ? "" : "App");
+        }
+        return angularAppName;
+    }
 
+    /**
+     * get the Angular 2+ application name.
+     */
+    public String getAngular2AppName() {
+        return this.getAngularXAppName();
+    }
+    
+    public String getAngularXAppName() {
+        if (angularXAppName == null) {
+            angularXAppName = firstUpper(getCamelizedBaseName());
+        }
+        return angularXAppName;
+    }
 }

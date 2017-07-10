@@ -8,9 +8,7 @@ File : app/layout/index.ts
                     enableProfile filter
 File : app/app.module.ts, app/admin/_admin.module.ts, app/admin/_index.ts
                     enableProfile,enableMetrics,enableAudits,enableLogs,enableDocs,enableConfiguration,enableHealth filter
-File : _language.constants.ts
-                    needle-i18n-language-constant
-File : _language.pipe.ts
+File : _find-language-from-key.pipe.ts.ts
                     remove header ejs parsing not working due to multi-lang
 File : app/layouts/main/main.component.html
                     enableProfile filter
@@ -69,3 +67,9 @@ File : _entity.model.ts
                                 `   ->  "
 
 
+__________________Nashorn issue________________________
+const, let, arrow function(=>) not supported
+forEach(xyz => { }) => forEach(function(xyz) { }) => 
+
+java.util.Map issue so JSON string is passed to parser and added following snippet in template (_entity-management-dialog.component.ts, _entity-management.module.ts) :
+ var differentRelationships = JSON.parse(differentRelationshipsJSON);

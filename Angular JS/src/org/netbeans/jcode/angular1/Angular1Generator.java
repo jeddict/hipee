@@ -224,8 +224,8 @@ public class Angular1Generator extends AngularGenerator {
     
         
     @Override
-    public NGApplicationConfig getNGApplicationConfig() {
-        return new NG1ApplicationConfig();
+    public NGApplicationConfig getNGApplicationConfig(String baseName) {
+        return new NG1ApplicationConfig(baseName);
     }
 
     @Override

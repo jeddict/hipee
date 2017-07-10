@@ -68,50 +68,39 @@ public class NG2Relationship implements NGRelationship{
     public String otherEntityModuleName;
     public String otherEntityModulePath;
     private String otherEntityAngularName;
+    private String otherEntityRelationshipNameCapitalized;
+    private String otherEntityRelationshipNameCapitalizedPlural;
     public boolean relationshipValidate;
     public boolean relationshipRequired;
     public String entityAngularJSSuffix;
 
     public List<String> relationshipValidateRules = new ArrayList<>();
-    
-   
-
-//    public NG2Relationship(String angularAppName, String relationshipType, boolean ownerSide, String relationshipName, String otherEntityName, String entityAngularJSSuffix) {
-//        this.relationshipType = relationshipType;
-//        this.ownerSide = ownerSide;
-//        this.relationshipName=relationshipName;
-//        this.otherEntityName = otherEntityName;
-//        this.entityAngularJSSuffix = entityAngularJSSuffix;
-//        setOtherEntityModule(angularAppName);
-//    }
-  
+     
     public NG2Relationship(String angularAppName, String entityAngularJSSuffix, Entity entity, RelationAttribute relation) {
         this.entityAngularJSSuffix= entityAngularJSSuffix;
         this.relationshipName = relation.getName();
         this.ownerSide = relation.isOwner();
+        this.otherEntityName = firstLower(relation.getConnectedEntity().getClazz());
+        this.otherEntityRelationshipName = relation.getConnectedAttributeName();
         if(relation instanceof ManyToMany){
-            this.otherEntityName = firstLower(relation.getConnectedEntity().getClazz());
             relationshipType = MANY_TO_MANY;
         } else if(relation instanceof OneToMany){
-            this.otherEntityName = firstLower(relation.getConnectedEntity().getClazz());
             relationshipType = ONE_TO_MANY;
         } else if(relation instanceof ManyToOne){
-            this.otherEntityName = firstLower(relation.getConnectedEntity().getClazz());
             relationshipType = MANY_TO_ONE;
         } else if(relation instanceof OneToOne){
-            this.otherEntityName = firstLower(relation.getConnectedEntity().getClazz());
             relationshipType = ONE_TO_ONE;
         } 
         this.name = entity.getClazz();
         setOtherEntityModule(angularAppName);
     }
     
-    private void setOtherEntityModule(String angularAppName) {
+    private void setOtherEntityModule(String angularXAppName) {
         if (!"User".equals(this.getOtherEntityNameCapitalized())) {
-            this.otherEntityModuleName = angularAppName + this.getOtherEntityNameCapitalized() + "Module";
+            this.otherEntityModuleName = angularXAppName + this.getOtherEntityNameCapitalized() + "Module";
              this.otherEntityModulePath = kebabCase(firstLower(this.otherEntityName));
         } else {
-            this.otherEntityModuleName = angularAppName + "SharedModule";
+            this.otherEntityModuleName = angularXAppName + "SharedModule";
             this.otherEntityModulePath = "../shared";
         }
     }
@@ -230,7 +219,7 @@ public class NG2Relationship implements NGRelationship{
     @Override
     public String getOtherEntityStateName() {
         if (otherEntityStateName == null) {
-            otherEntityStateName = trim(kebabCase(otherEntityName), '-') + (this.entityAngularJSSuffix!=null?entityAngularJSSuffix:EMPTY); 
+            otherEntityStateName = kebabCase(getOtherEntityAngularName()); 
         }
         return otherEntityStateName;
     }
@@ -282,14 +271,6 @@ public class NG2Relationship implements NGRelationship{
             LOG.log(Level.WARNING, "otherEntityRelationshipName is missing in {0} for relationship , using {1} as fallback", new Object[]{this.getName(), firstLower(this.getName())});
         }
         return otherEntityRelationshipName;
-    }
-
-    /**
-     * @param otherEntityRelationshipName the otherEntityRelationshipName to set
-     */
-    @Override
-    public void setOtherEntityRelationshipName(String otherEntityRelationshipName) {
-        this.otherEntityRelationshipName = otherEntityRelationshipName;
     }
 
     /**
@@ -384,7 +365,11 @@ public class NG2Relationship implements NGRelationship{
     @Override
     public String getRelationshipNameCapitalizedPlural() {
         if (relationshipNameCapitalizedPlural == null) {
-            relationshipNameCapitalizedPlural = pluralize(firstUpper(relationshipName));
+            if (relationshipName.length() > 1) {
+                relationshipNameCapitalizedPlural = pluralize(firstUpper(relationshipName));
+            } else {
+                relationshipNameCapitalizedPlural = firstUpper(pluralize(relationshipName));
+            }
         }
         return relationshipNameCapitalizedPlural;
     }
@@ -405,11 +390,11 @@ public class NG2Relationship implements NGRelationship{
      */
     @Override
     public String getOtherEntityRelationshipNamePlural() {
-        if (otherEntityRelationshipNamePlural != null
+        if (otherEntityRelationshipNamePlural == null
                 && (ONE_TO_MANY.equals(relationshipType)
                 || (MANY_TO_MANY.equals(relationshipType) && ownerSide == false)
-                || (ONE_TO_ONE.equals(relationshipType)))) {
-            otherEntityRelationshipNamePlural = pluralize(otherEntityRelationshipName);
+                || (ONE_TO_ONE.equals(relationshipType) && "user".equals(otherEntityName.toLowerCase())))) {
+            otherEntityRelationshipNamePlural = pluralize(getOtherEntityRelationshipName());
         }
         return otherEntityRelationshipNamePlural;
     }
@@ -452,11 +437,23 @@ public class NG2Relationship implements NGRelationship{
     }
 
     /**
-     * @param otherEntityAngularName the otherEntityAngularName to set
+     * @return the otherEntityRelationshipNameCapitalized
      */
-    public void setOtherEntityAngularName(String otherEntityAngularName) {
-        this.otherEntityAngularName = otherEntityAngularName;
+    public String getOtherEntityRelationshipNameCapitalized() {
+        if (otherEntityRelationshipNameCapitalized == null) {
+            otherEntityRelationshipNameCapitalized = firstUpper(getOtherEntityRelationshipName());
+        }
+        return otherEntityRelationshipNameCapitalized;
     }
-    
+
+    /**
+     * @return the otherEntityRelationshipNameCapitalizedPlural
+     */
+    public String getOtherEntityRelationshipNameCapitalizedPlural() {
+        if (otherEntityRelationshipNameCapitalizedPlural == null) {
+            otherEntityRelationshipNameCapitalizedPlural = pluralize(firstUpper(getOtherEntityRelationshipName()));
+        }
+        return otherEntityRelationshipNameCapitalizedPlural;
+    }
      
 }

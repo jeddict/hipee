@@ -15,18 +15,14 @@
  */
 package org.netbeans.jcode.ng.main;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.script.ScriptException;
@@ -38,6 +34,7 @@ import static org.netbeans.jcode.core.util.FileUtil.getSimpleFileName;
 import static org.netbeans.jcode.core.util.JavaSourceHelper.getSimpleClassName;
 import org.netbeans.jcode.core.util.JavaUtil;
 import static org.netbeans.jcode.core.util.ProjectHelper.getProjectWebRoot;
+import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import org.netbeans.jcode.layer.ConfigData;
 import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicResource;
 import org.netbeans.jcode.ng.main.domain.NGApplicationConfig;
@@ -91,8 +88,7 @@ public abstract class AngularGenerator implements Generator {
     @ConfigData
     protected ProgressHandler handler;
 
-    protected static final List<String> PARSER_FILE_TYPE = Arrays.asList("html", "js", "css", "scss", "json", "ts", "ejs", "txt");
-//    private static final List<String> BINARY_FILE_TYPE = Arrays.asList("gif", "ico", "png", "jpeg", "jpg");
+    protected static final List<String> PARSER_FILE_TYPE = Arrays.asList("html", "js", "css", "scss", "json", "ts", "ejs", "txt", "webapp");
 
     protected Consumer<FileTypeStream> getParserManager(EJSParser parser) {
         return getParserManager(parser, null);
@@ -109,6 +105,7 @@ public abstract class AngularGenerator implements Generator {
                 }
             } catch (ScriptException | IOException ex) {
                 Exceptions.printStackTrace(ex);
+                System.out.println("Error in template : " + fileTypeStream.getFileName());
             }
         };
     }
@@ -190,12 +187,12 @@ public abstract class AngularGenerator implements Generator {
     protected abstract String getClientFramework();
 
     protected NGApplicationConfig getAppConfig() {
-        NGApplicationConfig applicationConfig = getNGApplicationConfig();
-        applicationConfig.setAngularAppName(ngData.getModule());
+        NGApplicationConfig applicationConfig = getNGApplicationConfig(ngData.getModule());
         applicationConfig.setEnableTranslation(true);
         applicationConfig.setJhiPrefix("jhi");
+        applicationConfig.setLanguages(new HashSet<>(Arrays.asList("en")));
+        applicationConfig.setEnableI18nRTL(isI18nRTLSupportNecessary(applicationConfig.getLanguages()));
         applicationConfig.setBuildTool("maven");
-        applicationConfig.setBaseName(ngData.getApplicationTitle());
         applicationConfig.setApplicationPath(restData.getRestConfigData().getApplicationPath());
         applicationConfig.setEnableMetrics(restData.isMetrics());
         applicationConfig.setEnableLogs(restData.isLogger());
@@ -207,7 +204,7 @@ public abstract class AngularGenerator implements Generator {
         return applicationConfig;
     }
     
-    public abstract NGApplicationConfig getNGApplicationConfig();
+    public abstract NGApplicationConfig getNGApplicationConfig(String baseName);
 
     public abstract NGEntity getNGEntity(String name, String entityAngularJSSuffix);
 
@@ -222,11 +219,12 @@ public abstract class AngularGenerator implements Generator {
             handler.error(NbBundle.getMessage(AngularGenerator.class, "TITLE_Composite_Key_Not_Supported"),
                     NbBundle.getMessage(AngularGenerator.class, "MSG_Composite_Key_Not_Supported", entity.getClazz()));
             return null;
-        } else if (!"id".equals(idAttribute.getName())) {
-            handler.error(NbBundle.getMessage(AngularGenerator.class, "TITLE_PK_Field_Named_Id_Missing"),
-                    NbBundle.getMessage(AngularGenerator.class, "MSG_PK_Field_Named_Id_Missing", entity.getClazz(), idAttribute.getName()));
-            return null;
-        }
+        } 
+//        else if (!"id".equals(idAttribute.getName())) {
+//            handler.error(NbBundle.getMessage(AngularGenerator.class, "TITLE_PK_Field_Named_Id_Missing"),
+//                    NbBundle.getMessage(AngularGenerator.class, "MSG_PK_Field_Named_Id_Missing", entity.getClazz(), idAttribute.getName()));
+//            return null;
+//        }
         String entityAngularJSSuffix = "";
         NGEntity ngEntity = getNGEntity(entity.getClazz(), entityAngularJSSuffix);
         ngEntity.setPkType(entity.getAttributes().getIdField().getDataTypeLabel());
@@ -294,6 +292,93 @@ public abstract class AngularGenerator implements Generator {
             }
         }
         return ngEntity;
+    }
+    
+    
+    /**
+     * check if Right-to-Left support is necessary for i18n
+     * @param {string[]} languages - languages array
+     */
+    private boolean isI18nRTLSupportNecessary(Set<String> languages) {
+        if (languages.isEmpty()) {
+            return false;
+        }
+        return this.getAllSupportedLanguageOptions()
+                .stream()
+                .filter(lang -> lang.isRtl())
+                .anyMatch(lang -> languages.contains(lang.getValue()));
+    }
+    
+    /**
+     * get all the languages options
+     */
+    private List<Language> getAllSupportedLanguageOptions() {
+        return Arrays.asList(
+            new Language("Armenian", "hy"),
+            new Language("Catalan", "ca"),
+            new Language("Chinese (Simplified)", "zh-cn"),
+            new Language("Chinese (Traditional)", "zh-tw"),
+            new Language("Czech", "cs"),
+            new Language("Danish", "da"),
+            new Language("Dutch", "nl"),
+            new Language("English", "en"),
+            new Language("Estonian", "et"),
+            new Language("Farsi", "fa", true),
+            new Language("French", "fr"),
+            new Language("Galician", "gl"),
+            new Language("German", "de"),
+            new Language("Greek", "el"),
+            new Language("Hindi", "hi"),
+            new Language("Hungarian", "hu"),
+            new Language("Italian", "it"),
+            new Language("Japanese", "ja"),
+            new Language("Korean", "ko"),
+            new Language("Marathi", "mr"),
+            new Language("Polish", "pl"),
+            new Language("Portuguese (Brazilian)", "pt-br"),
+            new Language("Portuguese", "pt-pt"),
+            new Language("Romanian", "ro"),
+            new Language("Russian", "ru"),
+            new Language("Slovak", "sk"),
+            new Language("Serbian", "sr"),
+            new Language("Spanish", "es"),
+            new Language("Swedish", "sv"),
+            new Language("Turkish", "tr"),
+            new Language("Tamil", "ta"),
+            new Language("Thai", "th"),
+            new Language("Ukrainian", "ua"),
+            new Language("Vietnamese", "vi")
+        );
+    }
+    
+    class Language {
+        private final String name, value;
+        private boolean rtl;
+
+        public Language(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public Language(String name, String value, boolean rtl) {
+            this.name = name;
+            this.value = value;
+            this.rtl = rtl;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public boolean isRtl() {
+            return rtl;
+        }
+        
+        
     }
 
 }

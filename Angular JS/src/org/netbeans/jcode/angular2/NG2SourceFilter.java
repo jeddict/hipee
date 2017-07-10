@@ -85,7 +85,7 @@ public class NG2SourceFilter extends ApplicationSourceFilter {
             //Language
             dataFilter.put("_jhi-translate.directive.ts", () -> config.isEnableTranslation());//shared/language
             dataFilter.put("_translate-partial-loader.provider.ts", () -> config.isEnableTranslation());//shared/language
-            dataFilter.put("_language.pipe.ts", () -> config.isEnableTranslation());//shared/language
+            dataFilter.put("_find-language-from-key.pipe.ts", () -> config.isEnableTranslation());//shared/language
             dataFilter.put("_language.constants.ts", () -> config.isEnableTranslation());//shared/language
             dataFilter.put("_language.service.ts", () -> config.isEnableTranslation());//shared/language
             dataFilter.put("_jhi-missing-translation.config.ts", () -> config.isEnableTranslation());//shared/language
@@ -147,8 +147,8 @@ public class NG2SourceFilter extends ApplicationSourceFilter {
             dataFilter.put("_docs.route.ts", () -> config.isEnableDocs());
             dataFilter.put("swagger-ui/_index.html", () -> config.isEnableDocs());
             dataFilter.put("swagger-ui/images/throbber.gif", () -> config.isEnableDocs());
-            dataFilter.put("swagger-ui/config/resource.tson", () -> config.isEnableDocs());
-            dataFilter.put("swagger-ui/config/ui.tson", () -> config.isEnableDocs());
+            dataFilter.put("swagger-ui/config/resource.json", () -> config.isEnableDocs());
+            dataFilter.put("swagger-ui/config/ui.json", () -> config.isEnableDocs());
 
             //SCSS
             dataFilter.put("content/scss/_global.scss", () -> config.isUseSass());

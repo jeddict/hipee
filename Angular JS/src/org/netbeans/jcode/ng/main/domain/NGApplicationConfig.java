@@ -91,8 +91,6 @@ public interface NGApplicationConfig {
      */
     String getClientPackageManager();
 
-    String getDIST_DIR();
-
     /**
      * @return the dasherizedBaseName
      */
@@ -226,11 +224,6 @@ public interface NGApplicationConfig {
     boolean isUseSass();
 
     /**
-     * @param angularAppName the angularAppName to set
-     */
-    void setAngularAppName(String angularAppName);
-
-    /**
      * @param applicationPath the applicationPath to set
      */
     void setApplicationPath(String applicationPath);
@@ -239,11 +232,6 @@ public interface NGApplicationConfig {
      * @param authenticationType the authenticationType to set
      */
     void setAuthenticationType(String authenticationType);
-
-    /**
-     * @param baseName the baseName to set
-     */
-    void setBaseName(String baseName);
 
     void setBuildTool(String buildTool);
 
@@ -367,4 +355,22 @@ public interface NGApplicationConfig {
      */
     void setWebsocket(String websocket);
     
+    /**
+     * @return the enableI18nRTL
+     */
+    public boolean isEnableI18nRTL();
+
+    /**
+     * @param enableI18nRTL the enableI18nRTL to set
+     */
+    public void setEnableI18nRTL(boolean enableI18nRTL);
+    
+    public String getSrcDir();
+    
+    public String getTestDir();
+    
+    public String getBuildDir();
+    
+    public String getDistDir();
+
 }

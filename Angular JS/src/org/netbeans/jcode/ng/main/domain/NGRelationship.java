@@ -146,11 +146,6 @@ public interface NGRelationship {
     void setOtherEntityField(String otherEntityField);
 
     /**
-     * @param otherEntityRelationshipName the otherEntityRelationshipName to set
-     */
-    void setOtherEntityRelationshipName(String otherEntityRelationshipName);
-
-    /**
      * @param ownerSide the ownerSide to set
      */
     void setOwnerSide(boolean ownerSide);

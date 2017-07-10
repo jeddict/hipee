@@ -77,7 +77,7 @@ public class AngularUtil {
         }
     }
         
-       public static void insertNeedle(FileObject webRoot, String source, String needlePointer, String needleContent, ProgressHandler handler) {
+       public static void insertNeedle(FileObject root, String source, String needlePointer, String needleContent, ProgressHandler handler) {
            FileInputStream fis = null;
            if(source.endsWith("json")){
                needlePointer = "\"" + needlePointer + "\"";
@@ -88,7 +88,7 @@ public class AngularUtil {
                 // temp file
                 File outFile = File.createTempFile("$$$$$$$", "tmp");
                 // input
-                FileObject sourceFileObject = webRoot.getFileObject(source);
+                FileObject sourceFileObject = root.getFileObject(source);
                 if(sourceFileObject==null){
                     handler.error("Needle file", String.format("needle file '%s' not found ", source));
                     return;
