@@ -24,3 +24,24 @@ hs_err_pid*
 /Angular JS/nbproject/private/
 /build/
 /Cloud/build/
+/Cloud/nbproject/private/
+!/Angular JS/src/org/netbeans/jcode/angular2/template/entity-resources.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/entity-protractor-test.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/karma-test.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/entity-include-resources.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/project-resources.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/webapp-affected.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/web-resources-i18n.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/entity-karma-test.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/protractor-test.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/entity-resource-i18n.zip
+!/Angular JS/src/org/netbeans/jcode/angular2/template/web-resources.zip
+!/Angular JS/src/org/netbeans/jcode/angular1/template/web-resources-i18n.zip
+!/Angular JS/src/org/netbeans/jcode/angular1/template/entity-resource-i18n.zip
+!/Angular JS/src/org/netbeans/jcode/angular1/template/bower_components.zip
+!/Angular JS/src/org/netbeans/jcode/angular1/template/entity-include-resources.zip
+!/Angular JS/src/org/netbeans/jcode/angular1/template/entity-resources.zip
+!/Angular JS/src/org/netbeans/jcode/angular1/template/angular-locale.zip
+!/Angular JS/src/org/netbeans/jcode/angular1/template/web-resources.zip
+/Angular/nbproject/private/
+/Angular/build/

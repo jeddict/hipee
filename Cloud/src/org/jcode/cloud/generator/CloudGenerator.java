@@ -23,7 +23,6 @@ import static org.netbeans.jcode.console.Console.BOLD;
 import static org.netbeans.jcode.console.Console.FG_RED;
 import static org.netbeans.jcode.console.Console.UNDERLINE;
 import static org.netbeans.jcode.core.util.FileUtil.expandTemplate;
-import org.netbeans.jcode.core.util.POMManager;
 import org.netbeans.jcode.layer.ConfigData;
 import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.layer.Technology;
@@ -34,8 +33,8 @@ import org.openide.util.lookup.ServiceProvider;
 /**
  * @author Gaurav Gupta
  */
-@ServiceProvider(service = Generator.class)
-@Technology(label = "Cloud", panel = CloudConfigPanel.class, index = 2, sibling = {DockerGenerator.class})
+//@ServiceProvider(service = Generator.class)
+//@Technology(label = "Cloud", panel = CloudConfigPanel.class, tabIndex = 2, sibling = {DockerGenerator.class})
 public final class CloudGenerator extends DockerGenerator implements Generator {
 
     private static final String TEMPLATE = "org/jcode/cloud/template/";
@@ -54,18 +53,24 @@ public final class CloudGenerator extends DockerGenerator implements Generator {
     private void generateKubernetes(){
         if (config.isDockerActivated() && cloudConfig.getKubernetesConfigData().isEnabled()) {
             try {
+                handler.info("Kubernetes", "You can deploy all your apps by running:\n"
+                        + "\t\t "+ Console.wrap("kubectl apply -f namespace.yml", BOLD)+"\n"
+                        + "\t\t "+ Console.wrap("kubectl apply -f "+getApplicationName(), BOLD)+"\n"
+                        + "\n\t\t"
+                        + "Use these commands to find your application's IP addresses:\n"
+                        + "\t\t "+ Console.wrap("kubectl get svc " + getApplicationName(), BOLD));
+
                 handler.progress(Console.wrap(CloudGenerator.class, "MSG_Progress_Kubernetes_Generating", FG_RED, BOLD, UNDERLINE));
                 FileObject targetFolder = project.getProjectDirectory().getFileObject("k8s");
                 if(targetFolder == null){
                     targetFolder = project.getProjectDirectory().createFolder("k8s");
                 }
-                String applicationName = getApplicationName();
                 Map<String, Object> params = getParams();
                 params.put("NAMESPACE", cloudConfig.getKubernetesConfigData().getNamespace());
                 params.put("DOCKER_IMAGE", config.getDockerNamespace().replace("${project.groupId}", getPOMManager().getGroupId()) 
-                        + "/" + applicationName
+                        + "/" + getApplicationName()
                         + ":"  + getPOMManager().getVersion());
-                params.put("APP_NAME", applicationName);
+                params.put("APP_NAME", getApplicationName());
 
                 handler.progress(expandTemplate(TEMPLATE + "kubernetes/db/_" + config.getDatabaseType().name().toLowerCase() + ".yml.ftl", targetFolder, getApplicationName()+"_"+config.getDatabaseType().name().toLowerCase()+".yml", params));
                 handler.progress(expandTemplate(TEMPLATE + "kubernetes/_deployment.yml.ftl", targetFolder, getApplicationName()+"_deployment.yml", params));
