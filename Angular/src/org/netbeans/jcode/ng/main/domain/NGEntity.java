@@ -15,317 +15,557 @@
  */
 package org.netbeans.jcode.ng.main.domain;
 
+import java.util.ArrayList;
 import java.util.List;
+import static org.netbeans.jcode.core.util.StringHelper.firstLower;
+import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
+import static org.netbeans.jcode.core.util.StringHelper.kebabCase;
+import static org.netbeans.jcode.core.util.StringHelper.pluralize;
+import static org.netbeans.jcode.core.util.StringHelper.startCase;
+import static org.netbeans.jcode.ng.main.domain.NGRelationship.MANY_TO_MANY;
+import static org.netbeans.jcode.ng.main.domain.NGRelationship.MANY_TO_ONE;
+import static org.netbeans.jcode.ng.main.domain.NGRelationship.ONE_TO_MANY;
+import static org.netbeans.jcode.ng.main.domain.NGRelationship.ONE_TO_ONE;
 
 /**
  *
  * @author jGauravGupta
  */
-public interface NGEntity {
+public abstract class NGEntity {
     
-    void addField(NGField field);
+    private String name;
+    protected String entityNameCapitalized;
+    protected String entityClass;
+    private String entityClassHumanized;
+    private String entityClassPlural;
+    private String entityClassPluralHumanized;
+    protected String entityInstance;
+    private String entityInstancePlural;
+    private String entityApiUrl;
+    private String entityFolderName;
+    
+    protected String entityFileName;
+    protected String entityPluralFileName;
+    protected String entityServiceFileName;
+    protected String entityStateName;
+    protected String entityUrl;
+    protected String entityTranslationKey;
+    protected String entityTranslationKeyMenu;
+    
+    private boolean fieldsContainInstant;
+    private boolean fieldsContainZonedDateTime;
+    private boolean fieldsContainLocalDate;
+    private boolean fieldsContainBigDecimal;
+    private boolean fieldsContainBlob;
+    private boolean fieldsContainImageBlob;
+    private boolean validation;
+    private boolean fieldsContainOwnerManyToMany;
+    private boolean fieldsContainNoOwnerOneToOne;
+    private boolean fieldsContainOwnerOneToOne;
+    private boolean fieldsContainOneToMany;
+    private boolean fieldsContainManyToOne;
+    private List<String> differentTypes = new ArrayList<>();
+    private final List<NGField> fields = new ArrayList<>();
+    private final List<NGRelationship> relationships = new ArrayList<>();
+        private String pkType;
 
-    void addRelationship(NGRelationship relationship);
+    public NGEntity(String name, String entityAngularSuffix) {
+        String entityNameSpinalCased = kebabCase(firstLower(name));
+        
+        this.name = name;
+        this.entityNameCapitalized = firstUpper(name);
+        this.entityClass = this.entityNameCapitalized;
+        this.entityClassHumanized = startCase(this.entityNameCapitalized);
+        this.entityClassPlural = pluralize(this.entityClass);
+        this.entityClassPluralHumanized = startCase(this.entityClassPlural);
+        this.entityInstance = firstLower(name);
+        this.entityInstancePlural = pluralize(this.entityInstance);
+        this.entityApiUrl = entityNameSpinalCased;// entityNamePluralizedAndSpinalCased;
+        this.entityFolderName = entityNameSpinalCased;
+        
+        this.differentTypes.add(this.entityClass);
+        
+            }
+   
+       public void addRelationship(NGRelationship relationship) {
+        getRelationships().add(relationship);
+        // Load in-memory data for root
+        if (MANY_TO_MANY.equals(relationship.getRelationshipType()) && relationship.isOwnerSide()) {
+            setFieldsContainOwnerManyToMany(true);
+        } else if (ONE_TO_ONE.equals(relationship.getRelationshipType()) && !relationship.isOwnerSide()) {
+            setFieldsContainNoOwnerOneToOne(true);
+        } else if (ONE_TO_ONE.equals(relationship.getRelationshipType()) && relationship.isOwnerSide()) {
+            setFieldsContainOwnerOneToOne(true);
+        } else if (ONE_TO_MANY.equals(relationship.getRelationshipType())) {
+            setFieldsContainOneToMany(true);
+        } else if (MANY_TO_ONE.equals(relationship.getRelationshipType())) {
+            setFieldsContainManyToOne(true);
+        }
 
-    /**
-     * @return the entityAngularName
-     */
-    String getEntityAngularName();
+        if (relationship.getRelationshipValidateRules() != null && relationship.getRelationshipValidateRules().contains("required")) {
+            relationship.setRelationshipValidate(true);
+            relationship.setRelationshipRequired(true);
+            setValidation(true);
+        }
+       }
+    public void removeRelationship(NGRelationship relationship) {
+        getRelationships().remove(relationship);
+    }
 
-    /**
-     * @return the entityApiUrl
-     */
-    String getEntityApiUrl();
+    public void addField(NGField field) {
+        getFields().add(field);
+    }
 
-    /**
-     * @return the entityClass
-     */
-    String getEntityClass();
-
-    /**
-     * @return the entityClassHumanized
-     */
-    String getEntityClassHumanized();
-
-    /**
-     * @return the entityClassPlural
-     */
-    String getEntityClassPlural();
-
-    /**
-     * @return the entityClassPluralHumanized
-     */
-    String getEntityClassPluralHumanized();
-
-    /**
-     * @return the entityFileName
-     */
-    String getEntityFileName();
-
-    /**
-     * @return the entityFolderName
-     */
-    String getEntityFolderName();
-
-    /**
-     * @return the entityInstance
-     */
-    String getEntityInstance();
-
-    /**
-     * @return the entityInstancePlural
-     */
-    String getEntityInstancePlural();
-
-    /**
-     * @return the entityNameCapitalized
-     */
-    String getEntityNameCapitalized();
-
-    /**
-     * @return the entityPluralFileName
-     */
-    String getEntityPluralFileName();
-
-    /**
-     * @return the entityServiceFileName
-     */
-    String getEntityServiceFileName();
-
-    /**
-     * @return the entityStateName
-     */
-    String getEntityStateName();
-
-    /**
-     * @return the entityTranslationKey
-     */
-    String getEntityTranslationKey();
-
-    /**
-     * @return the entityTranslationKeyMenu
-     */
-    String getEntityTranslationKeyMenu();
-
-    /**
-     * @return the entityUrl
-     */
-    String getEntityUrl();
+    public void removeField(NGField field) {
+        getFields().remove(field);
+    }
 
     /**
      * @return the fields
      */
-    List<NGField> getFields();
-
-    /**
-     * @return the name
-     */
-    String getName();
-
-    /**
-     * @return the pkType
-     */
-    String getPkType();
+    public List<NGField> getFields() {
+        return fields;
+    }
 
     /**
      * @return the relationships
      */
-    List<NGRelationship> getRelationships();
+    public List<NGRelationship> getRelationships() {
+        return relationships;
+    }
 
     /**
-     * @return the fieldsContainBigDecimal
+     * @return the name
      */
-    boolean isFieldsContainBigDecimal();
+    public String getName() {
+        return name;
+    }
 
     /**
-     * @return the fieldsContainBlob
+     * @param name the name to set
      */
-    boolean isFieldsContainBlob();
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
-     * @return the fieldsContainLocalDate
+     * @return the entityNameCapitalized
      */
-    boolean isFieldsContainLocalDate();
-
-    /**
-     * @return the fieldsContainManyToOne
-     */
-    boolean isFieldsContainManyToOne();
-
-    /**
-     * @return the fieldsContainNoOwnerOneToOne
-     */
-    boolean isFieldsContainNoOwnerOneToOne();
-
-    /**
-     * @return the fieldsContainOneToMany
-     */
-    boolean isFieldsContainOneToMany();
-
-    /**
-     * @return the fieldsContainOwnerManyToMany
-     */
-    boolean isFieldsContainOwnerManyToMany();
-
-    /**
-     * @return the fieldsContainOwnerOneToOne
-     */
-    boolean isFieldsContainOwnerOneToOne();
-
-    /**
-     * @return the fieldsContainZonedDateTime
-     */
-    boolean isFieldsContainZonedDateTime();
-
-    /**
-     * @return the validation
-     */
-    boolean isValidation();
-
-    void removeField(NGField field);
-
-    void removeRelationship(NGRelationship relationship);
-
-    /**
-     * @param entityApiUrl the entityApiUrl to set
-     */
-    void setEntityApiUrl(String entityApiUrl);
-
-    /**
-     * @param entityClass the entityClass to set
-     */
-    void setEntityClass(String entityClass);
-
-    /**
-     * @param entityClassHumanized the entityClassHumanized to set
-     */
-    void setEntityClassHumanized(String entityClassHumanized);
-
-    /**
-     * @param entityClassPlural the entityClassPlural to set
-     */
-    void setEntityClassPlural(String entityClassPlural);
-
-    /**
-     * @param entityClassPluralHumanized the entityClassPluralHumanized to set
-     */
-    void setEntityClassPluralHumanized(String entityClassPluralHumanized);
-
-    /**
-     * @param entityFileName the entityFileName to set
-     */
-    void setEntityFileName(String entityFileName);
-
-    /**
-     * @param entityFolderName the entityFolderName to set
-     */
-    void setEntityFolderName(String entityFolderName);
-
-    /**
-     * @param entityInstance the entityInstance to set
-     */
-    void setEntityInstance(String entityInstance);
-
-    /**
-     * @param entityInstancePlural the entityInstancePlural to set
-     */
-    void setEntityInstancePlural(String entityInstancePlural);
+    public String getEntityNameCapitalized() {
+        return entityNameCapitalized;
+    }
 
     /**
      * @param entityNameCapitalized the entityNameCapitalized to set
      */
-    void setEntityNameCapitalized(String entityNameCapitalized);
+    public void setEntityNameCapitalized(String entityNameCapitalized) {
+        this.entityNameCapitalized = entityNameCapitalized;
+    }
+
+    /**
+     * @return the entityClass
+     */
+    public String getEntityClass() {
+        return entityClass;
+    }
+
+    /**
+     * @param entityClass the entityClass to set
+     */
+    public void setEntityClass(String entityClass) {
+        this.entityClass = entityClass;
+    }
+
+    /**
+     * @return the entityClassHumanized
+     */
+    public String getEntityClassHumanized() {
+        return entityClassHumanized;
+    }
+
+    /**
+     * @param entityClassHumanized the entityClassHumanized to set
+     */
+    public void setEntityClassHumanized(String entityClassHumanized) {
+        this.entityClassHumanized = entityClassHumanized;
+    }
+
+    /**
+     * @return the entityClassPlural
+     */
+    public String getEntityClassPlural() {
+        return entityClassPlural;
+    }
+
+    /**
+     * @param entityClassPlural the entityClassPlural to set
+     */
+    public void setEntityClassPlural(String entityClassPlural) {
+        this.entityClassPlural = entityClassPlural;
+    }
+
+    /**
+     * @return the entityClassPluralHumanized
+     */
+    public String getEntityClassPluralHumanized() {
+        return entityClassPluralHumanized;
+    }
+
+    /**
+     * @param entityClassPluralHumanized the entityClassPluralHumanized to set
+     */
+    public void setEntityClassPluralHumanized(String entityClassPluralHumanized) {
+        this.entityClassPluralHumanized = entityClassPluralHumanized;
+    }
+
+    /**
+     * @return the entityInstance
+     */
+    public String getEntityInstance() {
+        return entityInstance;
+    }
+
+    /**
+     * @param entityInstance the entityInstance to set
+     */
+    public void setEntityInstance(String entityInstance) {
+        this.entityInstance = entityInstance;
+    }
+
+    /**
+     * @return the entityInstancePlural
+     */
+    public String getEntityInstancePlural() {
+        return entityInstancePlural;
+    }
+
+    /**
+     * @param entityInstancePlural the entityInstancePlural to set
+     */
+    public void setEntityInstancePlural(String entityInstancePlural) {
+        this.entityInstancePlural = entityInstancePlural;
+    }
+
+    /**
+     * @return the entityApiUrl
+     */
+    public String getEntityApiUrl() {
+        return entityApiUrl;
+    }
+
+    /**
+     * @param entityApiUrl the entityApiUrl to set
+     */
+    public void setEntityApiUrl(String entityApiUrl) {
+        this.entityApiUrl = entityApiUrl;
+    }
+
+    /**
+     * @return the entityFolderName
+     */
+    public String getEntityFolderName() {
+        return entityFolderName;
+    }
+
+    /**
+     * @param entityFolderName the entityFolderName to set
+     */
+    public void setEntityFolderName(String entityFolderName) {
+        this.entityFolderName = entityFolderName;
+    }
+
+    /**
+     * @return the entityFileName
+     */
+    public String getEntityFileName() {
+        return entityFileName;
+    }
+
+    /**
+     * @param entityFileName the entityFileName to set
+     */
+    public void setEntityFileName(String entityFileName) {
+        this.entityFileName = entityFileName;
+    }
+
+    /**
+     * @return the entityPluralFileName
+     */
+    public String getEntityPluralFileName() {
+        return entityPluralFileName;
+    }
 
     /**
      * @param entityPluralFileName the entityPluralFileName to set
      */
-    void setEntityPluralFileName(String entityPluralFileName);
+    public void setEntityPluralFileName(String entityPluralFileName) {
+        this.entityPluralFileName = entityPluralFileName;
+    }
+
+    /**
+     * @return the entityServiceFileName
+     */
+    public String getEntityServiceFileName() {
+        return entityServiceFileName;
+    }
 
     /**
      * @param entityServiceFileName the entityServiceFileName to set
      */
-    void setEntityServiceFileName(String entityServiceFileName);
+    public void setEntityServiceFileName(String entityServiceFileName) {
+        this.entityServiceFileName = entityServiceFileName;
+    }
+    
+    /**
+     * @return the entityStateName
+     */
+    public String getEntityStateName() {
+        return entityStateName;
+    }
 
     /**
      * @param entityStateName the entityStateName to set
      */
-    void setEntityStateName(String entityStateName);
+    public void setEntityStateName(String entityStateName) {
+        this.entityStateName = entityStateName;
+    }
 
     /**
-     * @param entityTranslationKey the entityTranslationKey to set
+     * @return the entityUrl
      */
-    void setEntityTranslationKey(String entityTranslationKey);
-
-    /**
-     * @param entityTranslationKeyMenu the entityTranslationKeyMenu to set
-     */
-    void setEntityTranslationKeyMenu(String entityTranslationKeyMenu);
+    public String getEntityUrl() {
+        return entityUrl;
+    }
 
     /**
      * @param entityUrl the entityUrl to set
      */
-    void setEntityUrl(String entityUrl);
+    public void setEntityUrl(String entityUrl) {
+        this.entityUrl = entityUrl;
+    }
 
     /**
-     * @param fieldsContainBigDecimal the fieldsContainBigDecimal to set
+     * @return the entityTranslationKey
      */
-    void setFieldsContainBigDecimal(boolean fieldsContainBigDecimal);
+    public String getEntityTranslationKey() {
+        return entityTranslationKey;
+    }
 
     /**
-     * @param fieldsContainBlob the fieldsContainBlob to set
+     * @param entityTranslationKey the entityTranslationKey to set
      */
-    void setFieldsContainBlob(boolean fieldsContainBlob);
+    public void setEntityTranslationKey(String entityTranslationKey) {
+        this.entityTranslationKey = entityTranslationKey;
+    }
+
+    /**
+     * @return the entityTranslationKeyMenu
+     */
+    public String getEntityTranslationKeyMenu() {
+        return entityTranslationKeyMenu;
+    }
+
+    /**
+     * @param entityTranslationKeyMenu the entityTranslationKeyMenu to set
+     */
+    public void setEntityTranslationKeyMenu(String entityTranslationKeyMenu) {
+        this.entityTranslationKeyMenu = entityTranslationKeyMenu;
+    }
+
+    /**
+     * @return the fieldsContainInstant
+     */
+    public boolean isFieldsContainInstant() {
+        return fieldsContainInstant;
+    }
+
+    /**
+     * @param fieldsContainInstant the fieldsContainInstant to set
+     */
+    public void setFieldsContainInstant(boolean fieldsContainInstant) {
+        this.fieldsContainInstant = fieldsContainInstant;
+    }
+
+    /**
+     * @return the fieldsContainZonedDateTime
+     */
+    public boolean isFieldsContainZonedDateTime() {
+        return fieldsContainZonedDateTime;
+    }
+
+    /**
+     * @param fieldsContainZonedDateTime the fieldsContainZonedDateTime to set
+     */
+    public void setFieldsContainZonedDateTime(boolean fieldsContainZonedDateTime) {
+        this.fieldsContainZonedDateTime = fieldsContainZonedDateTime;
+    }
+
+    /**
+     * @return the fieldsContainLocalDate
+     */
+    public boolean isFieldsContainLocalDate() {
+        return fieldsContainLocalDate;
+    }
 
     /**
      * @param fieldsContainLocalDate the fieldsContainLocalDate to set
      */
-    void setFieldsContainLocalDate(boolean fieldsContainLocalDate);
+    public void setFieldsContainLocalDate(boolean fieldsContainLocalDate) {
+        this.fieldsContainLocalDate = fieldsContainLocalDate;
+    }
 
     /**
-     * @param fieldsContainManyToOne the fieldsContainManyToOne to set
+     * @return the fieldsContainBigDecimal
      */
-    void setFieldsContainManyToOne(boolean fieldsContainManyToOne);
+    public boolean isFieldsContainBigDecimal() {
+        return fieldsContainBigDecimal;
+    }
 
     /**
-     * @param fieldsContainNoOwnerOneToOne the fieldsContainNoOwnerOneToOne to
-     * set
+     * @param fieldsContainBigDecimal the fieldsContainBigDecimal to set
      */
-    void setFieldsContainNoOwnerOneToOne(boolean fieldsContainNoOwnerOneToOne);
+    public void setFieldsContainBigDecimal(boolean fieldsContainBigDecimal) {
+        this.fieldsContainBigDecimal = fieldsContainBigDecimal;
+    }
 
     /**
-     * @param fieldsContainOneToMany the fieldsContainOneToMany to set
+     * @return the fieldsContainBlob
      */
-    void setFieldsContainOneToMany(boolean fieldsContainOneToMany);
+    public boolean isFieldsContainBlob() {
+        return fieldsContainBlob;
+    }
+
+    /**
+     * @param fieldsContainBlob the fieldsContainBlob to set
+     */
+    public void setFieldsContainBlob(boolean fieldsContainBlob) {
+        this.fieldsContainBlob = fieldsContainBlob;
+    }
+
+    /**
+     * @return the fieldsContainImageBlob
+     */
+    public boolean isFieldsContainImageBlob() {
+        return fieldsContainImageBlob;
+    }
+
+    /**
+     * @param fieldsContainImageBlob the fieldsContainImageBlob to set
+     */
+    public void setFieldsContainImageBlob(boolean fieldsContainImageBlob) {
+        this.fieldsContainImageBlob = fieldsContainImageBlob;
+    }
+
+
+    /**
+     * @return the validation
+     */
+    public boolean isValidation() {
+        return validation;
+    }
+
+    /**
+     * @param validation the validation to set
+     */
+    public void setValidation(boolean validation) {
+        this.validation = validation;
+    }
+
+    /**
+     * @return the fieldsContainOwnerManyToMany
+     */
+    public boolean isFieldsContainOwnerManyToMany() {
+        return fieldsContainOwnerManyToMany;
+    }
 
     /**
      * @param fieldsContainOwnerManyToMany the fieldsContainOwnerManyToMany to
      * set
      */
-    void setFieldsContainOwnerManyToMany(boolean fieldsContainOwnerManyToMany);
+    public void setFieldsContainOwnerManyToMany(boolean fieldsContainOwnerManyToMany) {
+        this.fieldsContainOwnerManyToMany = fieldsContainOwnerManyToMany;
+    }
+
+    /**
+     * @return the fieldsContainNoOwnerOneToOne
+     */
+    public boolean isFieldsContainNoOwnerOneToOne() {
+        return fieldsContainNoOwnerOneToOne;
+    }
+
+    /**
+     * @param fieldsContainNoOwnerOneToOne the fieldsContainNoOwnerOneToOne to
+     * set
+     */
+    public void setFieldsContainNoOwnerOneToOne(boolean fieldsContainNoOwnerOneToOne) {
+        this.fieldsContainNoOwnerOneToOne = fieldsContainNoOwnerOneToOne;
+    }
+
+    /**
+     * @return the fieldsContainOwnerOneToOne
+     */
+    public boolean isFieldsContainOwnerOneToOne() {
+        return fieldsContainOwnerOneToOne;
+    }
 
     /**
      * @param fieldsContainOwnerOneToOne the fieldsContainOwnerOneToOne to set
      */
-    void setFieldsContainOwnerOneToOne(boolean fieldsContainOwnerOneToOne);
+    public void setFieldsContainOwnerOneToOne(boolean fieldsContainOwnerOneToOne) {
+        this.fieldsContainOwnerOneToOne = fieldsContainOwnerOneToOne;
+    }
 
     /**
-     * @param fieldsContainZonedDateTime the fieldsContainZonedDateTime to set
+     * @return the fieldsContainOneToMany
      */
-    void setFieldsContainZonedDateTime(boolean fieldsContainZonedDateTime);
+    public boolean isFieldsContainOneToMany() {
+        return fieldsContainOneToMany;
+    }
 
     /**
-     * @param name the name to set
+     * @param fieldsContainOneToMany the fieldsContainOneToMany to set
      */
-    void setName(String name);
+    public void setFieldsContainOneToMany(boolean fieldsContainOneToMany) {
+        this.fieldsContainOneToMany = fieldsContainOneToMany;
+    }
+
+    /**
+     * @return the fieldsContainManyToOne
+     */
+    public boolean isFieldsContainManyToOne() {
+        return fieldsContainManyToOne;
+    }
+
+    /**
+     * @param fieldsContainManyToOne the fieldsContainManyToOne to set
+     */
+    public void setFieldsContainManyToOne(boolean fieldsContainManyToOne) {
+        this.fieldsContainManyToOne = fieldsContainManyToOne;
+    }
+
+    /**
+     * @return the differentTypes
+     */
+    public List<String> getDifferentTypes() {
+        return differentTypes;
+    }
+
+        /**
+     * @return the pkType
+     */
+    public String getPkType() {
+        return pkType;
+    }
 
     /**
      * @param pkType the pkType to set
      */
-    void setPkType(String pkType);
-
-    /**
-     * @param validation the validation to set
+    public void setPkType(String pkType) {
+        this.pkType = pkType;
+    }
+        /**
+     * @return the entityAngularName
      */
-    void setValidation(boolean validation);
-    
+    public abstract String getEntityAngularName();
+
 }

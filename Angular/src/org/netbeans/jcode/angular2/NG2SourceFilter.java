@@ -89,7 +89,7 @@ public class NG2SourceFilter extends ApplicationSourceFilter {
             dataFilter.put("_language.constants.ts", () -> config.isEnableTranslation());//shared/language
             dataFilter.put("_language.service.ts", () -> config.isEnableTranslation());//shared/language
             dataFilter.put("_jhi-missing-translation.config.ts", () -> config.isEnableTranslation());//shared/language
-
+            dataFilter.put("_language.helper.ts", () -> config.isEnableTranslation());//shared/language            
             dataFilter.put("_translation.config.ts", () -> config.isEnableTranslation());
             dataFilter.put("_translation-storage.provider.ts", () -> config.isEnableTranslation());
             dataFilter.put("_active-menu.directive.ts", () -> config.isEnableTranslation());//layouts/navbar

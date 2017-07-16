@@ -41,7 +41,6 @@ public class FileTypeStream {
         return fileName.substring(fileName.lastIndexOf('/') + 1);
     }
     
-    
     /**
      * @return the fileType
      */

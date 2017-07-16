@@ -200,7 +200,7 @@ public class Angular2Generator extends AngularGenerator {
 "        }" +
 "    }\n" +
 "");
-        copyDynamicResource(getParserManager(parser), getTemplatePath() + "entity-resources.zip", webRoot, getEntityPathResolver(entity), handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resources.zip", webRoot, getEntityPathResolver(entity), handler);
     }
 
     private Function<String, String> getEntityPathResolver(NGEntity entity) {
@@ -227,7 +227,7 @@ public class Angular2Generator extends AngularGenerator {
     }
 
     private void updateNgEntityNeedle(NGApplicationConfig applicationConfig, List<NGEntity> ngEntities) {
-        for (NeedleFile needleFilefile : getNeedleFiles()) {
+        for (NeedleFile needleFilefile : getNeedleFiles(applicationConfig)) {
             for (String file : needleFilefile.getFile()) {
                 needleFilefile.getNeedles().forEach(needle -> 
                         insertNeedle(file.startsWith("/") ? projectRoot:webRoot, 
@@ -239,13 +239,17 @@ public class Angular2Generator extends AngularGenerator {
         }
     }
 
-    private List<NeedleFile> getNeedleFiles() {
+    private List<NeedleFile> getNeedleFiles(NGApplicationConfig applicationConfig) {
+        List<NeedleFile> needleFiles = new ArrayList<>();
+        
         NeedleFile ENTITY_MODULE_TS = new NeedleFile("app/entities/entity.module.ts");
         ENTITY_MODULE_TS.setNeedles(Arrays.asList(
                 //appName -> getAngularXAppName
                 new Needle("needle-add-entity-module-import", "import { ${appName}${entityAngularName}Module } from './${entityFolderName}/${entityFileName}.module';\n"),
                 new Needle("needle-add-entity-module", "        ${appName}${entityAngularName}Module,\n")
         ));
+        needleFiles.add(ENTITY_MODULE_TS);
+                
         NeedleFile NAVBAR_COMPONENT_HTML = new NeedleFile("app/layouts/navbar/navbar.component.html");
         NAVBAR_COMPONENT_HTML.setNeedles(Arrays.asList(
                 new Needle("needle-add-entity-to-menu",
@@ -256,11 +260,18 @@ public class Angular2Generator extends AngularGenerator {
                 + "                        </a>\n"
                 + "                    </li>")
         ));
+        needleFiles.add(NAVBAR_COMPONENT_HTML);
 
-        NeedleFile GLOBAL_JSON = new NeedleFile("i18n/en/global.json");
-        GLOBAL_JSON.setNeedles(Arrays.asList(
-                new Needle("needle-menu-add-entry", "\t\t\t\t\t\t\t\t\"${entityTranslationKeyMenu}\": \"${startCase_entityClass}\",")
-        ));
+        
+        if(applicationConfig.isEnableTranslation()){
+            for (String language : applicationConfig.getLanguages()) {
+                NeedleFile GLOBAL_JSON = new NeedleFile("i18n/"+language+"/global.json");
+                GLOBAL_JSON.setNeedles(Arrays.asList(
+                        new Needle("needle-menu-add-entry", "\t\t\"${entityTranslationKeyMenu}\": \"${startCase_entityClass}\",")
+                ));
+                needleFiles.add(GLOBAL_JSON);
+            }
+        }
 
         NeedleFile LANGUAGE_WEBPACK = new NeedleFile("/webpack/webpack.common.js");
         LANGUAGE_WEBPACK.setNeedles(Arrays.asList(
@@ -269,7 +280,9 @@ public class Angular2Generator extends AngularGenerator {
                         "                { pattern: \"./${srcDir}i18n/${language}/*.json\", fileName: \"./i18n/${language}.json\" }<#if language_has_next>,</#if>\n" +
                         "        </#list>")
         ));
-        return Arrays.asList(ENTITY_MODULE_TS, NAVBAR_COMPONENT_HTML, GLOBAL_JSON, LANGUAGE_WEBPACK);
+        needleFiles.add(LANGUAGE_WEBPACK);
+        
+        return needleFiles;
     }
 
     private void addMavenDependencies(String pom) {
@@ -283,13 +296,13 @@ public class Angular2Generator extends AngularGenerator {
 
     private void generateNgHome(EJSParser parser) throws IOException {
         Function<String, String> pathResolver = templatePath -> templatePath.replace("_", "");// "_index.html" ->  "tabIndex.html";
-        copyDynamicResource(getParserManager(parser), getTemplatePath() + "project-resources.zip", projectRoot, pathResolver, handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "project-resources.zip", projectRoot, pathResolver, handler);
 
 //        parser.setDelimiter('#');//nested template
-//        copyDynamicFile(getParserManager(parser), getTemplatePath() + "_index.html", webRoot, "tabIndex.html", handler);
+//        copyDynamicFile(parser.getParserManager(), getTemplatePath() + "_index.html", webRoot, "tabIndex.html", handler);
         FileObject nbactionsFile = projectRoot.getFileObject("nbactions.xml");
         if (nbactionsFile == null) {
-            copyDynamicFile(getParserManager(parser), getTemplatePath() + "webpack_nbactions.xml", projectRoot, "nbactions.xml", handler);
+            copyDynamicFile(parser.getParserManager(), getTemplatePath() + "webpack_nbactions.xml", projectRoot, "nbactions.xml", handler);
         }
         handler.info(NbBundle.getMessage(Angular2Generator.class, "ACTIVATE_PROFILE"),
                 NbBundle.getMessage(Angular2Generator.class, "ACTIVATE_WEBPACK_PROFILE"));
@@ -310,15 +323,15 @@ public class Angular2Generator extends AngularGenerator {
     protected void generateNgApplication(EJSParser parser) throws IOException {
         handler.append(Console.wrap(AngularGenerator.class, "MSG_Copying_Application_Files", FG_RED, BOLD, UNDERLINE));
         List<String> skipList = Arrays.asList("_find-language-from-key.pipe.ts");//charset issue 
-        copyDynamicResource(getParserManager(parser, skipList), getTemplatePath() + "web-resources.zip", webRoot, PATH_RESOLVER, handler);
+        copyDynamicResource(parser.getParserManager(skipList), getTemplatePath() + "web-resources.zip", webRoot, PATH_RESOLVER, handler);
     }
 
     protected void generateNgTest(EJSParser parser) throws IOException {
         FileObject testRoot = SourceGroupSupport.getTestSourceGroup(project).getRootFolder().getParent();//test/java => ../java
 //        FileObject javascriptRoot = testRoot.createFolder("javascript");
-        copyDynamicResource(getParserManager(parser), getTemplatePath() + "karma-test.zip", testRoot, PATH_RESOLVER, handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "karma-test.zip", testRoot, PATH_RESOLVER, handler);
         if (ngData.isProtractorTest()) {
-            copyDynamicResource(getParserManager(parser), getTemplatePath() + "protractor-test.zip", testRoot, PATH_RESOLVER, handler);
+            copyDynamicResource(parser.getParserManager(), getTemplatePath() + "protractor-test.zip", testRoot, PATH_RESOLVER, handler);
         }
     }
 
@@ -329,9 +342,9 @@ public class Angular2Generator extends AngularGenerator {
         parser.addContext(config);
 
         FileObject testRoot = SourceGroupSupport.getTestSourceGroup(project).getRootFolder().getParent();//test/java => ../java
-        copyDynamicResource(getParserManager(parser), getTemplatePath() + "entity-karma-test.zip", testRoot, getEntityPathResolver(entity), handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-karma-test.zip", testRoot, getEntityPathResolver(entity), handler);
         if (ngData.isProtractorTest()) {
-            copyDynamicResource(getParserManager(parser), getTemplatePath() + "entity-protractor-test.zip", testRoot, getEntityPathResolver(entity), handler);
+            copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-protractor-test.zip", testRoot, getEntityPathResolver(entity), handler);
         }
     }
 

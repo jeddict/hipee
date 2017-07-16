@@ -17,24 +17,26 @@ package org.netbeans.jcode.ng.main;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import javax.script.ScriptException;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 import org.netbeans.jpa.modeler.spec.*;
 import org.netbeans.api.project.Project;
+import static org.netbeans.jcode.core.util.AttributeType.BIGDECIMAL;
+import static org.netbeans.jcode.core.util.AttributeType.INSTANT;
+import static org.netbeans.jcode.core.util.AttributeType.LOCAL_DATE;
+import static org.netbeans.jcode.core.util.AttributeType.ZONED_DATE_TIME;
 import static org.netbeans.jcode.core.util.FileUtil.getSimpleFileName;
 import static org.netbeans.jcode.core.util.JavaSourceHelper.getSimpleClassName;
 import org.netbeans.jcode.core.util.JavaUtil;
 import static org.netbeans.jcode.core.util.ProjectHelper.getProjectWebRoot;
-import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
+import static org.netbeans.jcode.core.util.StringHelper.pluralize;
+import org.netbeans.jcode.i18n.I18NConfigData;
+import static org.netbeans.jcode.i18n.LanguageUtil.isI18nRTLSupportNecessary;
 import org.netbeans.jcode.layer.ConfigData;
 import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicResource;
 import org.netbeans.jcode.ng.main.domain.NGApplicationConfig;
@@ -44,14 +46,12 @@ import org.netbeans.jcode.ng.main.domain.NGEntity;
 import org.netbeans.jcode.ng.main.domain.NGField;
 import org.netbeans.jcode.ng.main.domain.NGRelationship;
 import org.netbeans.jcode.parser.ejs.EJSParser;
-import org.netbeans.jcode.parser.ejs.FileTypeStream;
 import org.netbeans.jcode.rest.controller.RESTData;
 import org.netbeans.jcode.task.progress.ProgressHandler;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Id;
@@ -63,6 +63,7 @@ import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
+import static org.netbeans.jpa.modeler.spec.extend.BlobContentType.IMAGE;
 
 /**
  *
@@ -78,6 +79,9 @@ public abstract class AngularGenerator implements Generator {
 
     @ConfigData
     protected RESTData restData;
+    
+    @ConfigData
+    protected I18NConfigData i18nData;
 
     @ConfigData
     protected Project project;
@@ -87,28 +91,6 @@ public abstract class AngularGenerator implements Generator {
     
     @ConfigData
     protected ProgressHandler handler;
-
-    protected static final List<String> PARSER_FILE_TYPE = Arrays.asList("html", "js", "css", "scss", "json", "ts", "ejs", "txt", "webapp");
-
-    protected Consumer<FileTypeStream> getParserManager(EJSParser parser) {
-        return getParserManager(parser, null);
-    }
-
-    protected Consumer<FileTypeStream> getParserManager(EJSParser parser, List<String> skipFile) {
-        return (fileTypeStream) -> {
-            try {
-
-                if (PARSER_FILE_TYPE.contains(fileTypeStream.getFileType()) && (skipFile == null || !skipFile.contains(fileTypeStream.getFileName()))) {
-                    IOUtils.write(parser.parse(fileTypeStream.getInputStream()), fileTypeStream.getOutputStream());
-                } else {
-                    IOUtils.copy(fileTypeStream.getInputStream(), fileTypeStream.getOutputStream());
-                }
-            } catch (ScriptException | IOException ex) {
-                Exceptions.printStackTrace(ex);
-                System.out.println("Error in template : " + fileTypeStream.getFileName());
-            }
-        };
-    }
 
     protected List<String> entityScriptFiles;
     protected List<String> scriptFiles;
@@ -131,7 +113,8 @@ public abstract class AngularGenerator implements Generator {
         EJSParser parser = new EJSParser();
         parser.addContext(applicationConfig);
         parser.addContext(entity);
-
+        Set<String> languages = applicationConfig.getLanguages();
+        
         Function<String, String> pathResolver = (templatePath) -> {
             String simpleFileName = getSimpleFileName(templatePath);
             String[] pathSplitter = simpleFileName.split("_");
@@ -140,14 +123,14 @@ public abstract class AngularGenerator implements Generator {
                  return null;
             }
             String lang = pathSplitter[2];
-            if (!applicationConfig.getLanguages().contains(lang)) {
+            if (!languages.contains(lang)) {
                 return null;
             }
 
             templatePath = String.format("i18n/%s/%s.json", lang, entity.getEntityTranslationKey());
             return templatePath;
         };
-        copyDynamicResource(getParserManager(parser), getTemplatePath() + "entity-resource-i18n.zip", webRoot, pathResolver, handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resource-i18n.zip", webRoot, pathResolver, handler);
     }
 
     protected void generateNgApplicationi18nResource(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
@@ -158,12 +141,13 @@ public abstract class AngularGenerator implements Generator {
         EJSParser parser = new EJSParser();
         parser.addContext(applicationConfig);
         parser.addContext(data);
-
+        Set<String> languages = applicationConfig.getLanguages();
+        
         Function<String, String> pathResolver = (templatePath) -> {
             String[] paths = templatePath.split("/");
             String lang = paths[1]; //"i18n/en/password.json" 
             String file = paths[2];
-            if (!applicationConfig.getLanguages().contains(lang)) { //if lang selected by dev 
+            if (!languages.contains(lang)) { //if lang selected by dev 
                 return null;
             }
             if (!fileFilter.isEnable(file)) {
@@ -175,7 +159,7 @@ public abstract class AngularGenerator implements Generator {
             //path modification not required
             return templatePath;
         };
-        copyDynamicResource(getParserManager(parser), getTemplatePath() + "web-resources-i18n.zip", webRoot, pathResolver, handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "web-resources-i18n.zip", webRoot, pathResolver, handler);
     }
 
     protected EntityConfig getEntityConfig() {
@@ -191,8 +175,14 @@ public abstract class AngularGenerator implements Generator {
         applicationConfig.setEnableTranslation(true);
         applicationConfig.setJhiPrefix("jed");
         applicationConfig.setUseSass(ngData.isSass());
-        applicationConfig.setLanguages(new HashSet<>(Arrays.asList("en")));
+        
+        if (i18nData.isEnabled()) {
+            applicationConfig.setNativeLanguage(i18nData.getNativeLanguage().getValue());
+            applicationConfig.setLanguages(i18nData.getOtherLanguagesKeyword());
+        } 
+        applicationConfig.setEnableTranslation(i18nData.isEnabled());
         applicationConfig.setEnableI18nRTL(isI18nRTLSupportNecessary(applicationConfig.getLanguages()));
+        
         applicationConfig.setApplicationPath(restData.getRestConfigData().getApplicationPath());
         applicationConfig.setEnableMetrics(restData.isMetrics());
         applicationConfig.setEnableLogs(restData.isLogger());
@@ -226,6 +216,11 @@ public abstract class AngularGenerator implements Generator {
         }
         String entityAngularJSSuffix = "";
         NGEntity ngEntity = getNGEntity(entity.getClazz(), entityAngularJSSuffix);
+        if(StringUtils.isNotBlank(entity.getLabel())){
+            ngEntity.setEntityClassHumanized(entity.getLabel());
+            ngEntity.setEntityClassPluralHumanized(pluralize(entity.getLabel()));
+        }
+        
         ngEntity.setPkType(entity.getAttributes().getIdField().getDataTypeLabel());
         List<Attribute> attributes = entity.getAttributes().getAllAttribute();
 //      Uncomment for inheritance support
@@ -246,20 +241,23 @@ public abstract class AngularGenerator implements Generator {
 
             if (attribute instanceof RelationAttribute) {
                 RelationAttribute relationAttribute = (RelationAttribute) attribute;
-                NGRelationship relationship = getNGRelationship(angularAppName, entityAngularJSSuffix, entity, relationAttribute);
+                NGRelationship ngRelationship = getNGRelationship(angularAppName, entityAngularJSSuffix, entity, relationAttribute);
                 Entity mappedEntity = relationAttribute.getConnectedEntity();
                 if (mappedEntity.getLabelAttribute() == null || mappedEntity.getLabelAttribute().getName().equals("id")) {
                     handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Entity_Label_Missing"),
                             NbBundle.getMessage(AngularGenerator.class, "MSG_Entity_Label_Missing", mappedEntity.getClazz()));
                 } else {
-                    relationship.setOtherEntityField(mappedEntity.getLabelAttribute().getName());
+                    ngRelationship.setOtherEntityField(mappedEntity.getLabelAttribute().getName());
                 }
                 if (entity == mappedEntity) {
                     handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Self_Relation_Not_Supported"),
                             NbBundle.getMessage(AngularGenerator.class, "MSG_Self_Relation_Not_Supported", attribute.getName(), ngEntity.getName()));
                     continue;
                 }
-                ngEntity.addRelationship(relationship);
+                if (StringUtils.isNotBlank(attribute.getLabel())) {
+                    ngRelationship.setRelationshipNameHumanized(attribute.getLabel());
+                }
+                ngEntity.addRelationship(ngRelationship);
             } else if (attribute instanceof BaseAttribute) {
                 if (attribute instanceof EnumTypeHandler && ((EnumTypeHandler) attribute).getEnumerated() != null) {
                     handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Enum_Type_Not_Supported"),
@@ -279,105 +277,48 @@ public abstract class AngularGenerator implements Generator {
                 if (attribute instanceof Version || attribute instanceof Transient) {
                     continue;
                 }
-                NGField field = getNGField((BaseAttribute) attribute);
+                NGField ngField = getNGField((BaseAttribute) attribute);
                 Class<?> primitiveType = JavaUtil.getPrimitiveType(attribute.getDataTypeLabel());
                 if (primitiveType != null) {
-                    field.setFieldType(primitiveType.getSimpleName());//todo short, byte, char not supported in ui template
+                    ngField.setFieldType(primitiveType.getSimpleName());//todo short, byte, char not supported in ui template
                 } else {
-                    field.setFieldType(getSimpleClassName(attribute.getDataTypeLabel()));
+                    ngField.setFieldType(getSimpleClassName(attribute.getDataTypeLabel()));
                 }
-
-                ngEntity.addField(field);
+                if (StringUtils.isNotBlank(attribute.getLabel())) {
+                    ngField.setFieldNameHumanized(attribute.getLabel());
+                }
+                
+                if (null != ngField.getFieldType()) {
+                    switch (ngField.getFieldType()) {
+                        case INSTANT:
+                            ngEntity.setFieldsContainInstant(true);
+                            break;
+                        case ZONED_DATE_TIME:
+                            ngEntity.setFieldsContainZonedDateTime(true);
+                            break;
+                        case LOCAL_DATE:
+                            ngEntity.setFieldsContainLocalDate(true);
+                            break;
+                        case BIGDECIMAL:
+                            ngEntity.setFieldsContainBigDecimal(true);
+                            break;
+                        default:
+                            if (((BaseAttribute) attribute).isBlobAttributeType()) {
+                                ngEntity.setFieldsContainBlob(true);
+                                if(attribute.getBlobContentType() != null){
+                                    ngField.setFieldTypeBlobContent(attribute.getBlobContentType().getValue());
+                                    if (attribute.getBlobContentType() == IMAGE) {
+                                        ngEntity.setFieldsContainImageBlob(true);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                }
+                ngEntity.addField(ngField);
             }
         }
         return ngEntity;
     }
     
-    
-    /**
-     * check if Right-to-Left support is necessary for i18n
-     * @param {string[]} languages - languages array
-     */
-    private boolean isI18nRTLSupportNecessary(Set<String> languages) {
-        if (languages.isEmpty()) {
-            return false;
-        }
-        return this.getAllSupportedLanguageOptions()
-                .stream()
-                .filter(lang -> lang.isRtl())
-                .anyMatch(lang -> languages.contains(lang.getValue()));
-    }
-    
-    /**
-     * get all the languages options
-     */
-    private List<Language> getAllSupportedLanguageOptions() {
-        return Arrays.asList(
-            new Language("Armenian", "hy"),
-            new Language("Catalan", "ca"),
-            new Language("Chinese (Simplified)", "zh-cn"),
-            new Language("Chinese (Traditional)", "zh-tw"),
-            new Language("Czech", "cs"),
-            new Language("Danish", "da"),
-            new Language("Dutch", "nl"),
-            new Language("English", "en"),
-            new Language("Estonian", "et"),
-            new Language("Farsi", "fa", true),
-            new Language("French", "fr"),
-            new Language("Galician", "gl"),
-            new Language("German", "de"),
-            new Language("Greek", "el"),
-            new Language("Hindi", "hi"),
-            new Language("Hungarian", "hu"),
-            new Language("Italian", "it"),
-            new Language("Japanese", "ja"),
-            new Language("Korean", "ko"),
-            new Language("Marathi", "mr"),
-            new Language("Polish", "pl"),
-            new Language("Portuguese (Brazilian)", "pt-br"),
-            new Language("Portuguese", "pt-pt"),
-            new Language("Romanian", "ro"),
-            new Language("Russian", "ru"),
-            new Language("Slovak", "sk"),
-            new Language("Serbian", "sr"),
-            new Language("Spanish", "es"),
-            new Language("Swedish", "sv"),
-            new Language("Turkish", "tr"),
-            new Language("Tamil", "ta"),
-            new Language("Thai", "th"),
-            new Language("Ukrainian", "ua"),
-            new Language("Vietnamese", "vi")
-        );
-    }
-    
-    class Language {
-        private final String name, value;
-        private boolean rtl;
-
-        public Language(String name, String value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        public Language(String name, String value, boolean rtl) {
-            this.name = name;
-            this.value = value;
-            this.rtl = rtl;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public boolean isRtl() {
-            return rtl;
-        }
-        
-        
-    }
-
 }

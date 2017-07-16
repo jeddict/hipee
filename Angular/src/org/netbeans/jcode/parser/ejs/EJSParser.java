@@ -17,16 +17,26 @@ package org.netbeans.jcode.parser.ejs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipInputStream;
 import javax.script.Bindings;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -134,10 +144,12 @@ public final class EJSParser {
         return result;
     }
 
-    public String parse(InputStream templateStream) throws ScriptException, IOException {
+    public String parse(Reader reader) throws ScriptException, IOException {
         StringWriter writer = new StringWriter();
-        IOUtils.copy(templateStream, writer);//, "ISO-8859-1");//, "UTF-8");
-        return parse(writer.toString());
+        IOUtils.copy(reader, writer);
+        String parsed = parse(writer.toString());
+        writer.close();
+        return parsed;
     }
 
     public void eval(String script){
@@ -174,5 +186,46 @@ public final class EJSParser {
      */
     public void setImportTemplate(Map<String, String> importTemplate) {
         this.importTemplate = importTemplate;
+    }
+    
+    
+    private static final Set<String> PARSER_FILE_TYPE = new HashSet<>(Arrays.asList("html", "js", "css", "scss", "json", "properties", "ts", "ejs", "txt", "webapp"));
+
+    public static boolean isTextFile(String file){
+        return true;
+    }
+    
+    public Consumer<FileTypeStream> getParserManager() {
+        return getParserManager(null);
+    }
+
+    public Consumer<FileTypeStream> getParserManager(List<String> skipFile) {
+        return (fileType) -> {
+            try {
+
+                if (PARSER_FILE_TYPE.contains(fileType.getFileType()) && (skipFile == null || !skipFile.contains(fileType.getFileName()))) {
+                                        
+                    Charset charset = Charset.forName("UTF-8");
+                    Reader reader = new BufferedReader(new InputStreamReader(fileType.getInputStream(), charset));
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(fileType.getOutputStream(), charset));
+                    IOUtils.write(parse(reader), writer);
+                    if(!(fileType.getInputStream() instanceof ZipInputStream)){
+                        reader.close();
+                    }
+                    writer.flush();
+                    writer.close();
+                } else {
+                    IOUtils.copy(fileType.getInputStream(), fileType.getOutputStream());
+                    if(!(fileType.getInputStream() instanceof ZipInputStream)){
+                        fileType.getInputStream().close();
+                    }
+                    fileType.getOutputStream().close();
+                }
+                
+            } catch (ScriptException | IOException ex) {
+                Exceptions.printStackTrace(ex);
+                System.out.println("Error in template : " + fileType.getFileName());
+            }
+        };
     }
 }

@@ -62,7 +62,7 @@ import org.openide.util.Exceptions;
  * @author Gaurav Gupta
  */
 @ServiceProvider(service = Generator.class)
-@Technology(type = VIEWER, label = "AngularJS 1", panel = Angular1Panel.class, parents = {RESTGenerator.class})
+@Technology(type = VIEWER, label = "AngularJS 1 (Obsolete)", panel = Angular1Panel.class, parents = {RESTGenerator.class})
 public class Angular1Generator extends AngularGenerator {
 
     private static final String TEMPLATE = "org/netbeans/jcode/angular1/template/";
@@ -151,7 +151,7 @@ public class Angular1Generator extends AngularGenerator {
             return templatePath;
         };
         parser.setImportTemplate(templateLib);
-        copyDynamicResource(getParserManager(parser), getTemplatePath() + "entity-resources.zip", webRoot, pathResolver, handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resources.zip", webRoot, pathResolver, handler);
     }
 
     protected void generateNgLocaleResource(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
@@ -171,7 +171,7 @@ public class Angular1Generator extends AngularGenerator {
             //path modification not required
             return templatePath;
         };
-        copyDynamicResource(getParserManager(parser), getTemplatePath() + "angular-locale.zip", webRoot, pathResolver, handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "angular-locale.zip", webRoot, pathResolver, handler);
     }
 
     private void generateNgHome(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
@@ -187,8 +187,8 @@ public class Angular1Generator extends AngularGenerator {
         parser.addContext(applicationConfig);
         parser.addContext(data);
 
-        copyDynamicFile(getParserManager(parser), getTemplatePath() + "_index.html", webRoot, "index.html", handler);
-        copyDynamicFile(getParserManager(parser), getTemplatePath() + "_bower.json", project.getProjectDirectory(), "bower.json", handler);
+        copyDynamicFile(parser.getParserManager(), getTemplatePath() + "_index.html", webRoot, "index.html", handler);
+        copyDynamicFile(parser.getParserManager(), getTemplatePath() + "_bower.json", project.getProjectDirectory(), "bower.json", handler);
         handler.append(Console.wrap(AngularGenerator.class, "MSG_Copying_Bower_Lib_Files", FG_RED, BOLD));
         FileUtil.copyStaticResource(getTemplatePath() + "bower_components.zip", webRoot, null, handler);
     }
@@ -219,7 +219,7 @@ public class Angular1Generator extends AngularGenerator {
             }
             return templatePath;
         };
-        copyDynamicResource(getParserManager(parser), getTemplatePath() + "web-resources.zip", webRoot, pathResolver, handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "web-resources.zip", webRoot, pathResolver, handler);
     }
     
         
@@ -235,7 +235,7 @@ public class Angular1Generator extends AngularGenerator {
 
     @Override
     public NGRelationship getNGRelationship(String angularAppName, String entityAngularJSSuffix, Entity entity, RelationAttribute relation) {
-        return new NG1Relationship(angularAppName, entity, relation);
+        return new NG1Relationship(angularAppName, entityAngularJSSuffix, entity, relation);
     }
 
     @Override
