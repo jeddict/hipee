@@ -37,7 +37,8 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Gaurav Gupta
  */
 @ServiceProvider(service = Generator.class)
-@Technology(label = "i18n", panel = I18NConfigPanel.class, sibling = {RESTGenerator.class})
+@Technology(label = "i18n", panel = I18NConfigPanel.class, entityGenerator = false,
+        sibling = {RESTGenerator.class})
 public final class I18NGenerator implements Generator {
 
     private static final String TEMPLATE = "org/netbeans/jcode/i18n/template/";
