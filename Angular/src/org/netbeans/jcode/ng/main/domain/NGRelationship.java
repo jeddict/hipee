@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.core.util.StringHelper.camelCase;
@@ -52,7 +53,7 @@ public abstract class NGRelationship {
     private String relationshipFieldNamePlural;
     private String relationshipNameHumanized;
     private String relationshipNamePlural;
-    
+
     private String otherEntityName;
     private String otherEntityNameCapitalized;
     private String otherEntityNamePlural;
@@ -61,12 +62,10 @@ public abstract class NGRelationship {
     private String otherEntityField;
     private String otherEntityFieldCapitalized;
     private String otherEntityRelationshipName;
-    
-    
+
     private String otherEntityAngularName;
     private String otherEntityRelationshipNameCapitalized;
     private String otherEntityRelationshipNameCapitalizedPlural;
-
 
     private String relationshipNameCapitalized;
     private String relationshipNameCapitalizedPlural;
@@ -74,15 +73,15 @@ public abstract class NGRelationship {
     private boolean relationshipRequired;
     private List<String> relationshipValidateRules = new ArrayList<>();
     private boolean relationshipValidate;
-    
-    
+
     private String otherEntityModuleName;
     private String otherEntityModulePath;
     protected String entityAngularJSSuffix;
-    
+
     public NGRelationship(String angularAppName, String entityAngularJSSuffix, Entity entity, RelationAttribute relation) {
         this.entityAngularJSSuffix = entityAngularJSSuffix;
-        this.relationshipName = relation.getName();
+        this.relationshipName = StringUtils.isEmpty(relation.getJsonbProperty())
+                ? relation.getName() : relation.getJsonbProperty();
         this.ownerSide = relation.isOwner();
         this.otherEntityName = firstLower(relation.getConnectedEntity().getClazz());
         this.otherEntityRelationshipName = relation.getConnectedAttributeName();
@@ -98,6 +97,7 @@ public abstract class NGRelationship {
         this.name = entity.getClazz();
         setOtherEntityModule(angularAppName);
     }
+
     /**
      * @return the name
      */
@@ -157,7 +157,6 @@ public abstract class NGRelationship {
     /**
      * @return the relationshipType
      */
-
     public String getRelationshipType() {
         if (relationshipType == null) {
             throw new IllegalStateException("relationshipType is missing in " + this.getName() + " for relationship");
@@ -229,7 +228,6 @@ public abstract class NGRelationship {
     /**
      * @return the relationshipNameHumanized
      */
-
     public String getRelationshipNameHumanized() {
         if (relationshipNameHumanized == null) {
             relationshipNameHumanized = startCase(relationshipName);
@@ -244,7 +242,7 @@ public abstract class NGRelationship {
         this.relationshipNameHumanized = relationshipNameHumanized;
     }
 
-        /**
+    /**
      * @return the relationshipNamePlural
      */
     public String getRelationshipNamePlural() {
@@ -253,11 +251,10 @@ public abstract class NGRelationship {
         }
         return relationshipNamePlural;
     }
-    
+
     /**
      * @return the relationshipNameCapitalized
      */
-
     public String getRelationshipNameCapitalized() {
         if (relationshipNameCapitalized == null) {
             relationshipNameCapitalized = firstUpper(relationshipName);
@@ -268,7 +265,6 @@ public abstract class NGRelationship {
     /**
      * @return the relationshipNameCapitalizedPlural
      */
-
     public String getRelationshipNameCapitalizedPlural() {
         if (relationshipNameCapitalizedPlural == null) {
             if (relationshipName.length() > 1) {
@@ -280,9 +276,6 @@ public abstract class NGRelationship {
         return relationshipNameCapitalizedPlural;
     }
 
-    
-    
-    
     /**
      * @return the otherEntityName
      */
@@ -292,8 +285,7 @@ public abstract class NGRelationship {
         }
         return otherEntityName;
     }
-    
-    
+
     /**
      * @return the otherEntityField
      */
@@ -320,7 +312,7 @@ public abstract class NGRelationship {
     public String getOtherEntityFieldCapitalized() {
         if (otherEntityFieldCapitalized == null) {
             String OtherEntityField = getOtherEntityField();
-            otherEntityFieldCapitalized = OtherEntityField!=null?firstUpper(OtherEntityField):null;
+            otherEntityFieldCapitalized = OtherEntityField != null ? firstUpper(OtherEntityField) : null;
         }
         return otherEntityFieldCapitalized;
     }
@@ -339,7 +331,6 @@ public abstract class NGRelationship {
         return otherEntityRelationshipName;
     }
 
-
     /**
      * @return the otherEntityNameCapitalized
      */
@@ -350,8 +341,7 @@ public abstract class NGRelationship {
         return otherEntityNameCapitalized;
     }
 
-    
-        /**
+    /**
      * @return the otherEntityNamePlural
      */
     public String getOtherEntityNamePlural() {
@@ -370,15 +360,14 @@ public abstract class NGRelationship {
         }
         return otherEntityNameCapitalizedPlural;
     }
-    
-    
+
     /**
      * @return the otherEntityAngularName
      */
     public String getOtherEntityAngularName() {
         if (this.otherEntityAngularName == null) {
             if (!"User".equals(this.getOtherEntityNameCapitalized())) {
-                String otherEntityAngularSuffix = this.entityAngularJSSuffix!=null?entityAngularJSSuffix:EMPTY;
+                String otherEntityAngularSuffix = this.entityAngularJSSuffix != null ? entityAngularJSSuffix : EMPTY;
                 this.otherEntityAngularName = firstUpper(this.otherEntityName) + firstUpper(camelCase(otherEntityAngularSuffix));
             } else {
                 this.otherEntityAngularName = "User";
@@ -407,8 +396,7 @@ public abstract class NGRelationship {
         return otherEntityRelationshipNameCapitalizedPlural;
     }
 
- 
-        /**
+    /**
      * @return the otherEntityModuleName
      */
     public String getOtherEntityModuleName() {
@@ -421,8 +409,6 @@ public abstract class NGRelationship {
     public String getOtherEntityModulePath() {
         return otherEntityModulePath;
     }
-    
-    
 
     /**
      * @return the otherEntityRelationshipNamePlural
@@ -434,8 +420,7 @@ public abstract class NGRelationship {
      */
     public abstract String getOtherEntityStateName();
 
-    
-    protected void setOtherEntityModule(String angularAppName) {
+    private void setOtherEntityModule(String angularAppName) {
         if (!"User".equals(this.getOtherEntityNameCapitalized())) {
             this.otherEntityModuleName = angularAppName + this.getOtherEntityNameCapitalized() + "Module";
             this.otherEntityModulePath = kebabCase(firstLower(this.otherEntityName));
@@ -444,12 +429,13 @@ public abstract class NGRelationship {
             this.otherEntityModulePath = "../shared";
         }
     }
-      protected  String pluralize(String data){
-         if( relationshipType.equals(ONE_TO_MANY) ||  relationshipType.equals(MANY_TO_MANY)){
-             return data;
-         } else {
+
+    protected String pluralize(String data) {
+        if (relationshipType.equals(ONE_TO_MANY) || relationshipType.equals(MANY_TO_MANY)) {
+            return data;
+        } else {
             return StringHelper.pluralize(data);
-         }
+        }
     }
-        
+
 }

@@ -18,6 +18,7 @@ package org.netbeans.jcode.ng.main.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.bean.validation.constraints.Constraint;
 import org.netbeans.bean.validation.constraints.Max;
@@ -55,17 +56,14 @@ public abstract class NGField {
     private String fieldValues;
     private String fieldInJavaBeanMethod;
 
-    public NGField(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
     public NGField(BaseAttribute attribute) {
-        this(attribute.getName());
+        this.fieldName = StringUtils.isEmpty(attribute.getJsonbProperty())
+                ? attribute.getName() : attribute.getJsonbProperty();
         loadValidation(attribute.getAttributeConstraintsMap());
     }
 
     //['required', 'max', 'min', 'maxlength', 'minlength', 'maxbytes', 'minbytes', 'pattern'];
-    protected void loadValidation(Map<String, Constraint> constraints) {
+    private void loadValidation(Map<String, Constraint> constraints) {
         List<String> validationRules = new ArrayList<>();
 
         NotNull notNull = (NotNull) constraints.get(NotNull.class.getSimpleName());

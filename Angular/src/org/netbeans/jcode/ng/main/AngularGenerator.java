@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-
 import org.netbeans.jpa.modeler.spec.*;
 import org.netbeans.api.project.Project;
 import static org.netbeans.jcode.core.util.AttributeType.BIGDECIMAL;
@@ -31,6 +32,7 @@ import static org.netbeans.jcode.core.util.AttributeType.INSTANT;
 import static org.netbeans.jcode.core.util.AttributeType.LOCAL_DATE;
 import static org.netbeans.jcode.core.util.AttributeType.ZONED_DATE_TIME;
 import static org.netbeans.jcode.core.util.FileUtil.getSimpleFileName;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
 import static org.netbeans.jcode.core.util.JavaSourceHelper.getSimpleClassName;
 import org.netbeans.jcode.core.util.JavaUtil;
 import static org.netbeans.jcode.core.util.ProjectHelper.getProjectWebRoot;
@@ -38,7 +40,7 @@ import static org.netbeans.jcode.core.util.StringHelper.pluralize;
 import org.netbeans.jcode.i18n.I18NConfigData;
 import static org.netbeans.jcode.i18n.LanguageUtil.isI18nRTLSupportNecessary;
 import org.netbeans.jcode.layer.ConfigData;
-import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicResource;
+import static org.netbeans.jcode.ng.main.AngularUtil.*;
 import org.netbeans.jcode.ng.main.domain.NGApplicationConfig;
 import org.netbeans.jcode.ng.main.domain.ApplicationSourceFilter;
 import org.netbeans.jcode.ng.main.domain.EntityConfig;
@@ -55,7 +57,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
@@ -126,21 +127,35 @@ public abstract class AngularGenerator implements Generator {
             if (!languages.contains(lang)) {
                 return null;
             }
-
             templatePath = String.format("i18n/%s/%s.json", lang, entity.getEntityTranslationKey());
             return templatePath;
         };
         copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resource-i18n.zip", webRoot, pathResolver, handler);
     }
+    
+    protected void generateNgEnumi18nResource(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
+        FileObject webRoot = getProjectWebRoot(project);
+        Set<String> languages = applicationConfig.getLanguages();
+        for (Entry<String, List<String>> entry : applicationConfig.getEnumTypes().entrySet()) {
+            String enumTypeFQ = entry.getKey();
+            String enumType = enumTypeFQ.substring(enumTypeFQ.lastIndexOf(".")+1); // strip the package name
+            Map param = new HashMap<>();
+            param.put("enumName", enumType);
+            param.put("enums", entry.getValue());
+            EJSParser parser = new EJSParser();
+            parser.addContext(param);
+            parser.addContext(applicationConfig);
+            for (String lang : languages) {
+                String templatePath = String.format("i18n/%s/%s.json", lang, enumType.toLowerCase());
+                copyDynamicFile(parser.getParserManager(), getTemplatePath() + "enum-resource-i18n/i18n/_enum.json", webRoot, templatePath, handler);
+            }
+        }
+    }
 
     protected void generateNgApplicationi18nResource(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
         FileObject webRoot = getProjectWebRoot(project);
-
-        Map<String, Object> data = new HashMap();//todo remove
-
         EJSParser parser = new EJSParser();
         parser.addContext(applicationConfig);
-        parser.addContext(data);
         Set<String> languages = applicationConfig.getLanguages();
         
         Function<String, String> pathResolver = (templatePath) -> {
@@ -203,7 +218,8 @@ public abstract class AngularGenerator implements Generator {
     public abstract NGField getNGField(BaseAttribute attribute);
  
 
-    protected NGEntity getEntity(String angularAppName, Entity entity) {
+    protected NGEntity getEntity(NGApplicationConfig applicationConfig, Entity entity) {
+        String angularAppName = applicationConfig.getAngularAppName();
         Attribute idAttribute = entity.getAttributes().getIdField();
         if (idAttribute instanceof EmbeddedId || idAttribute instanceof DefaultAttribute) {
             handler.error(NbBundle.getMessage(AngularGenerator.class, "TITLE_Composite_Key_Not_Supported"),
@@ -259,11 +275,6 @@ public abstract class AngularGenerator implements Generator {
                 }
                 ngEntity.addRelationship(ngRelationship);
             } else if (attribute instanceof BaseAttribute) {
-                if (attribute instanceof EnumTypeHandler && ((EnumTypeHandler) attribute).getEnumerated() != null) {
-                    handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Enum_Type_Not_Supported"),
-                            NbBundle.getMessage(AngularGenerator.class, "MSG_Enum_Type_Not_Supported", attribute.getName(), ngEntity.getName()));
-                    continue;
-                }
                 if (attribute instanceof Embedded) {
                     handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Embedded_Type_Not_Supported"),
                             NbBundle.getMessage(AngularGenerator.class, "MSG_Embedded_Type_Not_Supported", attribute.getName(), ngEntity.getName()));
@@ -274,9 +285,10 @@ public abstract class AngularGenerator implements Generator {
                             NbBundle.getMessage(AngularGenerator.class, "MSG_ElementCollection_Type_Not_Supported", attribute.getName(), ngEntity.getName()));
                     continue;
                 }
-                if (attribute instanceof Version || attribute instanceof Transient) {
+                if (attribute instanceof Version) {
                     continue;
                 }
+                
                 NGField ngField = getNGField((BaseAttribute) attribute);
                 Class<?> primitiveType = JavaUtil.getPrimitiveType(attribute.getDataTypeLabel());
                 if (primitiveType != null) {
@@ -289,30 +301,39 @@ public abstract class AngularGenerator implements Generator {
                 }
                 
                 if (null != ngField.getFieldType()) {
-                    switch (ngField.getFieldType()) {
-                        case INSTANT:
-                            ngEntity.setFieldsContainInstant(true);
-                            break;
-                        case ZONED_DATE_TIME:
-                            ngEntity.setFieldsContainZonedDateTime(true);
-                            break;
-                        case LOCAL_DATE:
-                            ngEntity.setFieldsContainLocalDate(true);
-                            break;
-                        case BIGDECIMAL:
-                            ngEntity.setFieldsContainBigDecimal(true);
-                            break;
-                        default:
-                            if (((BaseAttribute) attribute).isBlobAttributeType()) {
-                                ngEntity.setFieldsContainBlob(true);
-                                if(attribute.getBlobContentType() != null){
-                                    ngField.setFieldTypeBlobContent(attribute.getBlobContentType().getValue());
-                                    if (attribute.getBlobContentType() == IMAGE) {
-                                        ngEntity.setFieldsContainImageBlob(true);
-                                    }
-                                }
+                    if (INSTANT.contains(ngField.getFieldType())) {
+                        ngEntity.setFieldsContainInstant(true);
+                    } else if (ZONED_DATE_TIME.contains(ngField.getFieldType())) {
+                        ngEntity.setFieldsContainZonedDateTime(true);
+                    } else if (LOCAL_DATE.contains(ngField.getFieldType())) {
+                        ngEntity.setFieldsContainLocalDate(true);
+                    } else if (BIGDECIMAL.contains(ngField.getFieldType())) {
+                        ngEntity.setFieldsContainBigDecimal(true);
+                    } else if (((BaseAttribute) attribute).isBlobAttributeType()) {
+                        ngEntity.setFieldsContainBlob(true);
+                        if (attribute.getBlobContentType() != null) {
+                            ngField.setFieldTypeBlobContent(attribute.getBlobContentType().getValue());
+                            if (attribute.getBlobContentType() == IMAGE) {
+                                ngEntity.setFieldsContainImageBlob(true);
                             }
-                            break;
+                        }
+                    } else if (attribute instanceof EnumTypeHandler && ((EnumTypeHandler) attribute).getEnumerated() != null) {
+                        ngField.setFieldIsEnum(true);
+                        String enumType = ((BaseAttribute) attribute).getAttributeType();
+                        try {
+                          List elements = JavaSourceHelper.getEnumVariableElements(project, enumType);
+                          String enumElement = (String) elements.stream()
+                                    .map(var -> var.toString())
+                                    .collect(Collectors.joining(","));
+                            ngField.setFieldValues(enumElement);
+                            applicationConfig.addEnumType(enumType, (List<String>) elements.stream()
+                                    .map(var -> var.toString())
+                                    .collect(Collectors.toList()));
+                        } catch (IOException ex) {
+                            handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Enum_Type_Not_Found"),
+                            NbBundle.getMessage(AngularGenerator.class, "MSG_Enum_Type_Not_Found", attribute.getName(), ngEntity.getName(), enumType));
+                            continue;
+                        }
                     }
                 }
                 ngEntity.addField(ngField);

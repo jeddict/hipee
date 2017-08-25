@@ -103,7 +103,7 @@ public class Angular2Generator extends AngularGenerator {
                 handler.append(Console.wrap(AngularGenerator.class, "MSG_Copying_Entity_Files", FG_RED, BOLD, UNDERLINE));
             }
             for (Entity entity : entities) {
-                NGEntity ngEntity = getEntity(applicationConfig.getAngularAppName(), entity);
+                NGEntity ngEntity = getEntity(applicationConfig, entity);
                 if (ngEntity != null) {
                     ngEntities.add(ngEntity);
                     generateNgEntity(applicationConfig, getEntityConfig(), ngEntity, templateLib);
@@ -111,6 +111,7 @@ public class Angular2Generator extends AngularGenerator {
                     generateNgEntityi18nResource(applicationConfig, fileFilter, ngEntity);
                 }
             }
+            generateNgEnumi18nResource(applicationConfig, fileFilter);
             applicationConfig.setEntities(ngEntities);
 
             if (appConfigData.isCompleteApplication()) {

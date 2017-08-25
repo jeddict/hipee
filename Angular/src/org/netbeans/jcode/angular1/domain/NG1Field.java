@@ -20,10 +20,6 @@ import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 
 public class NG1Field extends NGField {
 
-    public NG1Field(String fieldName) {
-        super(fieldName);
-    }
-
     public NG1Field(BaseAttribute attribute) {
         super(attribute);
     }

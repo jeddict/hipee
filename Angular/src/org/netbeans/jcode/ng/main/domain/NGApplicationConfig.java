@@ -15,8 +15,10 @@
  */
 package org.netbeans.jcode.ng.main.domain;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.netbeans.jcode.core.util.StringHelper.camelCase;
@@ -111,6 +113,8 @@ public abstract class NGApplicationConfig {
     private boolean enableAudits;
     private boolean enableProfile;
     private boolean enableDocs;
+    
+    private Map<String,List<String>> enumTypes = new HashMap<>();
 
     public NGApplicationConfig(String baseName, String buildTool) {
         this.baseName = baseName;
@@ -647,5 +651,16 @@ public abstract class NGApplicationConfig {
      * @return the angularAppName
      */
     public abstract String getAngularAppName();
+
+    /**
+     * @return the enumTypes
+     */
+    public Map<String,List<String>> getEnumTypes() {
+        return enumTypes;
+    }
+    
+    public void addEnumType(String enumType, List<String> varTypes){
+        enumTypes.put(enumType, varTypes);
+    }
 
 }

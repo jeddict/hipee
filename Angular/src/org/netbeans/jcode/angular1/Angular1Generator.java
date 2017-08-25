@@ -99,13 +99,14 @@ public class Angular1Generator extends AngularGenerator {
             Map<String, String> templateLib = getResource(getTemplatePath() + "entity-include-resources.zip");
             List<NGEntity> entities = new ArrayList<>();
             for (Entity entity : entityMapping.getGeneratedEntity().collect(toList())) {
-                NGEntity ngEntity = getEntity(applicationConfig.getAngularAppName(), entity);
+                NGEntity ngEntity = getEntity(applicationConfig, entity);
                 if (ngEntity != null) {
                     entities.add(ngEntity);
                     generateNgEntity(applicationConfig, fileFilter, getEntityConfig(), ngEntity, templateLib);
                     generateNgEntityi18nResource(applicationConfig, fileFilter, ngEntity);
                 }
             }
+            generateNgEnumi18nResource(applicationConfig, fileFilter);
             applicationConfig.setEntities(entities);
 
             if (appConfigData.isCompleteApplication()) {
