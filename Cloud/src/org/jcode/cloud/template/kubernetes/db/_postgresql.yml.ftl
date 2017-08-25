@@ -18,6 +18,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: ${DB_SVC}
+  namespace: ${K8S_NS}
 spec:
   replicas: 1
   template:
@@ -48,6 +49,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ${DB_SVC}
+  namespace: ${K8S_NS}
 spec:
   selector:
     app: ${DB_SVC}

@@ -18,6 +18,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: ${DB_SVC}
+  namespace: ${K8S_NS}
 spec:
   replicas: 1
   template:
@@ -38,6 +39,10 @@ spec:
           value: ${DB_PASSWORD}
         - name: MYSQL_DATABASE
           value: ${DB_NAME}
+#        command:
+#        - mysqld
+#        - --lower_case_table_names=1
+#        - --skip-ssl
         ports:
         - containerPort: ${DB_PORT}
         volumeMounts:
@@ -48,6 +53,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ${DB_SVC}
+  namespace: ${K8S_NS}
 spec:
   selector:
     app: ${DB_SVC}

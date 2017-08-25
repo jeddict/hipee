@@ -33,8 +33,9 @@ import org.openide.util.lookup.ServiceProvider;
 /**
  * @author Gaurav Gupta
  */
-//@ServiceProvider(service = Generator.class)
-//@Technology(label = "Cloud", panel = CloudConfigPanel.class, tabIndex = 2, sibling = {DockerGenerator.class})
+@ServiceProvider(service = Generator.class)
+@Technology(label = "Cloud", panel = CloudConfigPanel.class, entityGenerator = false,
+        tabIndex = 2, sibling = {DockerGenerator.class})
 public final class CloudGenerator extends DockerGenerator implements Generator {
 
     private static final String TEMPLATE = "org/jcode/cloud/template/";
@@ -53,12 +54,20 @@ public final class CloudGenerator extends DockerGenerator implements Generator {
     private void generateKubernetes(){
         if (config.isDockerActivated() && cloudConfig.getKubernetesConfigData().isEnabled()) {
             try {
-                handler.info("Kubernetes", "You can deploy all your apps by running:\n"
-                        + "\t\t "+ Console.wrap("kubectl apply -f namespace.yml", BOLD)+"\n"
-                        + "\t\t "+ Console.wrap("kubectl apply -f "+getApplicationName(), BOLD)+"\n"
+                boolean generateNamespace = !"default".equals(cloudConfig.getKubernetesConfigData().getNamespace());
+                boolean generateIngress = "ClusterIP".equals(cloudConfig.getKubernetesConfigData().getServiceType()); // and 'gateway' or 'monolith'
+                String applicationWithNS = getApplicationName() + (generateNamespace? " --namespace " + cloudConfig.getKubernetesConfigData().getNamespace() : "");
+                handler.info("Kubernetes",
+                        "You can deploy all your apps by running:\n"
+                        + (generateNamespace ? "\t\t " + Console.wrap("kubectl apply -f k8s/namespace.yml", BOLD) + "\n" : "")
+                        + "\t\t " + Console.wrap("kubectl apply -f k8s/" + getApplicationName(), BOLD) + "\n"
                         + "\n\t\t"
-                        + "Use these commands to find your application's IP addresses:\n"
-                        + "\t\t "+ Console.wrap("kubectl get svc " + getApplicationName(), BOLD));
+                        + "Use this command to find your application's IP addresses:\n"
+                        + "\t\t " + Console.wrap("kubectl get svc " + applicationWithNS, BOLD)
+                        + "\n\t\t"
+                        + "Use this command to open your application in browser:\n"
+                        + "\t\t " + Console.wrap("minikube service " + applicationWithNS, BOLD)
+                );
 
                 handler.progress(Console.wrap(CloudGenerator.class, "MSG_Progress_Kubernetes_Generating", FG_RED, BOLD, UNDERLINE));
                 FileObject targetFolder = project.getProjectDirectory().getFileObject("k8s");
@@ -66,15 +75,30 @@ public final class CloudGenerator extends DockerGenerator implements Generator {
                     targetFolder = project.getProjectDirectory().createFolder("k8s");
                 }
                 Map<String, Object> params = getParams();
-                params.put("NAMESPACE", cloudConfig.getKubernetesConfigData().getNamespace());
+                params.put("APP_SERVER_PORT", "8080");
+                params.put("INGRESS_DOMAIN", cloudConfig.getKubernetesConfigData().getIngressDomain());
+                params.put("K8S_SVC_TYPE", cloudConfig.getKubernetesConfigData().getServiceType());
+                params.put("K8S_NS", cloudConfig.getKubernetesConfigData().getNamespace());
                 params.put("DOCKER_IMAGE", config.getDockerNamespace().replace("${project.groupId}", getPOMManager().getGroupId()) 
                         + "/" + getApplicationName()
                         + ":"  + getPOMManager().getVersion());
                 params.put("APP_NAME", getApplicationName());
 
-                handler.progress(expandTemplate(TEMPLATE + "kubernetes/db/_" + config.getDatabaseType().name().toLowerCase() + ".yml.ftl", targetFolder, getApplicationName()+"_"+config.getDatabaseType().name().toLowerCase()+".yml", params));
-                handler.progress(expandTemplate(TEMPLATE + "kubernetes/_deployment.yml.ftl", targetFolder, getApplicationName()+"_deployment.yml", params));
-                handler.progress(expandTemplate(TEMPLATE + "kubernetes/_service.yml.ftl", targetFolder, getApplicationName()+"_service.yml", params));
+                if (generateIngress) {
+                    handler.progress(expandTemplate(TEMPLATE + "kubernetes/_ingress.yml.ftl", targetFolder, 
+                            getApplicationName()+"/"+getApplicationName()+"_ingress.yml", params));
+                }
+                if (generateNamespace) {
+                    handler.progress(expandTemplate(TEMPLATE + "kubernetes/_namespace.yml.ftl", targetFolder, 
+                            "namespace.yml", params));
+                }
+                handler.progress(expandTemplate(TEMPLATE + "kubernetes/db/_" + config.getDatabaseType().name().toLowerCase() + ".yml.ftl", targetFolder, 
+                        getApplicationName()+"/"+getApplicationName()+"_"+config.getDatabaseType().name().toLowerCase()+".yml", params));
+                handler.progress(expandTemplate(TEMPLATE + "kubernetes/_deployment.yml.ftl", targetFolder, 
+                        getApplicationName()+"/"+getApplicationName()+"_deployment.yml", params));
+                handler.progress(expandTemplate(TEMPLATE + "kubernetes/_service.yml.ftl", targetFolder, 
+                        getApplicationName()+"/"+getApplicationName()+"_service.yml", params));
+                
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }

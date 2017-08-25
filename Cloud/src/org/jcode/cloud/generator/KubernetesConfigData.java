@@ -25,6 +25,8 @@ public class KubernetesConfigData implements Serializable {
 
     private boolean enabled;
     private String namespace;
+    private String serviceType;
+    private String ingressDomain;
 
     /**
      * @return the enabled
@@ -52,6 +54,34 @@ public class KubernetesConfigData implements Serializable {
      */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    /**
+     * @return the serviceType
+     */
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    /**
+     * @param serviceType the serviceType to set
+     */
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    /**
+     * @return the ingressDomain
+     */
+    public String getIngressDomain() {
+        return ingressDomain;
+    }
+
+    /**
+     * @param ingressDomain the ingressDomain to set
+     */
+    public void setIngressDomain(String ingressDomain) {
+        this.ingressDomain = ingressDomain;
     }
 
 }

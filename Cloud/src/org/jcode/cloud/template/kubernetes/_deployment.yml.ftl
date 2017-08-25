@@ -18,6 +18,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: ${APP_NAME}
+  namespace: ${K8S_NS}
 spec:
   replicas: 1
   template:
@@ -41,7 +42,7 @@ spec:
             cpu: "1"
         ports:
         - name: web
-          containerPort: 8080
+          containerPort: ${APP_SERVER_PORT}
 <#--    readinessProbe:
           httpGet:
             path: /management/health

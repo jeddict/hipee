@@ -14,17 +14,17 @@
 
  Portions Copyright 2013-2017 Gaurav Gupta
 -->
-apiVersion: v1
-kind: Service
+apiVersion: extensions/v1beta1
+kind: Ingress
 metadata:
   name: ${APP_NAME}
   namespace: ${K8S_NS}
-  labels:
-    app: ${APP_NAME}
 spec:
-  selector:
-    app: ${APP_NAME}
-  type: ${K8S_SVC_TYPE}
-  ports:
-  - name: web
-    port: ${APP_SERVER_PORT}
+  rules:
+  - host: ${APP_NAME}.${INGRESS_DOMAIN}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ${APP_NAME}
+          servicePort: ${APP_SERVER_PORT}

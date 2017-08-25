@@ -15,6 +15,7 @@
  */
 package org.jcode.cloud.generator;
 
+import java.awt.event.ItemEvent;
 import org.netbeans.jcode.window.GenericDialog;
 
 /**
@@ -33,27 +34,98 @@ public class KubernetesPanel extends GenericDialog {
         this.kubernetesConfigData = kubernetesConfigData;
         initComponents();
         getRootPane().setDefaultButton(saveButton);
-        namespaceTextField.setText(kubernetesConfigData.getNamespace());
+        namespace_TextField.setText(kubernetesConfigData.getNamespace());
+        setSelectedServiceType(kubernetesConfigData.getServiceType());
+        domain_TextField.setText(kubernetesConfigData.getIngressDomain());
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLayeredPane5 = new javax.swing.JLayeredPane();
-        jLayeredPane4 = new javax.swing.JLayeredPane();
+        serviceType_ButtonGroup = new javax.swing.ButtonGroup();
+        root_LayeredPane = new javax.swing.JLayeredPane();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
+        namespace_LayeredPane = new javax.swing.JLayeredPane();
+        namespace_Label = new javax.swing.JLabel();
+        namespace_TextField = new javax.swing.JTextField();
+        serviceType_LayeredPane = new javax.swing.JLayeredPane();
+        serviceType_Label = new javax.swing.JLabel();
+        serviceType_ButtonGroupPanel = new javax.swing.JLayeredPane();
+        loadBalancer_RadioButton = new javax.swing.JRadioButton();
+        nodePort_RadioButton = new javax.swing.JRadioButton();
+        ingress_RadioButton = new javax.swing.JRadioButton();
+        domain_LayeredPane = new javax.swing.JLayeredPane();
+        domain_Label = new javax.swing.JLabel();
+        domain_TextField = new javax.swing.JTextField();
+        action_LayeredPane = new javax.swing.JLayeredPane();
         saveButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        jLayeredPane1 = new javax.swing.JLayeredPane();
-        jLayeredPane2 = new javax.swing.JLayeredPane();
-        namespace = new javax.swing.JLabel();
-        namespaceTextField = new javax.swing.JTextField();
-        jLayeredPane3 = new javax.swing.JLayeredPane();
 
         setTitle(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.title")); // NOI18N
         setSize(new java.awt.Dimension(500, 200));
 
-        jLayeredPane4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        jLayeredPane1.setLayout(new java.awt.GridLayout(3, 1, 0, 12));
+
+        namespace_LayeredPane.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(namespace_Label, org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.namespace_Label.text")); // NOI18N
+        namespace_Label.setPreferredSize(new java.awt.Dimension(88, 14));
+        namespace_LayeredPane.add(namespace_Label, java.awt.BorderLayout.WEST);
+
+        namespace_TextField.setText(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.namespace_TextField.text")); // NOI18N
+        namespace_TextField.setToolTipText(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.namespace_TextField.toolTipText")); // NOI18N
+        namespace_LayeredPane.add(namespace_TextField, java.awt.BorderLayout.CENTER);
+
+        jLayeredPane1.add(namespace_LayeredPane);
+
+        serviceType_LayeredPane.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(serviceType_Label, org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.serviceType_Label.text")); // NOI18N
+        serviceType_Label.setPreferredSize(new java.awt.Dimension(88, 14));
+        serviceType_LayeredPane.add(serviceType_Label, java.awt.BorderLayout.WEST);
+
+        serviceType_ButtonGroupPanel.setPreferredSize(new java.awt.Dimension(402, 25));
+        serviceType_ButtonGroupPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 35, 0));
+
+        serviceType_ButtonGroup.add(loadBalancer_RadioButton);
+        loadBalancer_RadioButton.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(loadBalancer_RadioButton, org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.loadBalancer_RadioButton.text")); // NOI18N
+        loadBalancer_RadioButton.setToolTipText(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.loadBalancer_RadioButton.toolTipText")); // NOI18N
+        serviceType_ButtonGroupPanel.add(loadBalancer_RadioButton);
+
+        serviceType_ButtonGroup.add(nodePort_RadioButton);
+        org.openide.awt.Mnemonics.setLocalizedText(nodePort_RadioButton, org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.nodePort_RadioButton.text")); // NOI18N
+        nodePort_RadioButton.setToolTipText(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.nodePort_RadioButton.toolTipText")); // NOI18N
+        serviceType_ButtonGroupPanel.add(nodePort_RadioButton);
+
+        serviceType_ButtonGroup.add(ingress_RadioButton);
+        org.openide.awt.Mnemonics.setLocalizedText(ingress_RadioButton, org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.ingress_RadioButton.text")); // NOI18N
+        ingress_RadioButton.setToolTipText(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.ingress_RadioButton.toolTipText")); // NOI18N
+        ingress_RadioButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                ingress_RadioButtonItemStateChanged(evt);
+            }
+        });
+        serviceType_ButtonGroupPanel.add(ingress_RadioButton);
+
+        serviceType_LayeredPane.add(serviceType_ButtonGroupPanel, java.awt.BorderLayout.CENTER);
+
+        jLayeredPane1.add(serviceType_LayeredPane);
+
+        domain_LayeredPane.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(domain_Label, org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.domain_Label.text")); // NOI18N
+        domain_Label.setPreferredSize(new java.awt.Dimension(88, 14));
+        domain_LayeredPane.add(domain_Label, java.awt.BorderLayout.WEST);
+
+        domain_TextField.setText(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.domain_TextField.text")); // NOI18N
+        domain_TextField.setToolTipText(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.domain_TextField.toolTipText")); // NOI18N
+        domain_LayeredPane.add(domain_TextField, java.awt.BorderLayout.CENTER);
+
+        jLayeredPane1.add(domain_LayeredPane);
+
+        action_LayeredPane.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         org.openide.awt.Mnemonics.setLocalizedText(saveButton, org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.saveButton.text")); // NOI18N
         saveButton.addActionListener(new java.awt.event.ActionListener() {
@@ -61,7 +133,7 @@ public class KubernetesPanel extends GenericDialog {
                 saveButtonActionPerformed(evt);
             }
         });
-        jLayeredPane4.add(saveButton);
+        action_LayeredPane.add(saveButton);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancelButton, org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.cancelButton.text")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -69,68 +141,41 @@ public class KubernetesPanel extends GenericDialog {
                 cancelButtonActionPerformed(evt);
             }
         });
-        jLayeredPane4.add(cancelButton);
+        action_LayeredPane.add(cancelButton);
 
-        jLayeredPane1.setLayout(new java.awt.GridLayout(2, 1, 0, 12));
+        root_LayeredPane.setLayer(jLayeredPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_LayeredPane.setLayer(action_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jLayeredPane2.setLayout(new java.awt.BorderLayout());
-
-        org.openide.awt.Mnemonics.setLocalizedText(namespace, org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.namespace.text")); // NOI18N
-        namespace.setPreferredSize(new java.awt.Dimension(88, 14));
-        jLayeredPane2.add(namespace, java.awt.BorderLayout.WEST);
-
-        namespaceTextField.setText(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.namespaceTextField.text")); // NOI18N
-        namespaceTextField.setToolTipText(org.openide.util.NbBundle.getMessage(KubernetesPanel.class, "KubernetesPanel.namespaceTextField.toolTipText")); // NOI18N
-        jLayeredPane2.add(namespaceTextField, java.awt.BorderLayout.CENTER);
-
-        jLayeredPane1.add(jLayeredPane2);
-
-        javax.swing.GroupLayout jLayeredPane3Layout = new javax.swing.GroupLayout(jLayeredPane3);
-        jLayeredPane3.setLayout(jLayeredPane3Layout);
-        jLayeredPane3Layout.setHorizontalGroup(
-            jLayeredPane3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 490, Short.MAX_VALUE)
-        );
-        jLayeredPane3Layout.setVerticalGroup(
-            jLayeredPane3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        jLayeredPane1.add(jLayeredPane3);
-
-        jLayeredPane5.setLayer(jLayeredPane4, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane5.setLayer(jLayeredPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        javax.swing.GroupLayout jLayeredPane5Layout = new javax.swing.GroupLayout(jLayeredPane5);
-        jLayeredPane5.setLayout(jLayeredPane5Layout);
-        jLayeredPane5Layout.setHorizontalGroup(
-            jLayeredPane5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jLayeredPane5Layout.createSequentialGroup()
-                .addGroup(jLayeredPane5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLayeredPane4)
-                    .addGroup(jLayeredPane5Layout.createSequentialGroup()
+        javax.swing.GroupLayout root_LayeredPaneLayout = new javax.swing.GroupLayout(root_LayeredPane);
+        root_LayeredPane.setLayout(root_LayeredPaneLayout);
+        root_LayeredPaneLayout.setHorizontalGroup(
+            root_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(root_LayeredPaneLayout.createSequentialGroup()
+                .addGroup(root_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(action_LayeredPane)
+                    .addGroup(root_LayeredPaneLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLayeredPane1)))
+                        .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jLayeredPane5Layout.setVerticalGroup(
-            jLayeredPane5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane5Layout.createSequentialGroup()
+        root_LayeredPaneLayout.setVerticalGroup(
+            root_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_LayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
-                .addComponent(jLayeredPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(action_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane5)
+            .addComponent(root_LayeredPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane5)
+            .addComponent(root_LayeredPane)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -140,21 +185,63 @@ public class KubernetesPanel extends GenericDialog {
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         setVisible(false);//if (!hasError()) {
-        kubernetesConfigData.setNamespace(namespaceTextField.getText());
+        kubernetesConfigData.setNamespace(namespace_TextField.getText());
+        kubernetesConfigData.setServiceType(getSelectedServiceType());
+        kubernetesConfigData.setIngressDomain(domain_TextField.getText());
         this.setDialogResult(javax.swing.JOptionPane.OK_OPTION);
         dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
 
+    private void ingress_RadioButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_ingress_RadioButtonItemStateChanged
+       if(evt.getStateChange() == ItemEvent.SELECTED){
+           domain_LayeredPane.setVisible(true);
+       }else if(evt.getStateChange() == ItemEvent.DESELECTED){
+           domain_LayeredPane.setVisible(false);
+       }
+    }//GEN-LAST:event_ingress_RadioButtonItemStateChanged
+
+    private String getSelectedServiceType(){
+        return ingress_RadioButton.isSelected() ? CLUSTER_IP :
+                (nodePort_RadioButton.isSelected()? NODE_PORT : LOAD_BALANCER);
+                
+    }
+    
+    private void setSelectedServiceType(String serviceType){
+        if (CLUSTER_IP.equals(serviceType)) {
+            ingress_RadioButton.setSelected(true);
+            domain_LayeredPane.setVisible(true);
+        } else if (NODE_PORT.equals(serviceType)) {
+            nodePort_RadioButton.setSelected(true);
+            domain_LayeredPane.setVisible(false);
+        } else {
+            loadBalancer_RadioButton.setSelected(true);
+            domain_LayeredPane.setVisible(false);
+        }
+    }
+    
+    
+    private final String CLUSTER_IP = "ClusterIP";
+    private final String NODE_PORT = "NodePort";
+    private final String LOAD_BALANCER = "LoadBalancer";
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLayeredPane action_LayeredPane;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JLabel domain_Label;
+    private javax.swing.JLayeredPane domain_LayeredPane;
+    private javax.swing.JTextField domain_TextField;
+    private javax.swing.JRadioButton ingress_RadioButton;
     private javax.swing.JLayeredPane jLayeredPane1;
-    private javax.swing.JLayeredPane jLayeredPane2;
-    private javax.swing.JLayeredPane jLayeredPane3;
-    private javax.swing.JLayeredPane jLayeredPane4;
-    private javax.swing.JLayeredPane jLayeredPane5;
-    private javax.swing.JLabel namespace;
-    private javax.swing.JTextField namespaceTextField;
+    private javax.swing.JRadioButton loadBalancer_RadioButton;
+    private javax.swing.JLabel namespace_Label;
+    private javax.swing.JLayeredPane namespace_LayeredPane;
+    private javax.swing.JTextField namespace_TextField;
+    private javax.swing.JRadioButton nodePort_RadioButton;
+    private javax.swing.JLayeredPane root_LayeredPane;
     private javax.swing.JButton saveButton;
+    private javax.swing.ButtonGroup serviceType_ButtonGroup;
+    private javax.swing.JLayeredPane serviceType_ButtonGroupPanel;
+    private javax.swing.JLabel serviceType_Label;
+    private javax.swing.JLayeredPane serviceType_LayeredPane;
     // End of variables declaration//GEN-END:variables
 }

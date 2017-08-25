@@ -15,16 +15,7 @@
  Portions Copyright 2013-2017 Gaurav Gupta
 -->
 apiVersion: v1
-kind: Service
+kind: Namespace
 metadata:
-  name: ${APP_NAME}
-  namespace: ${K8S_NS}
-  labels:
-    app: ${APP_NAME}
-spec:
-  selector:
-    app: ${APP_NAME}
-  type: ${K8S_SVC_TYPE}
-  ports:
-  - name: web
-    port: ${APP_SERVER_PORT}
+  name: ${K8S_NS}
+
