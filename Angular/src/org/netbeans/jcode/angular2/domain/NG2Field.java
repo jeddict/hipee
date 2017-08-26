@@ -27,6 +27,7 @@ public class NG2Field extends NGField {
     /**
      * @param fieldType the fieldType to set
      */
+    @Override
     public void setFieldType(String fieldType, String databaseType) {
         if ("DateTime".equals(fieldType) || "Date".equals(fieldType)) {
             fieldType = "Instant";

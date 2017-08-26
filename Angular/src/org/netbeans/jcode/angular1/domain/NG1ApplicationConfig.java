@@ -30,6 +30,7 @@ public class NG1ApplicationConfig extends NGApplicationConfig {
     /**
      * @return the angularAppName
      */
+    @Override
     public String getAngularAppName() {
         return baseName;
     }

@@ -27,6 +27,7 @@ public class NG1Field extends NGField {
     /**
      * @param fieldType the fieldType to set
      */
+    @Override
     public void setFieldType(String fieldType, String databaseType) {
         if ("DateTime".equals(fieldType)) {
             fieldType = "ZonedDateTime";

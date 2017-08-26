@@ -37,6 +37,7 @@ public class NG2ApplicationConfig extends NGApplicationConfig {
     /**
      * get the Angular application name.
      */
+    @Override
     public String getAngularAppName() {
         if (angularAppName == null) {
             angularAppName = camelCase(baseName) + (baseName.endsWith("App") ? "" : "App");

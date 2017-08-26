@@ -49,6 +49,7 @@ public class NG1Entity extends NGEntity {
         this.entityTranslationKeyMenu = camelCase(this.entityStateName);
     }
 
+    @Override
     public void addRelationship(NGRelationship relationship) {
         super.addRelationship(relationship);
 
@@ -59,6 +60,7 @@ public class NG1Entity extends NGEntity {
         }
     }
 
+    @Override
     public String getEntityAngularName() {
         return entityAngularJSName;
     }

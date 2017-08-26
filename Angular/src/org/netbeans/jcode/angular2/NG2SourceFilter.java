@@ -35,6 +35,7 @@ public class NG2SourceFilter extends ApplicationSourceFilter {
         super(config);
     }
 
+    @Override
     protected Map<String, Supplier<Boolean>> getGeneratorFilter() {
         if (dataFilter == null) {
             dataFilter = new HashMap<>();

@@ -53,6 +53,7 @@ public class NG2Entity extends NGEntity {
         this.entityTranslationKeyMenu = camelCase(this.entityStateName);
     }
 
+    @Override
     public void addRelationship(NGRelationship relationship) {
         super.addRelationship(relationship);
         String entityType = relationship.getOtherEntityNameCapitalized();
@@ -66,6 +67,7 @@ public class NG2Entity extends NGEntity {
         differentRelationships.get(entityType).add(relationship);
     }
 
+    @Override
     public String getEntityAngularName() {
         return entityAngularName;
     }

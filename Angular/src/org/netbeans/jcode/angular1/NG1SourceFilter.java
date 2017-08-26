@@ -38,6 +38,7 @@ public class NG1SourceFilter extends ApplicationSourceFilter {
     }
   
 
+    @Override
     protected Map<String, Supplier<Boolean>> getGeneratorFilter() {
         if (dataFilter == null) {
             dataFilter = new HashMap<>();
