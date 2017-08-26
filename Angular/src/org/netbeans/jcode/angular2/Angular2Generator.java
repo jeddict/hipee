@@ -25,8 +25,8 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import org.netbeans.jcode.angular2.domain.NG2ApplicationConfig;
 import org.netbeans.jcode.angular2.domain.NG2Entity;
-import org.netbeans.jcode.angular2.domain.NG2Relationship;
 import org.netbeans.jcode.angular2.domain.NG2Field;
+import org.netbeans.jcode.angular2.domain.NG2Relationship;
 import org.netbeans.jcode.console.Console;
 import static org.netbeans.jcode.console.Console.BOLD;
 import static org.netbeans.jcode.console.Console.FG_RED;
@@ -35,11 +35,9 @@ import static org.netbeans.jcode.core.util.FileUtil.getFileExt;
 import org.netbeans.jcode.core.util.POMManager;
 import static org.netbeans.jcode.core.util.ProjectHelper.getProjectWebRoot;
 import org.netbeans.jcode.core.util.SourceGroupSupport;
+import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.layer.Technology;
 import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
-import org.netbeans.jcode.rest.controller.RESTGenerator;
-import org.openide.util.lookup.ServiceProvider;
-import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.ng.main.AngularGenerator;
 import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicFile;
 import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicResource;
@@ -54,6 +52,7 @@ import org.netbeans.jcode.ng.main.domain.NGRelationship;
 import org.netbeans.jcode.ng.main.domain.Needle;
 import org.netbeans.jcode.ng.main.domain.NeedleFile;
 import org.netbeans.jcode.parser.ejs.EJSParser;
+import org.netbeans.jcode.rest.controller.RESTGenerator;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -61,6 +60,7 @@ import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *

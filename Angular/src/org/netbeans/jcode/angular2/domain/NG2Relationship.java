@@ -15,8 +15,8 @@
  */
 package org.netbeans.jcode.angular2.domain;
 
-import org.netbeans.jcode.ng.main.domain.*;
 import static org.netbeans.jcode.core.util.StringHelper.kebabCase;
+import org.netbeans.jcode.ng.main.domain.*;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 

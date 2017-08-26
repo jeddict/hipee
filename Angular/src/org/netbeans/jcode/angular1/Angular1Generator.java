@@ -23,10 +23,9 @@ import java.util.Map;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import org.netbeans.jcode.angular1.domain.NG1ApplicationConfig;
-import org.netbeans.jcode.angular1.domain.NG1Field;
 import org.netbeans.jcode.angular1.domain.NG1Entity;
+import org.netbeans.jcode.angular1.domain.NG1Field;
 import org.netbeans.jcode.angular1.domain.NG1Relationship;
-
 import org.netbeans.jcode.console.Console;
 import static org.netbeans.jcode.console.Console.BOLD;
 import static org.netbeans.jcode.console.Console.FG_RED;
@@ -35,11 +34,9 @@ import org.netbeans.jcode.core.util.FileUtil;
 import static org.netbeans.jcode.core.util.FileUtil.getFileExt;
 import static org.netbeans.jcode.core.util.FileUtil.getSimpleFileNameWithExt;
 import static org.netbeans.jcode.core.util.ProjectHelper.getProjectWebRoot;
+import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.layer.Technology;
 import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
-import org.netbeans.jcode.rest.controller.RESTGenerator;
-import org.openide.util.lookup.ServiceProvider;
-import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.ng.main.AngularGenerator;
 import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicFile;
 import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicResource;
@@ -51,11 +48,13 @@ import org.netbeans.jcode.ng.main.domain.NGEntity;
 import org.netbeans.jcode.ng.main.domain.NGField;
 import org.netbeans.jcode.ng.main.domain.NGRelationship;
 import org.netbeans.jcode.parser.ejs.EJSParser;
+import org.netbeans.jcode.rest.controller.RESTGenerator;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *

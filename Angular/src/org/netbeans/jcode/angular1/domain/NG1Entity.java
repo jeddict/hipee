@@ -22,14 +22,8 @@ import static org.netbeans.jcode.core.util.StringHelper.firstLower;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import static org.netbeans.jcode.core.util.StringHelper.kebabCase;
 import static org.netbeans.jcode.core.util.StringHelper.pluralize;
-import static org.netbeans.jcode.core.util.StringHelper.startCase;
 import org.netbeans.jcode.ng.main.domain.NGEntity;
-import org.netbeans.jcode.ng.main.domain.NGField;
 import org.netbeans.jcode.ng.main.domain.NGRelationship;
-import static org.netbeans.jcode.ng.main.domain.NGRelationship.MANY_TO_MANY;
-import static org.netbeans.jcode.ng.main.domain.NGRelationship.MANY_TO_ONE;
-import static org.netbeans.jcode.ng.main.domain.NGRelationship.ONE_TO_MANY;
-import static org.netbeans.jcode.ng.main.domain.NGRelationship.ONE_TO_ONE;
 
 /**
  *

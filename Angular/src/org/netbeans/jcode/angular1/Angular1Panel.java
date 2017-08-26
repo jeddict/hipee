@@ -15,7 +15,6 @@
  */
 package org.netbeans.jcode.angular1;
 
-import org.netbeans.jcode.ng.main.*;
 import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.api.project.Project;
@@ -23,6 +22,7 @@ import org.netbeans.api.project.SourceGroup;
 import static org.netbeans.jcode.core.util.StringHelper.firstLower;
 import static org.netbeans.jcode.core.util.StringHelper.kebabCase;
 import static org.netbeans.jcode.core.util.StringHelper.startCase;
+import org.netbeans.jcode.ng.main.*;
 import org.netbeans.jcode.stack.config.panel.*;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.openide.util.NbBundle;

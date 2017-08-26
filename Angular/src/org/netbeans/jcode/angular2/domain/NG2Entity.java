@@ -17,7 +17,6 @@ package org.netbeans.jcode.angular2.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.netbeans.jcode.ng.main.domain.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,11 +26,7 @@ import static org.netbeans.jcode.core.util.StringHelper.firstLower;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import static org.netbeans.jcode.core.util.StringHelper.kebabCase;
 import static org.netbeans.jcode.core.util.StringHelper.pluralize;
-import static org.netbeans.jcode.core.util.StringHelper.startCase;
-import static org.netbeans.jcode.ng.main.domain.NGRelationship.MANY_TO_MANY;
-import static org.netbeans.jcode.ng.main.domain.NGRelationship.MANY_TO_ONE;
-import static org.netbeans.jcode.ng.main.domain.NGRelationship.ONE_TO_MANY;
-import static org.netbeans.jcode.ng.main.domain.NGRelationship.ONE_TO_ONE;
+import org.netbeans.jcode.ng.main.domain.*;
 import org.openide.util.Exceptions;
 
 /**

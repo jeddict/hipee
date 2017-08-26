@@ -15,9 +15,9 @@
  */
 package org.netbeans.jcode.angular2.domain;
 
-import org.netbeans.jcode.ng.main.domain.*;
 import static org.netbeans.jcode.core.util.StringHelper.camelCase;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
+import org.netbeans.jcode.ng.main.domain.*;
 
 /**
  *
