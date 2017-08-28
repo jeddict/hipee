@@ -328,6 +328,9 @@ public abstract class NGRelationship {
             otherEntityRelationshipName = firstLower(getName());//warning
             LOG.log(Level.WARNING, "otherEntityRelationshipName is missing in {0} for relationship , using {1} as fallback", new Object[]{this.getName(), firstLower(this.getName())});
         }
+        if(otherEntityRelationshipName == null){
+            return EMPTY;
+        }
         return otherEntityRelationshipName;
     }
 
