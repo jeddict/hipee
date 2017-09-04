@@ -85,7 +85,7 @@ public abstract class NGEntity {
         
         this.differentTypes.add(this.entityClass);
         
-            }
+     }
    
        public void addRelationship(NGRelationship relationship) {
         getRelationships().add(relationship);

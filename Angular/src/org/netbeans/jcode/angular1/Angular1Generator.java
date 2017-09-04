@@ -66,6 +66,7 @@ public class Angular1Generator extends AngularGenerator {
 
     private static final String TEMPLATE = "org/netbeans/jcode/angular1/template/";
     private static final String CLIENT_FRAMEWORK = "angular1";
+    private final static String MODULE_JS = "app/app.module.js";
     private ApplicationSourceFilter sourceFilter;
 
     @Override
@@ -85,12 +86,10 @@ public class Angular1Generator extends AngularGenerator {
         }
         return sourceFilter;
     }
-    private final static String MODULE_JS = "app/app.module.js";
 
     @Override
     protected void generateClientSideComponent() {
         try {
-
             NGApplicationConfig applicationConfig = getAppConfig();
             ApplicationSourceFilter fileFilter = getApplicationSourceFilter(applicationConfig);
 
@@ -101,11 +100,10 @@ public class Angular1Generator extends AngularGenerator {
                 NGEntity ngEntity = getEntity(applicationConfig, entity);
                 if (ngEntity != null) {
                     entities.add(ngEntity);
-                    generateNgEntity(applicationConfig, fileFilter, getEntityConfig(), ngEntity, templateLib);
+                    generateNgEntity(applicationConfig, fileFilter, getEntityConfig(entity), ngEntity, templateLib);
                     generateNgEntityi18nResource(applicationConfig, fileFilter, ngEntity);
                 }
             }
-            generateNgEnumi18nResource(applicationConfig, fileFilter);
             applicationConfig.setEntities(entities);
 
             if (appConfigData.isCompleteApplication()) {

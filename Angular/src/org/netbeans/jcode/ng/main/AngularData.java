@@ -17,6 +17,9 @@ package org.netbeans.jcode.ng.main;
 
 import java.util.Arrays;
 import java.util.List;
+import static org.netbeans.jcode.core.util.StringHelper.camelCase;
+import org.netbeans.jcode.ng.main.domain.ClientPackager;
+import static org.netbeans.jcode.ng.main.domain.ClientPackager.NPM;
 import org.netbeans.jcode.ng.main.domain.EntityConfig;
 import org.netbeans.jcode.rest.controller.RESTData;
 import org.netbeans.jcode.stack.config.data.LayerConfigData;
@@ -27,10 +30,13 @@ import org.netbeans.jcode.stack.config.data.LayerConfigData;
  */
 public class AngularData extends LayerConfigData<RESTData> {
 
+    public static final String DEFAULT_PREFIX = "jee";
+    
+    private String prefix;
     private String module;
     private String applicationTitle;
     private EntityConfig applicationConfig;
-    private PaginationType pagination; 
+    private ClientPackager clientPackager;
     private boolean protractorTest;
     private boolean sass;
 
@@ -63,6 +69,23 @@ public class AngularData extends LayerConfigData<RESTData> {
     }
 
     /**
+     * @return the prefix
+     */
+    public String getPrefix() {
+        if(prefix == null){
+            return DEFAULT_PREFIX;
+        }
+        return prefix;
+    }
+
+    /**
+     * @param prefix the prefix to set
+     */
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    /**
      * @return the applicationTitle
      */
     public String getApplicationTitle() {
@@ -78,24 +101,26 @@ public class AngularData extends LayerConfigData<RESTData> {
     
     @Override
     protected void onLayerConnection(){
-        getParentLayerConfigData().setPagination(pagination != null && pagination != PaginationType.NO);
-    }
-
-    /**
-     * @return the pagination
-     */
-    public PaginationType getPagination() {
-        if(pagination==null){
-            return PaginationType.NO;
+        if(getModule()!=null){
+            getParentLayerConfigData().setFrontendAppName(camelCase(getModule()) + (getModule().endsWith("App") ? "" : "App"));
         }
-        return pagination;
     }
 
     /**
-     * @param pagination the pagination to set
+     * @return the clientPackager
      */
-    public void setPagination(PaginationType pagination) {
-        this.pagination = pagination;
+    public ClientPackager getClientPackager() {
+        if(clientPackager == null){
+            return NPM;
+        }
+        return clientPackager;
+    }
+
+    /**
+     * @param clientPackager the clientPackager to set
+     */
+    public void setClientPackager(ClientPackager clientPackager) {
+        this.clientPackager = clientPackager;
     }
 
     /**
@@ -128,7 +153,6 @@ public class AngularData extends LayerConfigData<RESTData> {
     
     @Override
     public List<String> getUsageDetails() {
-        return Arrays.asList("PaginationType-"+getPagination().getTitle(), 
-                isProtractorTest() ? "ProtractorTest" : null);
+        return Arrays.asList(isProtractorTest() ? "ProtractorTest" : null);
     }
 }

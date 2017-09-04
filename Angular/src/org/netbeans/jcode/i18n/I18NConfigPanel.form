@@ -18,7 +18,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="root_LayeredPane" pref="580" max="32767" attributes="0"/>
+              <Component id="root_LayeredPane" pref="630" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -156,7 +156,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
                 <Property name="columns" type="int" value="5"/>
-                <Property name="rows" type="int" value="7"/>
+                <Property name="rows" type="int" value="8"/>
               </Layout>
             </Container>
           </SubComponents>

@@ -78,6 +78,7 @@ public class Needle {
             Map<String, Object> param = new HashMap<>();
             param.put("srcDir", applicationConfig.getSrcDir());
             param.put("languages", applicationConfig.getLanguages());
+            param.put("languageInstances", applicationConfig.getLanguageInstances());
             content.append(expandTemplate(template, param));
         }
         return content.toString();

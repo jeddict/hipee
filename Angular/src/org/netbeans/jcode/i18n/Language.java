@@ -14,18 +14,28 @@ import java.util.Objects;
  */
 public class Language implements Serializable {
 
-    private final String name, value;
-    private boolean rtl;
+    private final String name, dispName, value;
+    private boolean rtl, skipForLocale;
 
-    public Language(String name, String value) {
+    public Language(String name, String dispName, String value) {
         this.name = name;
+        this.dispName = dispName;
         this.value = value;
     }
 
-    public Language(String name, String value, boolean rtl) {
+    public Language(String name, String dispName, String value, boolean rtl) {
         this.name = name;
+        this.dispName = dispName;
         this.value = value;
         this.rtl = rtl;
+    }
+
+    public Language(String name, String dispName, String value, boolean rtl, boolean skipForLocale) {
+        this.name = name;
+        this.dispName = dispName;
+        this.value = value;
+        this.rtl = rtl;
+        this.skipForLocale = skipForLocale;
     }
 
     public String getName() {
@@ -38,6 +48,20 @@ public class Language implements Serializable {
 
     public boolean isRtl() {
         return rtl;
+    }
+    
+    /**
+     * @return the dispName
+     */
+    public String getDispName() {
+        return dispName;
+    }
+
+    /**
+     * @return the skipForLocale
+     */
+    public boolean isSkipForLocale() {
+        return skipForLocale;
     }
 
     @Override
@@ -65,4 +89,9 @@ public class Language implements Serializable {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+    
 }

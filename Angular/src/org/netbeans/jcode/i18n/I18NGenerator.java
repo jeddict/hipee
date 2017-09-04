@@ -16,6 +16,7 @@
 package org.netbeans.jcode.i18n;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.function.Function;
 import org.netbeans.api.project.Project;
 import org.netbeans.jcode.angular2.domain.NG2ApplicationConfig;

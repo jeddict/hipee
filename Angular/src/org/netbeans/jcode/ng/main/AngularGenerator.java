@@ -18,12 +18,14 @@ package org.netbeans.jcode.ng.main;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toSet;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.Project;
 import static org.netbeans.jcode.core.util.AttributeType.BIGDECIMAL;
@@ -37,6 +39,7 @@ import org.netbeans.jcode.core.util.JavaUtil;
 import static org.netbeans.jcode.core.util.ProjectHelper.getProjectWebRoot;
 import static org.netbeans.jcode.core.util.StringHelper.pluralize;
 import org.netbeans.jcode.i18n.I18NConfigData;
+import org.netbeans.jcode.i18n.Language;
 import static org.netbeans.jcode.i18n.LanguageUtil.isI18nRTLSupportNecessary;
 import org.netbeans.jcode.layer.ConfigData;
 import org.netbeans.jcode.layer.Generator;
@@ -171,9 +174,9 @@ public abstract class AngularGenerator implements Generator {
         copyDynamicResource(parser.getParserManager(), getTemplatePath() + "web-resources-i18n.zip", webRoot, pathResolver, handler);
     }
 
-    protected EntityConfig getEntityConfig() {
+    protected EntityConfig getEntityConfig(Entity entity) {
         EntityConfig entityConfig = new EntityConfig();
-        entityConfig.setPagination(ngData.getPagination().getKeyword());
+        entityConfig.setPagination(entity.getPaginationType().getKeyword());
         return entityConfig;
     }
 
@@ -182,12 +185,13 @@ public abstract class AngularGenerator implements Generator {
     protected NGApplicationConfig getAppConfig() {
         NGApplicationConfig applicationConfig = getNGApplicationConfig(ngData.getModule(), "maven");
         applicationConfig.setEnableTranslation(true);
-        applicationConfig.setJhiPrefix("jed");
+        applicationConfig.setJhiPrefix(ngData.getPrefix());
         applicationConfig.setUseSass(ngData.isSass());
         
         if (i18nData.isEnabled()) {
             applicationConfig.setNativeLanguage(i18nData.getNativeLanguage().getValue());
             applicationConfig.setLanguages(i18nData.getOtherLanguagesKeyword());
+            applicationConfig.setLanguageInstances(i18nData.getLanguageInstances());
         } 
         applicationConfig.setEnableTranslation(i18nData.isEnabled());
         applicationConfig.setEnableI18nRTL(isI18nRTLSupportNecessary(applicationConfig.getLanguages()));
@@ -200,6 +204,9 @@ public abstract class AngularGenerator implements Generator {
         applicationConfig.setClientFramework(getClientFramework());
         applicationConfig.setSkipClient(false);
         applicationConfig.setSkipServer(false);
+        
+        applicationConfig.setClientPackageManager(ngData.getClientPackager().toString());
+        applicationConfig.setProtractorTests(ngData.isProtractorTest());
         return applicationConfig;
     }
     
@@ -259,11 +266,11 @@ public abstract class AngularGenerator implements Generator {
                 } else {
                     ngRelationship.setOtherEntityField(mappedEntity.getLabelAttribute().getName());
                 }
-                if (entity == mappedEntity) {
-                    handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Self_Relation_Not_Supported"),
-                            NbBundle.getMessage(AngularGenerator.class, "MSG_Self_Relation_Not_Supported", attribute.getName(), ngEntity.getName()));
-                    continue;
-                }
+//                if (entity == mappedEntity) {
+//                    handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Self_Relation_Not_Supported"),
+//                            NbBundle.getMessage(AngularGenerator.class, "MSG_Self_Relation_Not_Supported", attribute.getName(), ngEntity.getName()));
+//                    continue;
+//                }
                 if (StringUtils.isNotBlank(attribute.getLabel())) {
                     ngRelationship.setRelationshipNameHumanized(attribute.getLabel());
                 }

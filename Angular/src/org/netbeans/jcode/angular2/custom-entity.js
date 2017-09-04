@@ -16,28 +16,26 @@
                     "!"+ relationshipFieldName + " || !"+ relationshipFieldName+".id" :
                     "!"+ relationshipFieldName+"Id";
 
-                query =
-        "this."+relationship.otherEntityName+"Service" +
-            ".query({filter: '"+relationship.otherEntityRelationshipName.toLowerCase()+"}-is-null'})"+
-            ".subscribe((res: ResponseWrapper) => {"+
-                "if ("+relationshipFieldNameIdCheck+") {"
-                    "this."+ variableName + " = res.json;"+
-                "} else {"+
-                    "this."+relationship.otherEntityName+"Service"+
-                        ".find("+relationshipFieldName + (dto === 'no' ? '.id' : 'Id') + ")"+
-                        ".subscribe((subRes: "+relationship.otherEntityAngularName+") => {"+
-                            "this."+variableName+" = [subRes].concat(res.json);"+
-                        "}, (subRes: ResponseWrapper) => this.onError(subRes.json));"+
-                "}"+
-            "}, (res: ResponseWrapper) => this.onError(res.json));";
+                query = "this."+relationship.otherEntityName+"Service\n" +
+"            .query({filter: '"+relationship.otherEntityRelationshipName.toLowerCase()+"-is-null'})\n"+
+"            .subscribe((res: ResponseWrapper) => {\n"+
+"                if ("+relationshipFieldNameIdCheck+") {\n"+
+"                    this."+ variableName + " = res.json;\n"+
+"                } else {\n"+
+"                    this."+relationship.otherEntityName+"Service\n"+
+"                        .find("+relationshipFieldName + (dto === 'no' ? '.id' : 'Id') + ")\n"+
+"                        .subscribe((subRes: "+relationship.otherEntityAngularName+") => {\n"+
+"                            this."+variableName+" = [subRes].concat(res.json);\n"+
+"                        }, (subRes: ResponseWrapper) => this.onError(subRes.json));\n"+
+"                }\n"+
+"            }, (res: ResponseWrapper) => this.onError(res.json));";
             } else if (relationship.relationshipType !== 'one-to-many') {
                 variableName = relationship.otherEntityNameCapitalizedPlural.toLowerCase();
                 if (variableName === entityInstance) {
                     variableName += 'Collection';
                 }
-                query =
-        "this."+relationship.otherEntityName+"Service.query()"+
-            ".subscribe((res: ResponseWrapper) => { this."+variableName+" = res.json; }, (res: ResponseWrapper) => this.onError(res.json));";
+                query = "this."+relationship.otherEntityName+"Service.query()\n"+
+"            .subscribe((res: ResponseWrapper) => { this."+variableName+" = res.json; }, (res: ResponseWrapper) => this.onError(res.json));";
             }
             if (variableName && !this.contains(queries, query)) {
                 queries.push(query);
@@ -49,4 +47,13 @@
             variables : variables,
             hasManyToMany : hasManyToMany
         };
+    }
+
+    /**
+     * Function to print a proper array with simple quoted strings
+     *
+     *  @param {array} array - the array to print
+     */
+    function toArrayString(array) {
+        return "["+array.join('\', \'')+"]";
     }

@@ -15,7 +15,7 @@
  */
 package org.netbeans.jcode.ng.main.domain;
 
-import org.netbeans.jcode.ng.main.PaginationType;
+import org.netbeans.jpa.modeler.spec.extend.PaginationType;
 
 /**
  *

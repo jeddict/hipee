@@ -26,6 +26,7 @@ public class NeedleFile {
 
     private List<String> file;
     private List<Needle> needles;
+    private boolean entity = true;
 
     public NeedleFile(String... files) {
         if(files==null){
@@ -53,5 +54,19 @@ public class NeedleFile {
      */
     public void setNeedles(List<Needle> needles) {
         this.needles = needles;
+    }
+
+    /**
+     * @return the entity
+     */
+    public boolean isEntity() {
+        return entity;
+    }
+
+    /**
+     * @param entity the entity to set
+     */
+    public void setEntity(boolean entity) {
+        this.entity = entity;
     }
 }

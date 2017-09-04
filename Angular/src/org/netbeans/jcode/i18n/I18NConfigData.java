@@ -16,6 +16,7 @@
 package org.netbeans.jcode.i18n;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toSet;
@@ -83,6 +84,12 @@ public class I18NConfigData extends LayerConfigData {
         return otherLanguages.stream()
                 .map(lang -> lang.getValue())
                 .collect(toSet());
+    }
+    
+    public Set<Language> getLanguageInstances() {
+        Set<Language> inst = new HashSet<>(otherLanguages);
+        inst.add(nativeLanguage);
+        return inst;
     }
     
     @Override

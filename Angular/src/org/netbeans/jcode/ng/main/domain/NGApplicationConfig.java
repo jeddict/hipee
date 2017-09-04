@@ -24,6 +24,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.netbeans.jcode.core.util.StringHelper.camelCase;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import static org.netbeans.jcode.core.util.StringHelper.kebabCase;
+import org.netbeans.jcode.i18n.Language;
 
 /**
  *
@@ -80,6 +81,7 @@ public abstract class NGApplicationConfig {
     private boolean enableTranslation;
     private String nativeLanguage;
     private Set<String> languages;
+    private Set<Language> languageInstances;
     private boolean enableI18nRTL;
 
     private String jhiPrefix;
@@ -366,6 +368,20 @@ public abstract class NGApplicationConfig {
     public void setLanguages(Set<String> languages) {
         this.languages = new HashSet<>(languages);
         this.languages.add(getNativeLanguage());
+    }
+
+    /**
+     * @return the languageInstances
+     */
+    public Set<Language> getLanguageInstances() {
+        return languageInstances;
+    }
+
+    /**
+     * @param languageInstances the languageInstances to set
+     */
+    public void setLanguageInstances(Set<Language> languageInstances) {
+        this.languageInstances = languageInstances;
     }
     
     /**

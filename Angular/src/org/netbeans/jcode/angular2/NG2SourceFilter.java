@@ -154,6 +154,7 @@ public class NG2SourceFilter extends ApplicationSourceFilter {
             //SCSS
             dataFilter.put("content/scss/_global.scss", () -> config.isUseSass());
             dataFilter.put("content/scss/_vendor.scss", () -> config.isUseSass());
+            dataFilter.put("content/scss/_rtl.scss", () -> config.isUseSass() && config.isEnableI18nRTL());
             dataFilter.put("app/layouts/profiles/_page-ribbon.scss", () -> config.isEnableProfile() && config.isUseSass());
             dataFilter.put("app/layouts/navbar/_navbar.scss", () -> config.isUseSass());
             dataFilter.put("app/home/_home.scss", () -> config.isUseSass());
@@ -163,6 +164,7 @@ public class NG2SourceFilter extends ApplicationSourceFilter {
             dataFilter.put("content/css/_documentation.css", () -> !config.isUseSass());
             dataFilter.put("content/css/_global.css", () -> !config.isUseSass());
             dataFilter.put("content/css/_vendor.css", () -> !config.isUseSass());
+            dataFilter.put("content/css/_rtl.css", () -> !config.isUseSass() && config.isEnableI18nRTL());
             dataFilter.put("app/layouts/profiles/_page-ribbon.css", () -> config.isEnableProfile() && !config.isUseSass());
             dataFilter.put("app/layouts/navbar/_navbar.css", () -> !config.isUseSass());
             dataFilter.put("app/home/_home.css", () -> !config.isUseSass());

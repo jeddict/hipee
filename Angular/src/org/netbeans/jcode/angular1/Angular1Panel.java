@@ -24,7 +24,6 @@ import static org.netbeans.jcode.core.util.StringHelper.kebabCase;
 import static org.netbeans.jcode.core.util.StringHelper.startCase;
 import org.netbeans.jcode.ng.main.*;
 import org.netbeans.jcode.stack.config.panel.*;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.openide.util.NbBundle;
 
 /**
@@ -62,53 +61,20 @@ public class Angular1Panel extends LayerConfigPanel<AngularData> {
         if (StringUtils.isNotBlank(data.getApplicationTitle())) {
             setApplicationTitle(data.getApplicationTitle());
         }
-        
-        if (data.getPagination()!=null) {
-            setPaginationType(data.getPagination());
-        }
     }
 
     @Override
     public void store() {
         this.getConfigData().setModule(getModule());
         this.getConfigData().setApplicationTitle(getApplicationTitle());
-        this.getConfigData().setPagination(getPaginationType());
     }
-
-    private Project project;
 
     @Override
     public void init(String folder, Project project, SourceGroup sourceGroup) {
-        this.project = project;
-        
         setModule(kebabCase(firstLower(project.getProjectDirectory().getName())));
         setApplicationTitle(startCase(project.getProjectDirectory().getName()));
-        
-        paginationComboBox.removeAllItems();
-        for (PaginationType pagination : PaginationType.values()) {
-            paginationComboBox.addItem(new ComboBoxValue(pagination, pagination.getTitle()));
-        }
-
     }
     
-    private void setPaginationType(PaginationType paginationType) {
-        if (paginationType == null) {
-            paginationComboBox.setSelectedIndex(0);
-        } else {
-            for (int i = 0; i < paginationComboBox.getItemCount(); i++) {
-                if (((ComboBoxValue<PaginationType>) paginationComboBox.getItemAt(i)).getValue() == paginationType) {
-                    paginationComboBox.setSelectedIndex(i);
-                }
-            }
-        }
-    }
-    
-    private PaginationType getPaginationType(){
-        return ((ComboBoxValue<PaginationType>) paginationComboBox.getSelectedItem()).getValue();
-    }
-
-
-
     public String getModule() {
         return angularModuleTextField.getText().trim();
     }
@@ -146,10 +112,6 @@ public class Angular1Panel extends LayerConfigPanel<AngularData> {
         titleStartLabel = new javax.swing.JLabel();
         appTitleTextField = new javax.swing.JTextField();
         titleEndLabel = new javax.swing.JLabel();
-        wrapperPanel3 = new javax.swing.JPanel();
-        paginationLabel = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
-        paginationComboBox = new javax.swing.JComboBox();
 
         warningPanel.setLayout(new java.awt.BorderLayout(10, 0));
 
@@ -219,20 +181,6 @@ public class Angular1Panel extends LayerConfigPanel<AngularData> {
 
         jPanel1.add(wrapperPanel1);
 
-        wrapperPanel3.setLayout(new java.awt.BorderLayout(10, 0));
-
-        org.openide.awt.Mnemonics.setLocalizedText(paginationLabel, org.openide.util.NbBundle.getMessage(Angular1Panel.class, "Angular1Panel.paginationLabel.text")); // NOI18N
-        paginationLabel.setPreferredSize(new java.awt.Dimension(80, 14));
-        wrapperPanel3.add(paginationLabel, java.awt.BorderLayout.LINE_START);
-
-        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.LINE_AXIS));
-
-        jPanel4.add(paginationComboBox);
-
-        wrapperPanel3.add(jPanel4, java.awt.BorderLayout.CENTER);
-
-        jPanel1.add(wrapperPanel3);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -279,16 +227,12 @@ public class Angular1Panel extends LayerConfigPanel<AngularData> {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JComboBox paginationComboBox;
-    private javax.swing.JLabel paginationLabel;
     private javax.swing.JLabel titleEndLabel;
     private javax.swing.JLabel titleStartLabel;
     private javax.swing.JLabel warningLabel;
     private javax.swing.JPanel warningPanel;
     private javax.swing.JPanel wrapperPanel1;
     private javax.swing.JPanel wrapperPanel2;
-    private javax.swing.JPanel wrapperPanel3;
     // End of variables declaration//GEN-END:variables
 
 
