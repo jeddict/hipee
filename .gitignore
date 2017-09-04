@@ -63,3 +63,4 @@ hs_err_pid*
 !/Angular/src/org/netbeans/jcode/angular1/template/entity-include-resources.zip
 !/Angular/src/org/netbeans/jcode/angular1/template/entity-resource-i18n.zip
 !/Angular/src/org/netbeans/jcode/i18n/template/rest-resources-i18n.zip
+!/Angular/src/org/netbeans/jcode/angular2/template/entity-include-resources.zip
