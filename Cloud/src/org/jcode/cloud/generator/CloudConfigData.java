@@ -15,7 +15,7 @@
  */
 package org.jcode.cloud.generator;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import org.netbeans.jcode.stack.config.data.LayerConfigData;
 
@@ -26,6 +26,8 @@ import org.netbeans.jcode.stack.config.data.LayerConfigData;
 public class CloudConfigData extends LayerConfigData {
 
     private KubernetesConfigData kubernetesConfigData;
+    
+    private OpenshiftConfigData openshiftConfigData;
 
     /**
      * @return the kubernetesConfigData
@@ -43,11 +45,29 @@ public class CloudConfigData extends LayerConfigData {
     public void setKubernetesConfigData(KubernetesConfigData kubernetesConfigData) {
         this.kubernetesConfigData = kubernetesConfigData;
     }
+    
+        /**
+     * @return the openshiftConfigData
+     */
+    public OpenshiftConfigData getOpenshiftConfigData() {
+        if(openshiftConfigData==null){
+            openshiftConfigData = new OpenshiftConfigData();
+        }
+        return openshiftConfigData;
+    }
+
+    /**
+     * @param openshiftConfigData the openshiftConfigData to set
+     */
+    public void setOpenshiftConfigData(OpenshiftConfigData openshiftConfigData) {
+        this.openshiftConfigData = openshiftConfigData;
+    }
 
 
     @Override
     public List<String> getUsageDetails() {
-//        return Arrays.asList(kubernetesActivated ? "Kubernetes" : null);
-        return Collections.EMPTY_LIST;
+        return Arrays.asList(getKubernetesConfigData().isEnabled() ? "Kubernetes" : null,
+                getOpenshiftConfigData().isEnabled() ? "Openshift" : null
+        );
     }
 }

@@ -22,12 +22,11 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author jGauravGupta
  */
-public class KubernetesConfigData implements Serializable {
+public class OpenshiftConfigData implements Serializable {
 
     private boolean enabled;
     private String namespace;
-    private String serviceType;
-    private String ingressDomain;
+    private String databaseStorageType;
 
     /**
      * @return the enabled
@@ -61,31 +60,17 @@ public class KubernetesConfigData implements Serializable {
     }
 
     /**
-     * @return the serviceType
+     * @return the databaseStorageType
      */
-    public String getServiceType() {
-        return serviceType;
+    public String getDatabaseStorageType() {
+        return databaseStorageType;
     }
 
     /**
-     * @param serviceType the serviceType to set
+     * @param databaseStorageType the databaseStorageType to set
      */
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
-
-    /**
-     * @return the ingressDomain
-     */
-    public String getIngressDomain() {
-        return ingressDomain;
-    }
-
-    /**
-     * @param ingressDomain the ingressDomain to set
-     */
-    public void setIngressDomain(String ingressDomain) {
-        this.ingressDomain = ingressDomain;
+    public void setDatabaseStorageType(String databaseStorageType) {
+        this.databaseStorageType = databaseStorageType;
     }
 
 }
