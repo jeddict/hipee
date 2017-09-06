@@ -43,7 +43,7 @@ import org.netbeans.jcode.i18n.Language;
 import static org.netbeans.jcode.i18n.LanguageUtil.isI18nRTLSupportNecessary;
 import org.netbeans.jcode.layer.ConfigData;
 import org.netbeans.jcode.layer.Generator;
-import static org.netbeans.jcode.ng.main.AngularUtil.*;
+import static org.netbeans.jcode.parser.ejs.EJSUtil.*;
 import org.netbeans.jcode.ng.main.domain.ApplicationSourceFilter;
 import org.netbeans.jcode.ng.main.domain.EntityConfig;
 import org.netbeans.jcode.ng.main.domain.NGApplicationConfig;

@@ -41,10 +41,10 @@ import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.layer.Technology;
 import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
 import org.netbeans.jcode.ng.main.AngularGenerator;
-import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicFile;
-import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicResource;
-import static org.netbeans.jcode.ng.main.AngularUtil.getResource;
-import static org.netbeans.jcode.ng.main.AngularUtil.insertNeedle;
+import static org.netbeans.jcode.parser.ejs.EJSUtil.copyDynamicFile;
+import static org.netbeans.jcode.parser.ejs.EJSUtil.copyDynamicResource;
+import static org.netbeans.jcode.parser.ejs.EJSUtil.getResource;
+import static org.netbeans.jcode.parser.ejs.EJSUtil.insertNeedle;
 import org.netbeans.jcode.ng.main.domain.ApplicationSourceFilter;
 import org.netbeans.jcode.ng.main.domain.EntityConfig;
 import org.netbeans.jcode.ng.main.domain.NGApplicationConfig;
@@ -124,7 +124,7 @@ public class Angular2Generator extends AngularGenerator {
             if (appConfigData.isCompleteApplication()) {
                 EJSParser parser = new EJSParser();
                 parser.addContext(applicationConfig);
-                parser.eval(IOUtils.toString(getClass().getResourceAsStream("custom-web.js"), "UTF-8"));
+                parser.eval(IOUtils.toString(getClass().getResourceAsStream("/org/netbeans/jcode/angular2/template/custom-web.js"), "UTF-8"));
                 generateNgApplication(parser);
                 generateNgTest(parser);
                 generateNgApplicationi18nResource(applicationConfig, fileFilter);
@@ -152,7 +152,7 @@ public class Angular2Generator extends AngularGenerator {
         parser.addContext(config);
 
         parser.setImportTemplate(templateLib); 
-        parser.eval(IOUtils.toString(getClass().getResourceAsStream("custom-entity.js"), "UTF-8"));
+        parser.eval(IOUtils.toString(getClass().getResourceAsStream("/org/netbeans/jcode/angular2/template/custom-entity.js"), "UTF-8"));
         copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resources.zip", webRoot, getEntityPathResolver(entity), handler);
     }
 
@@ -271,7 +271,8 @@ public class Angular2Generator extends AngularGenerator {
                 NbBundle.getMessage(Angular2Generator.class, "WEBPACK_PROFILE_TEXT",
                         applicationConfig.getClientPackageManager()));
 
-        addMavenDependencies("pom/" + applicationConfig.getClientPackageManager() + "_pom.xml");
+        String pomPath =  applicationConfig.getClientPackageManager() + "_" + (applicationConfig.isUseSass()?"sass_" : "");
+        addMavenDependencies("pom/" + pomPath + "pom.xml");
         appConfigData.addProfile("webpack");
     }
 

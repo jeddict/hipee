@@ -152,6 +152,7 @@ public class NG2SourceFilter extends ApplicationSourceFilter {
             dataFilter.put("swagger-ui/config/ui.json", () -> config.isEnableDocs());
 
             //SCSS
+            dataFilter.put("content/scss/__bootstrap-variables.scss", () -> config.isUseSass());
             dataFilter.put("content/scss/_global.scss", () -> config.isUseSass());
             dataFilter.put("content/scss/_vendor.scss", () -> config.isUseSass());
             dataFilter.put("content/scss/_rtl.scss", () -> config.isUseSass() && config.isEnableI18nRTL());

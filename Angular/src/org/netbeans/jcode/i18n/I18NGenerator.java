@@ -26,7 +26,7 @@ import org.netbeans.jcode.core.util.ProjectHelper;
 import org.netbeans.jcode.layer.ConfigData;
 import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.layer.Technology;
-import static org.netbeans.jcode.ng.main.AngularUtil.copyDynamicResource;
+import static org.netbeans.jcode.parser.ejs.EJSUtil.copyDynamicResource;
 import org.netbeans.jcode.parser.ejs.EJSParser;
 import org.netbeans.jcode.rest.controller.RESTGenerator;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
