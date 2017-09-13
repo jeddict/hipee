@@ -67,7 +67,9 @@ public abstract class NGEntity {
     private List<String> differentTypes = new ArrayList<>();
     private final List<NGField> fields = new ArrayList<>();
     private final List<NGRelationship> relationships = new ArrayList<>();
-        private String pkType;
+    private String pkType;
+    
+    private boolean upgrade;
 
     public NGEntity(String name, String entityAngularSuffix) {
         String entityNameSpinalCased = kebabCase(firstLower(name));
@@ -567,5 +569,19 @@ public abstract class NGEntity {
      * @return the entityAngularName
      */
     public abstract String getEntityAngularName();
+
+    /**
+     * @return the upgrade
+     */
+    public boolean isUpgrade() {
+        return upgrade;
+    }
+
+    /**
+     * @param upgrade the upgrade to set
+     */
+    public void setUpgrade(boolean upgrade) {
+        this.upgrade = upgrade;
+    }
 
 }

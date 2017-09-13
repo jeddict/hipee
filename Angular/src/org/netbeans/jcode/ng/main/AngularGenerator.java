@@ -264,7 +264,9 @@ public abstract class AngularGenerator implements Generator {
                     handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Entity_Label_Missing"),
                             NbBundle.getMessage(AngularGenerator.class, "MSG_Entity_Label_Missing", mappedEntity.getClazz()));
                 } else {
-                    ngRelationship.setOtherEntityField(mappedEntity.getLabelAttribute().getName());
+                    Attribute labelAttribute = mappedEntity.getLabelAttribute();
+                    ngRelationship.setOtherEntityField(StringUtils.isEmpty(labelAttribute.getJsonbProperty())
+                            ? labelAttribute.getName() : labelAttribute.getJsonbProperty());
                 }
 //                if (entity == mappedEntity) {
 //                    handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Self_Relation_Not_Supported"),

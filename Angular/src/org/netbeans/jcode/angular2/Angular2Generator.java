@@ -112,6 +112,9 @@ public class Angular2Generator extends AngularGenerator {
                 NGEntity ngEntity = getEntity(applicationConfig, entity);
                 if (ngEntity != null) {
                     ngEntities.add(ngEntity);
+                    ngEntity.setUpgrade(
+                            webRoot.getFileObject("app/entities/" + ngEntity.getEntityFolderName()) != null
+                    );
                     EntityConfig entityConfig = getEntityConfig(entity);
                     generateNgEntity(applicationConfig, entityConfig, ngEntity, templateLib);
                     generateNgEntityTest(applicationConfig, entityConfig, ngEntity);
@@ -181,11 +184,15 @@ public class Angular2Generator extends AngularGenerator {
 
     private void updateNgEntityNeedle(NGApplicationConfig applicationConfig, List<NGEntity> ngEntities) {
         for (NeedleFile needleFile : getNeedleFiles(applicationConfig)) {
+            if (!appConfigData.isCompleteApplication() && !needleFile.forEntity()) {
+                continue;
+            }
+            
             for (String file : needleFile.getFile()) {
                 needleFile.getNeedles().forEach(needle -> 
                         insertNeedle(file.startsWith("/") ? projectRoot:webRoot, 
                                 file, needle.getInsertPointer(), 
-                                needle.getTemplate(applicationConfig, needleFile.isEntity()?ngEntities:null), 
+                                needle.getTemplate(applicationConfig, needleFile.forEntity()?ngEntities:null), 
                                 handler)
                 );
             }

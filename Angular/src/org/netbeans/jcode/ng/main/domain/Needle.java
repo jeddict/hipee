@@ -19,9 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.netbeans.jcode.angular2.domain.NG2ApplicationConfig;
-import static org.netbeans.jcode.core.util.FileUtil.expandTemplate;
 import static org.netbeans.jcode.core.util.StringHelper.camelCase;
 import static org.netbeans.jcode.core.util.StringHelper.startCase;
+import static org.netbeans.jcode.core.util.FileUtil.expandTemplateContent;
+import static org.netbeans.jcode.core.util.FileUtil.expandTemplate;
 
 /**
  *
@@ -55,6 +56,9 @@ public class Needle {
         StringBuilder content = new StringBuilder();
         if (ngEntities != null) {
             for (NGEntity entity : ngEntities) {
+                if(entity.isUpgrade()){
+                    continue;
+                }
                 Map<String, Object> param = new HashMap<>();
                 param.put("entityFolderName", entity.getEntityFolderName());
                 param.put("entityFileName", entity.getEntityFileName());
@@ -72,14 +76,14 @@ public class Needle {
                     param.put("appName", ((NG2ApplicationConfig)applicationConfig).getAngularXAppName());
                 }
                 param.put("prefix", applicationConfig.getJhiPrefix());
-                content.append(expandTemplate(template, param));
+                content.append(expandTemplateContent(template, param));
             }
         } else {
             Map<String, Object> param = new HashMap<>();
             param.put("srcDir", applicationConfig.getSrcDir());
             param.put("languages", applicationConfig.getLanguages());
             param.put("languageInstances", applicationConfig.getLanguageInstances());
-            content.append(expandTemplate(template, param));
+            content.append(expandTemplateContent(template, param));
         }
         return content.toString();
     }

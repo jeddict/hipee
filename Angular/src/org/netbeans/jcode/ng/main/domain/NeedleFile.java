@@ -59,7 +59,7 @@ public class NeedleFile {
     /**
      * @return the entity
      */
-    public boolean isEntity() {
+    public boolean forEntity() {
         return entity;
     }
 
