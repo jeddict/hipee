@@ -51,7 +51,7 @@ public class CloudConfigPanel extends LayerConfigPanel<CloudConfigData> {
     public void read() {
         CloudConfigData data = this.getConfigData();
         loadUI(data.getKubernetesConfigData().isEnabled(), kubernetesCheckBox, kubernetesButton);
-        loadUI(data.getKubernetesConfigData().isEnabled(), openshiftCheckBox, openshiftButton);
+        loadUI(data.getOpenshiftConfigData().isEnabled(), openshiftCheckBox, openshiftButton);
     }
 
     public void loadUI(boolean enable, JCheckBox cloudCheckBox, JButton cloudButton) {

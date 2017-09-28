@@ -21,8 +21,11 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.bean.validation.constraints.Constraint;
+import org.netbeans.bean.validation.constraints.Email;
 import org.netbeans.bean.validation.constraints.Max;
 import org.netbeans.bean.validation.constraints.Min;
+import org.netbeans.bean.validation.constraints.NotBlank;
+import org.netbeans.bean.validation.constraints.NotEmpty;
 import org.netbeans.bean.validation.constraints.NotNull;
 import org.netbeans.bean.validation.constraints.Pattern;
 import org.netbeans.bean.validation.constraints.Size;
@@ -70,11 +73,27 @@ public abstract class NGField {
         if (notNull != null && notNull.getSelected()) {
             validationRules.add("required");
         }
+        
+        NotEmpty notEmpty = (NotEmpty) constraints.get(NotEmpty.class.getSimpleName());
+        if (notEmpty != null && notEmpty.getSelected()) {
+            validationRules.add("required");
+        }
+        
+        NotBlank notBlank = (NotBlank) constraints.get(NotBlank.class.getSimpleName());
+        if (notBlank != null && notBlank.getSelected()) {
+            validationRules.add("required");
+        }
 
         Pattern pattern = (Pattern) constraints.get(Pattern.class.getSimpleName());
         if (pattern != null && pattern.getSelected()) {
             validationRules.add("pattern");
             fieldValidateRulesPattern = pattern.getRegexp();
+        }
+        
+        Email email = (Email) constraints.get(Email.class.getSimpleName());
+        if (email != null && email.getSelected()) {
+            validationRules.add("pattern");
+            fieldValidateRulesPattern = "/^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$/";
         }
 
         Min min = (Min) constraints.get(Min.class.getSimpleName());
@@ -101,7 +120,6 @@ public abstract class NGField {
             }
         }
         setFieldValidate(validationRules);
-
     }
 
     /**

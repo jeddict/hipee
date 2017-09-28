@@ -18,14 +18,12 @@ package org.netbeans.jcode.ng.main;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import static java.util.stream.Collectors.toSet;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.Project;
 import static org.netbeans.jcode.core.util.AttributeType.BIGDECIMAL;
@@ -39,7 +37,6 @@ import org.netbeans.jcode.core.util.JavaUtil;
 import static org.netbeans.jcode.core.util.ProjectHelper.getProjectWebRoot;
 import static org.netbeans.jcode.core.util.StringHelper.pluralize;
 import org.netbeans.jcode.i18n.I18NConfigData;
-import org.netbeans.jcode.i18n.Language;
 import static org.netbeans.jcode.i18n.LanguageUtil.isI18nRTLSupportNecessary;
 import org.netbeans.jcode.layer.ConfigData;
 import org.netbeans.jcode.layer.Generator;
@@ -260,6 +257,9 @@ public abstract class AngularGenerator implements Generator {
                 RelationAttribute relationAttribute = (RelationAttribute) attribute;
                 NGRelationship ngRelationship = getNGRelationship(angularAppName, entityAngularJSSuffix, entity, relationAttribute);
                 Entity mappedEntity = relationAttribute.getConnectedEntity();
+                if (mappedEntity.getLabelAttribute() == null && !mappedEntity.getAttributes().getBasic().isEmpty()){
+                    mappedEntity.setLabelAttribute(mappedEntity.getAttributes().getBasic().get(0));
+                }
                 if (mappedEntity.getLabelAttribute() == null || mappedEntity.getLabelAttribute().getName().equals("id")) {
                     handler.warning(NbBundle.getMessage(AngularGenerator.class, "TITLE_Entity_Label_Missing"),
                             NbBundle.getMessage(AngularGenerator.class, "MSG_Entity_Label_Missing", mappedEntity.getClazz()));

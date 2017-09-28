@@ -65,7 +65,13 @@ public final class CloudGenerator extends DockerGenerator implements Generator {
                 boolean generateIngress = "ClusterIP".equals(cloudConfig.getKubernetesConfigData().getServiceType()); // and 'gateway' or 'monolith'
                 String applicationWithNS = getApplicationName() + (generateNamespace ? " --namespace " + cloudConfig.getKubernetesConfigData().getNamespace() : "");
                 handler.info("Kubernetes",
-                        "You can deploy all your apps by running:\n"
+                          "Use this command to start minikube:\n"
+                        + "\t\t " + Console.wrap("minikube start", BOLD)
+                        + "\n\t\t"
+                        + "Use this command to be able to work with the docker daemon:\n"
+                        + "\t\t " + Console.wrap("eval $(minikube docker-env)", BOLD)
+                        + "\n\t\t"
+                        + "You can deploy all your apps by running:\n"
                         + (generateNamespace ? "\t\t " + Console.wrap("kubectl apply -f k8s/namespace.yml", BOLD) + "\n" : "")
                         + "\t\t " + Console.wrap("kubectl apply -f k8s/" + getApplicationName(), BOLD) + "\n"
                         + "\n\t\t"

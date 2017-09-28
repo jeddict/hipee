@@ -36,7 +36,6 @@ import static org.netbeans.jcode.core.util.FileUtil.getFileExt;
 import org.netbeans.jcode.core.util.POMManager;
 import static org.netbeans.jcode.core.util.ProjectHelper.getProjectWebRoot;
 import org.netbeans.jcode.core.util.SourceGroupSupport;
-import org.netbeans.jcode.i18n.Language;
 import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.layer.Technology;
 import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
@@ -112,7 +111,7 @@ public class Angular2Generator extends AngularGenerator {
                 NGEntity ngEntity = getEntity(applicationConfig, entity);
                 if (ngEntity != null) {
                     ngEntities.add(ngEntity);
-                    ngEntity.setUpgrade(
+                    ngEntity.setUpgrade(appConfigData.isCompleteApplication()?false:
                             webRoot.getFileObject("app/entities/" + ngEntity.getEntityFolderName()) != null
                     );
                     EntityConfig entityConfig = getEntityConfig(entity);
