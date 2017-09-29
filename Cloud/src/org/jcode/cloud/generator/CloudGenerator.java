@@ -65,21 +65,23 @@ public final class CloudGenerator extends DockerGenerator implements Generator {
                 boolean generateIngress = "ClusterIP".equals(cloudConfig.getKubernetesConfigData().getServiceType()); // and 'gateway' or 'monolith'
                 String applicationWithNS = getApplicationName() + (generateNamespace ? " --namespace " + cloudConfig.getKubernetesConfigData().getNamespace() : "");
                 handler.info("Kubernetes",
-                          "Use this command to start minikube:\n"
-                        + "\t\t " + Console.wrap("minikube start", BOLD)
+                          "Use this command to start minikube:"
+                        + "\n\t\t " + Console.wrap("minikube start", BOLD)
                         + "\n\t\t"
-                        + "Use this command to be able to work with the docker daemon:\n"
-                        + "\t\t " + Console.wrap("eval $(minikube docker-env)", BOLD)
+                        + "Use this command to be able to work with the docker daemon:"
+                        + "\n\t\t " + Console.wrap("eval $(minikube docker-env)", BOLD)
                         + "\n\t\t"
-                        + "You can deploy all your apps by running:\n"
-                        + (generateNamespace ? "\t\t " + Console.wrap("kubectl apply -f k8s/namespace.yml", BOLD) + "\n" : "")
-                        + "\t\t " + Console.wrap("kubectl apply -f k8s/" + getApplicationName(), BOLD) + "\n"
+                        + "You can deploy all your apps by running:"
+                        + (generateNamespace ? "\n\t\t " + Console.wrap("kubectl apply -f k8s/namespace.yml", BOLD) : "")
+                        + "\n\t\t " + Console.wrap("kubectl apply -f k8s/" + getApplicationName(), BOLD) 
+                        
+                        + "\n"
                         + "\n\t\t"
-                        + "Use this command to find your application's IP addresses:\n"
-                        + "\t\t " + Console.wrap("kubectl get svc " + applicationWithNS, BOLD)
+                        + "Use this command to find your application's IP addresses:"
+                        + "\n\t\t " + Console.wrap("kubectl get svc " + applicationWithNS, BOLD)
                         + "\n\t\t"
-                        + "Use this command to open your application in browser:\n"
-                        + "\t\t " + Console.wrap("minikube service " + applicationWithNS, BOLD)
+                        + "Use this command to open your application in browser:"
+                        + "\n\t\t " + Console.wrap("minikube service " + applicationWithNS, BOLD)
                 );
 
                 handler.progress(Console.wrap(CloudGenerator.class, "MSG_Progress_Kubernetes_Generating", FG_RED, BOLD, UNDERLINE));
@@ -125,11 +127,11 @@ public final class CloudGenerator extends DockerGenerator implements Generator {
                 String dbType = config.getDatabaseType().getDockerImage().toLowerCase();
                 
                 handler.info("OpenShift",
-                        "You can deploy all your apps by running:\n"
-                        + "\t\t " + Console.wrap("ocp/ocp-apply.sh", BOLD) + "\n"
+                        "You can deploy all your apps by running:"
+                        + "\n\t\t " + Console.wrap("ocp/ocp-apply.sh", BOLD) + "\n"
                         + "\n\t\t"
-                        + "Use this command to find your application's IP addresses:\n"
-                        + "\t\t " + Console.wrap("oc get svc " + getApplicationName(), BOLD)
+                        + "Use this command to find your application's IP addresses:"
+                        + "\n\t\t " + Console.wrap("oc get svc " + getApplicationName(), BOLD)
                 );
 
                 Map<String, Object> params = getParams();

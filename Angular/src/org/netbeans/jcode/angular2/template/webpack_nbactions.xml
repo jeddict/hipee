@@ -12,6 +12,7 @@
             </goals>
             <properties>
                 <netbeans.deploy>true</netbeans.deploy>
+                <skipTests>true</skipTests>
             </properties>
             <activatedProfiles>
                 <activatedProfile>webpack</activatedProfile>
@@ -25,6 +26,9 @@
             <goals>
                 <goal>install</goal>
             </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
             <activatedProfiles>
                 <activatedProfile>webpack</activatedProfile>
             </activatedProfiles>
@@ -38,6 +42,9 @@
                 <goal>clean</goal>
                 <goal>install</goal>
             </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
             <activatedProfiles>
                 <activatedProfile>webpack</activatedProfile>
             </activatedProfiles>
@@ -51,6 +58,9 @@
             <goals>
                 <goal>install</goal>
             </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
             <activatedProfiles>
                 <activatedProfile>webpack</activatedProfile>
             </activatedProfiles>
@@ -68,6 +78,7 @@
             <properties>
                 <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
                 <netbeans.deploy>true</netbeans.deploy>
+                <skipTests>true</skipTests>
             </properties>
             <activatedProfiles>
                 <activatedProfile>webpack</activatedProfile>
