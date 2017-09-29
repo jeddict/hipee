@@ -90,11 +90,11 @@ public abstract class NGField {
             fieldValidateRulesPattern = pattern.getRegexp();
         }
         
-        Email email = (Email) constraints.get(Email.class.getSimpleName());
-        if (email != null && email.getSelected()) {
-            validationRules.add("pattern");
-            fieldValidateRulesPattern = "/^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$/";
-        }
+//        Email email = (Email) constraints.get(Email.class.getSimpleName());
+//        if (email != null && email.getSelected()) {
+//            validationRules.add("pattern");
+//            fieldValidateRulesPattern = "/^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$/";
+//        }
 
         Min min = (Min) constraints.get(Min.class.getSimpleName());
         if (min != null && min.getSelected()) {
