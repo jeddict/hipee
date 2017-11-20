@@ -43,7 +43,6 @@ public final class I18NGenerator implements Generator {
 
     private static final String TEMPLATE = "org/netbeans/jcode/i18n/template/";
 
-    @ConfigData
     protected Project project;
 
     @ConfigData
@@ -60,6 +59,11 @@ public final class I18NGenerator implements Generator {
         if (!appConfigData.isCompleteApplication()) {
             return;
         }
+        if(appConfigData.isGateway() || appConfigData.isMonolith()){
+            return;
+        }
+        project = appConfigData.isGateway() ? appConfigData.getGatewayProject() : appConfigData.getTargetProject();
+
         FileObject configRoot = ProjectHelper.getResourceDirectory(project);
 
         NG2ApplicationConfig applicationConfig = new NG2ApplicationConfig(

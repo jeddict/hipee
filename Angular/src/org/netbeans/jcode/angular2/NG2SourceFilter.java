@@ -24,8 +24,8 @@ import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.GATEWAY_APPL
 import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.JWT_AUTHENTICATION_TYPE;
 import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.OAUTH2_AUTHENTICATION_TYPE;
 import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.SESSION_AUTHENTICATION_TYPE;
-import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.SPRING_WEBSOCKET;
 import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.UAA_AUTHENTICATION_TYPE;
+import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.WEBSOCKET;
 
 public class NG2SourceFilter extends ApplicationSourceFilter {
 
@@ -57,12 +57,12 @@ public class NG2SourceFilter extends ApplicationSourceFilter {
 
             
             //ApplicationType
-            dataFilter.put("_gateway.component.html", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_gateway.component.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_gateway.route.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_gateway-route.model.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_gateway-routes.service.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("gateway.json", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("_gateway.component.html", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("_gateway.component.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("_gateway.route.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("_gateway-route.model.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("_gateway-routes.service.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("gateway.json", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
 
             //Social Login
             dataFilter.put("_social-register.component.html", () -> config.isEnableSocialSignIn());
@@ -75,13 +75,13 @@ public class NG2SourceFilter extends ApplicationSourceFilter {
             dataFilter.put("social.json", () -> config.isEnableSocialSignIn());  
 
             //WebSocket
-            dataFilter.put("_tracker.component.html", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));//admin
-            dataFilter.put("_tracker.component.ts", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));//admin
-            dataFilter.put("_tracker.route.ts", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));//admin
-            dataFilter.put("_tracker.service.ts", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));//shared
-            dataFilter.put("_window.service.ts", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));//shared
-            dataFilter.put("tracker.json", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));//shared
-            dataFilter.put("_mock-tracker.service.ts", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));//shared
+            dataFilter.put("_tracker.component.html", () -> WEBSOCKET.equals(config.getWebsocket()));//admin
+            dataFilter.put("_tracker.component.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//admin
+            dataFilter.put("_tracker.route.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//admin
+            dataFilter.put("_tracker.service.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
+            dataFilter.put("_window.service.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
+            dataFilter.put("tracker.json", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
+            dataFilter.put("_mock-tracker.service.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
 
             //Language
             dataFilter.put("_jhi-translate.directive.ts", () -> config.isEnableTranslation());//shared/language

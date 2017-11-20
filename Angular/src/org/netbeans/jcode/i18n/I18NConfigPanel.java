@@ -148,7 +148,7 @@ public class I18NConfigPanel extends LayerConfigPanel<I18NConfigData> {
         otherLangs_ScrollPane.setHorizontalScrollBar(null);
 
         otherLangs_LayeredPane.setToolTipText(org.openide.util.NbBundle.getMessage(I18NConfigPanel.class, "I18NConfigPanel.otherLangs_LayeredPane.toolTipText")); // NOI18N
-        otherLangs_LayeredPane.setLayout(new java.awt.GridLayout(8, 5));
+        otherLangs_LayeredPane.setLayout(new java.awt.GridLayout(9, 4));
         otherLangs_ScrollPane.setViewportView(otherLangs_LayeredPane);
 
         root_LayeredPane.add(otherLangs_ScrollPane, java.awt.BorderLayout.CENTER);

@@ -42,7 +42,7 @@ public abstract class NGApplicationConfig {
     public static final String GATEWAY_APPLICATION_TYPE = "gateway";
     public static final String MONOLITH_APPLICATION_TYPE = "monolith";
 
-    public static final String SPRING_WEBSOCKET = "spring-websocket";
+    public static final String WEBSOCKET = "websocket";
 
     public static final String ELASTIC_SEARCH_ENGINE = "elasticsearch";
     public static final String SQL_DATABASE_TYPE = "sql";
@@ -66,7 +66,10 @@ public abstract class NGApplicationConfig {
     private String applicationPath;//rest path
     private String buildTool;
     private String clientPackageManager;
-    private String applicationType;//gateway , monolith
+    private String applicationType;
+    private String microserviceName;
+    
+    private Map<String,String> locals = new HashMap<>();
 
     protected String baseName;
     private String capitalizedBaseName;
@@ -164,6 +167,26 @@ public abstract class NGApplicationConfig {
             applicationType = MONOLITH_APPLICATION_TYPE;
         }
         return applicationType;
+    }
+    
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    /**
+     * @return the microserviceName
+     */
+    public String getMicroserviceName() {
+        return microserviceName;
+    }
+
+    /**
+     * @param microserviceName the microserviceName to set
+     */
+    public void setMicroserviceName(String microserviceName) {
+        this.microserviceName = microserviceName;
+        locals.put("microserviceName", microserviceName);
     }
 
     /**

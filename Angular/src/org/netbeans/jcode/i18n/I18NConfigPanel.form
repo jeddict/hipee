@@ -155,8 +155,8 @@
               </Properties>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
-                <Property name="columns" type="int" value="5"/>
-                <Property name="rows" type="int" value="8"/>
+                <Property name="columns" type="int" value="4"/>
+                <Property name="rows" type="int" value="9"/>
               </Layout>
             </Container>
           </SubComponents>

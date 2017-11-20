@@ -35,6 +35,7 @@ import org.netbeans.jcode.core.util.JavaSourceHelper;
 import static org.netbeans.jcode.core.util.JavaSourceHelper.getSimpleClassName;
 import org.netbeans.jcode.core.util.JavaUtil;
 import static org.netbeans.jcode.core.util.ProjectHelper.getProjectWebRoot;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
 import static org.netbeans.jcode.core.util.StringHelper.pluralize;
 import org.netbeans.jcode.i18n.I18NConfigData;
 import static org.netbeans.jcode.i18n.LanguageUtil.isI18nRTLSupportNecessary;
@@ -44,6 +45,9 @@ import static org.netbeans.jcode.parser.ejs.EJSUtil.*;
 import org.netbeans.jcode.ng.main.domain.ApplicationSourceFilter;
 import org.netbeans.jcode.ng.main.domain.EntityConfig;
 import org.netbeans.jcode.ng.main.domain.NGApplicationConfig;
+import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.GATEWAY_APPLICATION_TYPE;
+import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.MICROSERVICE_APPLICATION_TYPE;
+import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.MONOLITH_APPLICATION_TYPE;
 import org.netbeans.jcode.ng.main.domain.NGEntity;
 import org.netbeans.jcode.ng.main.domain.NGField;
 import org.netbeans.jcode.ng.main.domain.NGRelationship;
@@ -79,13 +83,15 @@ public abstract class AngularGenerator implements Generator {
     protected I18NConfigData i18nData;
 
     @ConfigData
-    protected Project project;
-
-    @ConfigData
     protected ApplicationConfigData appConfigData;
     
     @ConfigData
     protected ProgressHandler handler;
+    
+    protected Project project;
+    protected FileObject projectRoot;
+    protected FileObject testRoot;
+    protected FileObject webRoot;
 
     protected List<String> entityScriptFiles;
     protected List<String> scriptFiles;
@@ -93,6 +99,11 @@ public abstract class AngularGenerator implements Generator {
 
     @Override
     public void execute() throws IOException {
+        project = appConfigData.isMicroservice() || appConfigData.isGateway()? 
+                    appConfigData.getGatewayProject(): appConfigData.getTargetProject();
+        testRoot = SourceGroupSupport.getTestSourceGroup(project).getRootFolder().getParent();//test/java => ../java
+        webRoot = getProjectWebRoot(project);
+        projectRoot = project.getProjectDirectory();
         entityScriptFiles = new ArrayList<>();
         scriptFiles = new ArrayList<>();
         generateClientSideComponent();
@@ -103,8 +114,6 @@ public abstract class AngularGenerator implements Generator {
     protected abstract void generateClientSideComponent();
 
     protected void generateNgEntityi18nResource(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter, NGEntity entity) throws IOException {
-        FileObject webRoot = getProjectWebRoot(project);
-
         EJSParser parser = new EJSParser();
         parser.addContext(applicationConfig);
         parser.addContext(entity);
@@ -128,7 +137,6 @@ public abstract class AngularGenerator implements Generator {
     }
     
     protected void generateNgEnumi18nResource(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
-        FileObject webRoot = getProjectWebRoot(project);
         Set<String> languages = applicationConfig.getLanguages();
         for (Entry<String, List<String>> entry : applicationConfig.getEnumTypes().entrySet()) {
             String enumTypeFQ = entry.getKey();
@@ -147,7 +155,6 @@ public abstract class AngularGenerator implements Generator {
     }
 
     protected void generateNgApplicationi18nResource(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
-        FileObject webRoot = getProjectWebRoot(project);
         EJSParser parser = new EJSParser();
         parser.addContext(applicationConfig);
         Set<String> languages = applicationConfig.getLanguages();
@@ -199,11 +206,16 @@ public abstract class AngularGenerator implements Generator {
         applicationConfig.setRestPackage(restData.getPackage());
         applicationConfig.setEnableDocs(restData.isDocsEnable());
         applicationConfig.setClientFramework(getClientFramework());
-        applicationConfig.setSkipClient(false);
-        applicationConfig.setSkipServer(false);
-        
         applicationConfig.setClientPackageManager(ngData.getClientPackager().toString());
         applicationConfig.setProtractorTests(ngData.isProtractorTest());
+        
+        applicationConfig.setApplicationType(
+                appConfigData.isMonolith() ? MONOLITH_APPLICATION_TYPE : GATEWAY_APPLICATION_TYPE
+        );
+        if (appConfigData.isMicroservice()) {
+            //microservice context path + application path
+            applicationConfig.setMicroserviceName(appConfigData.getTargetContextPath()+ '/' + restData.getRestConfigData().getApplicationPath());
+        }
         return applicationConfig;
     }
     

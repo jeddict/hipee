@@ -119,7 +119,6 @@ public class Angular1Generator extends AngularGenerator {
 
     protected void generateNgEntity(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter,
             EntityConfig config, NGEntity entity, Map<String, String> templateLib) throws IOException {
-        FileObject webRoot = getProjectWebRoot(project);
         EJSParser parser = new EJSParser();
         parser.addContext(applicationConfig);
         parser.addContext(entity);
@@ -153,10 +152,7 @@ public class Angular1Generator extends AngularGenerator {
     }
 
     protected void generateNgLocaleResource(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
-        FileObject webRoot = getProjectWebRoot(project);
-
         Map<String, Object> data = new HashMap();//todo remove
-
         EJSParser parser = new EJSParser();
         parser.addContext(applicationConfig);
         parser.addContext(data);
@@ -173,8 +169,6 @@ public class Angular1Generator extends AngularGenerator {
     }
 
     private void generateNgHome(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
-        FileObject webRoot = getProjectWebRoot(project);
-
         Map<String, Object> data = new HashMap();
         data.put("entityScriptFiles", entityScriptFiles);
         scriptFiles.remove(MODULE_JS);
@@ -186,15 +180,13 @@ public class Angular1Generator extends AngularGenerator {
         parser.addContext(data);
 
         copyDynamicFile(parser.getParserManager(), getTemplatePath() + "_index.html", webRoot, "index.html", handler);
-        copyDynamicFile(parser.getParserManager(), getTemplatePath() + "_bower.json", project.getProjectDirectory(), "bower.json", handler);
+        copyDynamicFile(parser.getParserManager(), getTemplatePath() + "_bower.json", projectRoot, "bower.json", handler);
         handler.append(Console.wrap(AngularGenerator.class, "MSG_Copying_Bower_Lib_Files", FG_RED, BOLD));
         FileUtil.copyStaticResource(getTemplatePath() + "bower_components.zip", webRoot, null, handler);
     }
 
     protected void generateNgApplication(NGApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
         handler.append(Console.wrap(AngularGenerator.class, "MSG_Copying_Application_Files", FG_RED, BOLD, UNDERLINE));
-        FileObject webRoot = getProjectWebRoot(project);
-
         EJSParser parser = new EJSParser();
         parser.addContext(applicationConfig);
 

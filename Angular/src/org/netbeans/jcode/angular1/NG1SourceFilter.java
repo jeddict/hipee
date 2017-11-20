@@ -25,8 +25,8 @@ import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.GATEWAY_APPL
 import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.JWT_AUTHENTICATION_TYPE;
 import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.OAUTH2_AUTHENTICATION_TYPE;
 import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.SESSION_AUTHENTICATION_TYPE;
-import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.SPRING_WEBSOCKET;
 import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.UAA_AUTHENTICATION_TYPE;
+import static org.netbeans.jcode.ng.main.domain.NGApplicationConfig.WEBSOCKET;
 
 public class NG1SourceFilter extends ApplicationSourceFilter {
 
@@ -60,10 +60,10 @@ public class NG1SourceFilter extends ApplicationSourceFilter {
             dataFilter.put("_language.service.js", () -> config.isEnableTranslation());
 
             //ApplicationType
-            dataFilter.put("gateway.html", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_gateway.state.js", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_gateway.controller.js", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_gateway.routes.service.js", () -> GATEWAY_APPLICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("gateway.html", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("_gateway.state.js", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("_gateway.controller.js", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("_gateway.routes.service.js", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
 
             //Social Login
             dataFilter.put("_social.html", () -> config.isEnableSocialSignIn());
@@ -75,10 +75,10 @@ public class NG1SourceFilter extends ApplicationSourceFilter {
             dataFilter.put("_social-auth.controller.js", () -> config.isEnableSocialSignIn() && JWT_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
 
             //WebSocket
-            dataFilter.put("tracker.html", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));
-            dataFilter.put("_tracker.state.js", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));
-            dataFilter.put("_tracker.controller.js", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));
-            dataFilter.put("_tracker.service.js", () -> SPRING_WEBSOCKET.equals(config.getWebsocket()));
+            dataFilter.put("tracker.html", () -> WEBSOCKET.equals(config.getWebsocket()));
+            dataFilter.put("_tracker.state.js", () -> WEBSOCKET.equals(config.getWebsocket()));
+            dataFilter.put("_tracker.controller.js", () -> WEBSOCKET.equals(config.getWebsocket()));
+            dataFilter.put("_tracker.service.js", () -> WEBSOCKET.equals(config.getWebsocket()));
 
             //Metrics
             dataFilter.put("_metrics.controller.js", () -> config.isEnableMetrics());
