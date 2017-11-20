@@ -15,8 +15,8 @@
  */
 package org.netbeans.jcode.angular1;
 
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import static org.netbeans.jcode.core.util.StringHelper.firstLower;

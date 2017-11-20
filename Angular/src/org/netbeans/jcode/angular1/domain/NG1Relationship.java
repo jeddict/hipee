@@ -15,7 +15,7 @@
  */
 package org.netbeans.jcode.angular1.domain;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.netbeans.jcode.core.util.StringHelper.kebabCase;
 import static org.netbeans.jcode.core.util.StringHelper.trim;
 import org.netbeans.jcode.ng.main.domain.NGRelationship;

@@ -15,7 +15,7 @@
  */
 package org.jcode.cloud.generator;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jcode.window.GenericDialog;
 import org.openide.util.NbBundle;
 

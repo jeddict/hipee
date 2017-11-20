@@ -16,7 +16,7 @@
 package org.jcode.cloud.generator;
 
 import java.io.Serializable;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
