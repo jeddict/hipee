@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.cloud.generator;
 
-import io.github.jeddict.jcode.stack.config.data.LayerConfigData;
+import io.github.jeddict.jcode.LayerConfigData;
 import java.util.Arrays;
 import java.util.List;
 
