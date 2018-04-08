@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import org.openide.util.Exceptions;
 
 /**
@@ -36,22 +37,15 @@ import org.openide.util.Exceptions;
  */
 public class ReactEntity extends BaseEntity {
 
-    private String entityReactName;
+    private final String entityReactName;
     private final Map<String, List<BaseRelationship>> differentRelationships = new HashMap<>();
 
-    public ReactEntity(String name, String entityReactSuffix) {
-        super(name, entityReactSuffix);
-        String entityNameSpinalCased = kebabCase(firstLower(name));
-        String entityNamePluralizedAndSpinalCased = kebabCase(firstLower(pluralize(name)));
-
-        this.entityFileName = kebabCase(this.entityNameCapitalized + firstUpper(entityReactSuffix));
-        this.entityPluralFileName = entityNamePluralizedAndSpinalCased + entityReactSuffix;
-        this.entityServiceFileName = this.entityFileName;
+    public ReactEntity(String name, String entityReactSuffix, String appName, String clientRootFolder) {
+        super(name, entityReactSuffix, appName, clientRootFolder);
         this.entityReactName = this.entityClass + firstUpper(camelCase(entityReactSuffix));
         this.entityStateName = kebabCase(entityReactName);
         this.entityUrl = this.entityStateName;
-        this.entityTranslationKey = this.entityInstance;
-        this.entityTranslationKeyMenu = camelCase(this.entityStateName);
+        this.entityTranslationKeyMenu = camelCase(isNotEmpty(clientRootFolder) ? clientRootFolder+"-"+entityStateName : entityStateName);
     }
 
     @Override

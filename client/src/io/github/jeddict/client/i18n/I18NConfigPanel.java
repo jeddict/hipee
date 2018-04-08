@@ -15,7 +15,6 @@
  */
 package io.github.jeddict.client.i18n;
 
-import io.github.jeddict.jcode.stack.config.panel.LayerConfigPanel;
 import java.awt.event.ItemEvent;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +28,7 @@ import javax.swing.JCheckBox;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import static io.github.jeddict.client.i18n.LanguageUtil.getAllSupportedLanguageOptions;
+import io.github.jeddict.jcode.LayerConfigPanel;
 import org.netbeans.modeler.properties.spec.ComboBoxValue;
 import org.netbeans.modeler.search.AutocompleteJComboBox;
 

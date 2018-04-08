@@ -27,12 +27,14 @@ import io.github.jeddict.jpa.spec.ManyToOne;
 import io.github.jeddict.jpa.spec.OneToMany;
 import io.github.jeddict.jpa.spec.OneToOne;
 import io.github.jeddict.jpa.spec.extend.RelationAttribute;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public abstract class BaseRelationship {
 
@@ -45,46 +47,49 @@ public abstract class BaseRelationship {
 
     private String name;
 
-    private String relationshipType;//MANY_TO_ONE,ONE_TO_ONE ,MANY_TO_MANY
+    private String relationshipType;//MANY_TO_ONE, ONE_TO_ONE ,MANY_TO_MANY
     private boolean ownerSide;
 
-    private String relationshipName;
-    private String relationshipFieldName;
-    private String relationshipFieldNamePlural;
+    private final String relationshipName;
+    private final String relationshipFieldName;
+    private final String relationshipFieldNamePlural;
     private String relationshipNameHumanized;
-    private String relationshipNamePlural;
+    private final String relationshipNamePlural;
 
-    private String otherEntityName;
-    private String otherEntityNameCapitalized;
-    private String otherEntityNamePlural;
-    private String otherEntityNameCapitalizedPlural;
+    private String otherEntityRelationshipNamePlural;
+    private final String otherEntityName;
+    private final String otherEntityNameCapitalized;
+    private final String otherEntityNamePlural;
+    private final String otherEntityNameCapitalizedPlural;
 
     private String otherEntityField;
-    private String otherEntityFieldCapitalized;
+    private final String otherEntityFieldCapitalized;
     private String otherEntityRelationshipName;
 
-    private String otherEntityAngularName;
-    private String otherEntityRelationshipNameCapitalized;
-    private String otherEntityRelationshipNameCapitalizedPlural;
+    private final String otherEntityAngularName;
+    private final String otherEntityRelationshipNameCapitalized;
+    private final String otherEntityRelationshipNameCapitalizedPlural;
+    private final String otherEntityStateName;
 
-    private String relationshipNameCapitalized;
-    private String relationshipNameCapitalizedPlural;
+    private final String relationshipNameCapitalized;
+    private final String relationshipNameCapitalizedPlural;
 
     private boolean relationshipRequired;
-    private List<String> relationshipValidateRules = new ArrayList<>();
+    private List<String> relationshipValidateRules;
     private boolean relationshipValidate;
 
-    private String otherEntityModuleName;
+    private final String otherEntityModuleName;
+    private String otherEntityFileName;
+
+    private String otherEntityClientRootFolder;
+    private String otherEntityModelName;
+    private String otherEntityPath;
     private String otherEntityModulePath;
     protected String entitySuffix;
 
-    public BaseRelationship(String appName, String entitySuffix, Entity entity, RelationAttribute relation) {
+    public BaseRelationship(String appName, String entitySuffix, Entity entity, RelationAttribute relation, String clientRootFolder) {
         this.entitySuffix = entitySuffix;
-        this.relationshipName = StringUtils.isEmpty(relation.getJsonbProperty())
-                ? relation.getName() : relation.getJsonbProperty();
-        this.ownerSide = relation.isOwner();
-        this.otherEntityName = firstLower(relation.getConnectedEntity().getClazz());
-        this.otherEntityRelationshipName = relation.getConnectedAttributeName();
+        this.relationshipName = isEmpty(relation.getJsonbProperty()) ? relation.getName() : relation.getJsonbProperty();
         if (relation instanceof ManyToMany) {
             relationshipType = MANY_TO_MANY;
         } else if (relation instanceof OneToMany) {
@@ -95,7 +100,89 @@ public abstract class BaseRelationship {
             relationshipType = ONE_TO_ONE;
         }
         this.name = entity.getClazz();
-        setOtherEntityModule(appName);
+        this.ownerSide = relation.isOwner();
+        this.otherEntityName = firstLower(relation.getConnectedEntity().getClazz());
+        
+        this.otherEntityRelationshipName = relation.getConnectedAttributeName();
+        if (otherEntityRelationshipName == null) {
+            if (ONE_TO_MANY.equals(relationshipType)
+                    || (MANY_TO_MANY.equals(relationshipType) && ownerSide == false)
+                    || (ONE_TO_ONE.equals(relationshipType))) {
+                otherEntityRelationshipName = firstLower(getName());//warning
+                LOG.log(Level.WARNING, "otherEntityRelationshipName is missing in {0} for relationship , using {1} as fallback", new Object[]{this.getName(), firstLower(this.getName())});
+            } else {
+                otherEntityRelationshipName = EMPTY;
+            }
+        }
+        
+        relationshipNameCapitalized = firstUpper(relationshipName);
+        if (relationshipName.length() > 1) {
+            relationshipNameCapitalizedPlural = pluralize(firstUpper(relationshipName));
+        } else {
+            relationshipNameCapitalizedPlural = firstUpper(pluralize(relationshipName));
+        }
+        relationshipNameHumanized = startCase(relationshipName);
+        relationshipNamePlural = pluralize(relationshipName);
+        relationshipFieldName = firstLower(relationshipName);
+        relationshipFieldNamePlural = pluralize(firstLower(relationshipName));
+        
+        if (MANY_TO_ONE.equals(relationshipType)
+                || (MANY_TO_MANY.equals(relationshipType) && ownerSide == true)
+                || (ONE_TO_ONE.equals(relationshipType) && ownerSide == true)) {
+            otherEntityField = "id";
+            LOG.log(Level.WARNING, "otherEntityField is missing in {0} for relationship , using id as fallback", this.getName());
+        }
+
+        if (ONE_TO_MANY.equals(relationshipType)
+                || (MANY_TO_MANY.equals(relationshipType) && ownerSide == false)
+                || (ONE_TO_ONE.equals(relationshipType) && "user".equals(otherEntityName.toLowerCase()))) {
+            otherEntityRelationshipNamePlural = pluralize(otherEntityRelationshipName);
+        }
+        otherEntityRelationshipNameCapitalized = firstUpper(otherEntityRelationshipName);
+        otherEntityRelationshipNameCapitalizedPlural = pluralize(firstUpper(otherEntityRelationshipName));
+
+        otherEntityNamePlural = pluralize(otherEntityName);
+        otherEntityNameCapitalized = firstUpper(otherEntityName);
+        if (!"User".equals(otherEntityNameCapitalized)) {
+            String otherEntitySuffix = this.entitySuffix != null ? entitySuffix : EMPTY;
+            this.otherEntityAngularName = firstUpper(this.otherEntityName) + firstUpper(camelCase(otherEntitySuffix));
+        } else {
+            this.otherEntityAngularName = "User";
+        }
+        otherEntityNameCapitalizedPlural = pluralize(firstUpper(otherEntityName));
+
+        otherEntityFieldCapitalized = otherEntityField != null ? firstUpper(otherEntityField) : null;
+        otherEntityStateName = kebabCase(otherEntityAngularName);
+
+        String entityParentPathAddition = BaseEntity.getEntityParentPathAddition(clientRootFolder);
+        if (!"User".equals(otherEntityNameCapitalized)) {
+            this.otherEntityModuleName = appName + this.otherEntityNameCapitalized + "Module";
+            this.otherEntityFileName = kebabCase(this.otherEntityAngularName);
+            this.otherEntityClientRootFolder = clientRootFolder;//otherEntityData.clientRootFolder;
+            this.otherEntityModulePath = kebabCase(firstLower(otherEntityName));
+
+            if (isNotEmpty(otherEntityClientRootFolder)) {
+                if (StringUtils.equals(clientRootFolder, otherEntityClientRootFolder)) {
+                    this.otherEntityModulePath = this.otherEntityFileName;
+                } else {
+                    this.otherEntityModulePath = (isNotEmpty(entityParentPathAddition) ? entityParentPathAddition + '/' : "") + otherEntityClientRootFolder + '/' + otherEntityFileName;
+                }
+                this.otherEntityModelName = otherEntityClientRootFolder + '/' + otherEntityFileName;
+                this.otherEntityPath = otherEntityClientRootFolder + "/" + this.otherEntityFileName;
+            } else {
+                this.otherEntityModulePath = (isNotEmpty(entityParentPathAddition) ? entityParentPathAddition + '/' : "") + otherEntityFileName;
+                this.otherEntityModelName = this.otherEntityFileName;
+                this.otherEntityPath = this.otherEntityFileName;
+            }
+        } else {
+            this.otherEntityModuleName = appName + "SharedModule";
+            this.otherEntityModulePath = "app/core";
+        }
+        
+        this.relationshipValidateRules = Collections.emptyList();
+        if (!relationshipValidateRules.isEmpty() && relationshipValidateRules.contains("required")) {
+            relationshipValidate = relationshipRequired = true;//validation
+        }
     }
 
     /**
@@ -190,27 +277,13 @@ public abstract class BaseRelationship {
      * @return the relationshipName
      */
     public String getRelationshipName() {
-        if (relationshipName == null) {
-            relationshipName = getOtherEntityName();
-            LOG.log(Level.WARNING, "relationshipName is missing in {0} for relationship using {1} as fallback", new Object[]{getName(), otherEntityName});
-        }
         return relationshipName;
-    }
-
-    /**
-     * @param relationshipName the relationshipName to set
-     */
-    public void setRelationshipName(String relationshipName) {
-        this.relationshipName = relationshipName;
     }
 
     /**
      * @return the relationshipFieldName
      */
     public String getRelationshipFieldName() {
-        if (relationshipFieldName == null) {
-            relationshipFieldName = firstLower(relationshipName);
-        }
         return relationshipFieldName;
     }
 
@@ -218,10 +291,6 @@ public abstract class BaseRelationship {
      * @return the relationshipFieldNamePlural
      */
     public String getRelationshipFieldNamePlural() {
-        if (relationshipFieldNamePlural == null) {
-            relationshipFieldNamePlural = pluralize(firstLower(relationshipName));
-
-        }
         return relationshipFieldNamePlural;
     }
 
@@ -229,9 +298,6 @@ public abstract class BaseRelationship {
      * @return the relationshipNameHumanized
      */
     public String getRelationshipNameHumanized() {
-        if (relationshipNameHumanized == null) {
-            relationshipNameHumanized = startCase(relationshipName);
-        }
         return relationshipNameHumanized;
     }
 
@@ -241,14 +307,11 @@ public abstract class BaseRelationship {
     public void setRelationshipNameHumanized(String relationshipNameHumanized) {
         this.relationshipNameHumanized = relationshipNameHumanized;
     }
-
+    
     /**
      * @return the relationshipNamePlural
      */
     public String getRelationshipNamePlural() {
-        if (relationshipNamePlural == null) {
-            relationshipNamePlural = pluralize(relationshipName);
-        }
         return relationshipNamePlural;
     }
 
@@ -256,9 +319,6 @@ public abstract class BaseRelationship {
      * @return the relationshipNameCapitalized
      */
     public String getRelationshipNameCapitalized() {
-        if (relationshipNameCapitalized == null) {
-            relationshipNameCapitalized = firstUpper(relationshipName);
-        }
         return relationshipNameCapitalized;
     }
 
@@ -266,13 +326,6 @@ public abstract class BaseRelationship {
      * @return the relationshipNameCapitalizedPlural
      */
     public String getRelationshipNameCapitalizedPlural() {
-        if (relationshipNameCapitalizedPlural == null) {
-            if (relationshipName.length() > 1) {
-                relationshipNameCapitalizedPlural = pluralize(firstUpper(relationshipName));
-            } else {
-                relationshipNameCapitalizedPlural = firstUpper(pluralize(relationshipName));
-            }
-        }
         return relationshipNameCapitalizedPlural;
     }
 
@@ -280,9 +333,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityName
      */
     public String getOtherEntityName() {
-        if (otherEntityName == null) {
-            throw new IllegalStateException("otherEntityName is missing in " + getName() + " for relationship ");
-        }
         return otherEntityName;
     }
 
@@ -290,12 +340,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityField
      */
     public String getOtherEntityField() {
-        if (otherEntityField == null && (MANY_TO_ONE.equals(relationshipType)
-                || (MANY_TO_MANY.equals(relationshipType) && ownerSide == true)
-                || (ONE_TO_ONE.equals(relationshipType) && ownerSide == true))) {
-            otherEntityField = "id";
-            LOG.log(Level.WARNING, "otherEntityField is missing in {0} for relationship , using id as fallback", this.getName());
-        }
         return otherEntityField;
     }
 
@@ -310,10 +354,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityFieldCapitalized
      */
     public String getOtherEntityFieldCapitalized() {
-        if (otherEntityFieldCapitalized == null) {
-            String OtherEntityField = getOtherEntityField();
-            otherEntityFieldCapitalized = OtherEntityField != null ? firstUpper(OtherEntityField) : null;
-        }
         return otherEntityFieldCapitalized;
     }
 
@@ -321,16 +361,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityRelationshipName
      */
     public String getOtherEntityRelationshipName() {
-        if (otherEntityRelationshipName == null
-                && (ONE_TO_MANY.equals(relationshipType)
-                || (MANY_TO_MANY.equals(relationshipType) && ownerSide == false)
-                || (ONE_TO_ONE.equals(relationshipType)))) {
-            otherEntityRelationshipName = firstLower(getName());//warning
-            LOG.log(Level.WARNING, "otherEntityRelationshipName is missing in {0} for relationship , using {1} as fallback", new Object[]{this.getName(), firstLower(this.getName())});
-        }
-        if(otherEntityRelationshipName == null){
-            return EMPTY;
-        }
         return otherEntityRelationshipName;
     }
 
@@ -338,9 +368,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityNameCapitalized
      */
     public String getOtherEntityNameCapitalized() {
-        if (otherEntityNameCapitalized == null) {
-            otherEntityNameCapitalized = firstUpper(otherEntityName);
-        }
         return otherEntityNameCapitalized;
     }
 
@@ -348,9 +375,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityNamePlural
      */
     public String getOtherEntityNamePlural() {
-        if (otherEntityNamePlural == null) {
-            otherEntityNamePlural = pluralize(otherEntityName);
-        }
         return otherEntityNamePlural;
     }
 
@@ -358,9 +382,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityNameCapitalizedPlural
      */
     public String getOtherEntityNameCapitalizedPlural() {
-        if (otherEntityNameCapitalizedPlural == null) {
-            otherEntityNameCapitalizedPlural = pluralize(firstUpper(otherEntityName));
-        }
         return otherEntityNameCapitalizedPlural;
     }
 
@@ -368,14 +389,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityAngularName
      */
     public String getOtherEntityAngularName() {
-        if (this.otherEntityAngularName == null) {
-            if (!"User".equals(this.getOtherEntityNameCapitalized())) {
-                String otherEntitySuffix = this.entitySuffix != null ? entitySuffix : EMPTY;
-                this.otherEntityAngularName = firstUpper(this.otherEntityName) + firstUpper(camelCase(otherEntitySuffix));
-            } else {
-                this.otherEntityAngularName = "User";
-            }
-        }
         return otherEntityAngularName;
     }
 
@@ -383,9 +396,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityRelationshipNameCapitalized
      */
     public String getOtherEntityRelationshipNameCapitalized() {
-        if (otherEntityRelationshipNameCapitalized == null) {
-            otherEntityRelationshipNameCapitalized = firstUpper(getOtherEntityRelationshipName());
-        }
         return otherEntityRelationshipNameCapitalized;
     }
 
@@ -393,9 +403,6 @@ public abstract class BaseRelationship {
      * @return the otherEntityRelationshipNameCapitalizedPlural
      */
     public String getOtherEntityRelationshipNameCapitalizedPlural() {
-        if (otherEntityRelationshipNameCapitalizedPlural == null) {
-            otherEntityRelationshipNameCapitalizedPlural = pluralize(firstUpper(getOtherEntityRelationshipName()));
-        }
         return otherEntityRelationshipNameCapitalizedPlural;
     }
 
@@ -404,6 +411,10 @@ public abstract class BaseRelationship {
      */
     public String getOtherEntityModuleName() {
         return otherEntityModuleName;
+    }
+    
+    public String getOtherEntityFileName() {
+        return otherEntityFileName;
     }
 
     /**
@@ -416,23 +427,29 @@ public abstract class BaseRelationship {
     /**
      * @return the otherEntityRelationshipNamePlural
      */
-    public abstract String getOtherEntityRelationshipNamePlural();
+    public String getOtherEntityRelationshipNamePlural() {
+        return otherEntityRelationshipNamePlural;
+    }
 
     /**
      * @return the otherEntityStateName
      */
-    public abstract String getOtherEntityStateName();
-
-    private void setOtherEntityModule(String angularAppName) {
-        if (!"User".equals(this.getOtherEntityNameCapitalized())) {
-            this.otherEntityModuleName = angularAppName + this.getOtherEntityNameCapitalized() + "Module";
-            this.otherEntityModulePath = kebabCase(firstLower(this.otherEntityName));
-        } else {
-            this.otherEntityModuleName = angularAppName + "SharedModule";
-            this.otherEntityModulePath = "../shared";
-        }
+    public String getOtherEntityStateName(){
+        return otherEntityStateName;
+    }
+    
+    public String getOtherEntityClientRootFolder() {
+        return otherEntityClientRootFolder;
     }
 
+    public String getOtherEntityModelName() {
+        return otherEntityModelName;
+    }
+        
+    public String getOtherEntityPath() {
+        return otherEntityPath;
+    }
+    
     protected String pluralize(String data) {
         if (relationshipType.equals(ONE_TO_MANY) || relationshipType.equals(MANY_TO_MANY)) {
             return data;

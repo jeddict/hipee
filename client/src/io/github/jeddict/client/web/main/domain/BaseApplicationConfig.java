@@ -69,6 +69,7 @@ public abstract class BaseApplicationConfig {
     private String clientPackageManager;
     private String applicationType;
     private String microserviceName;
+    private String serviceDiscoveryType;
     
     private final Map<String,String> locals = new HashMap<>();
 
@@ -114,13 +115,14 @@ public abstract class BaseApplicationConfig {
     private boolean skipUserManagement;
     private boolean skipClient;
     private boolean skipServer;
+    private boolean skipCommitHook;
 
     private boolean enableMetrics;
     private boolean enableLogs;
-    private boolean enableHealth = true;
-    private boolean enableConfiguration = true;
-    private boolean enableAudits = true;
-    private boolean enableProfile = true;
+    private boolean enableHealth;
+    private boolean enableConfiguration;
+    private boolean enableAudits;
+    private boolean enableProfile;
     private boolean enableDocs;
     
     private final Map<String,List<String>> enumTypes = new HashMap<>();
@@ -220,6 +222,14 @@ public abstract class BaseApplicationConfig {
         locals.put("microserviceName", microserviceName);
     }
 
+    public String getServiceDiscoveryType() {
+        return serviceDiscoveryType;
+    }
+
+    public void setServiceDiscoveryType(String serviceDiscoveryType) {
+        this.serviceDiscoveryType = serviceDiscoveryType;
+    }
+    
     /**
      * @return the enableTranslation
      */
@@ -699,6 +709,14 @@ public abstract class BaseApplicationConfig {
      */
     public void setSkipServer(boolean skipServer) {
         this.skipServer = skipServer;
+    }
+
+    public boolean isSkipCommitHook() {
+        return skipCommitHook;
+    }
+
+    public void setSkipCommitHook(boolean skipCommitHook) {
+        this.skipCommitHook = skipCommitHook;
     }
 
     public String getSrcDir() {

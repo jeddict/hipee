@@ -7,22 +7,6 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
-                    <code-name-base>org.netbeans.api.web.webmodule</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>1.10</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
-                    <code-name-base>io.github.jeddict.jcode.core</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>4.3</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
                     <code-name-base>io.github.jeddict.javaee</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -31,7 +15,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>io.github.jeddict.rest</code-name-base>
+                    <code-name-base>io.github.jeddict.jcode.core</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -52,6 +36,22 @@
                     <compile-dependency/>
                     <run-dependency>
                         <specification-version>2.5.3</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>io.github.jeddict.rest</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>4.3</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.api.web.webmodule</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.10</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -87,6 +87,24 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.modules.extexecution</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>2</release-version>
+                        <specification-version>1.48.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modules.extexecution.base</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>2</release-version>
+                        <implementation-version/>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.j2ee.core</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -113,12 +131,29 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.modules.maven</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>2</release-version>
+                        <implementation-version/>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.projectapi</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
                         <specification-version>1.65.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modules.web.common.ui</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <implementation-version/>
                     </run-dependency>
                 </dependency>
                 <dependency>

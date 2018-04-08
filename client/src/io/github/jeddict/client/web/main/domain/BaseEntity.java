@@ -27,13 +27,15 @@ import static io.github.jeddict.client.web.main.domain.BaseRelationship.MANY_TO_
 import static io.github.jeddict.client.web.main.domain.BaseRelationship.MANY_TO_ONE;
 import static io.github.jeddict.client.web.main.domain.BaseRelationship.ONE_TO_MANY;
 import static io.github.jeddict.client.web.main.domain.BaseRelationship.ONE_TO_ONE;
+import static io.github.jeddict.jcode.util.StringHelper.camelCase;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  *
  * @author jGauravGupta
  */
 public abstract class BaseEntity {
-    
+
     private String name;
     protected String entityNameCapitalized;
     protected String entityClass;
@@ -44,7 +46,9 @@ public abstract class BaseEntity {
     private String entityInstancePlural;
     private String entityApiUrl;
     private String entityFolderName;
-    
+    private final String entityModelFileName;
+    private final String entityParentPathAddition;
+
     protected String entityFileName;
     protected String entityPluralFileName;
     protected String entityServiceFileName;
@@ -52,13 +56,15 @@ public abstract class BaseEntity {
     protected String entityUrl;
     protected String entityTranslationKey;
     protected String entityTranslationKeyMenu;
-    
+
+    private boolean fieldsContainDate;
     private boolean fieldsContainInstant;
     private boolean fieldsContainZonedDateTime;
     private boolean fieldsContainLocalDate;
     private boolean fieldsContainBigDecimal;
     private boolean fieldsContainBlob;
     private boolean fieldsContainImageBlob;
+    private boolean fieldsContainBlobOrImage;
     private boolean validation;
     private boolean fieldsContainOwnerManyToMany;
     private boolean fieldsContainNoOwnerOneToOne;
@@ -69,30 +75,57 @@ public abstract class BaseEntity {
     private final List<BaseField> fields = new ArrayList<>();
     private final List<BaseRelationship> relationships = new ArrayList<>();
     private String pkType;
-    
-    private boolean haveFieldWithJavadoc;
-    
-    private boolean upgrade;
 
-    public BaseEntity(String name, String entityAngularSuffix) {
-        String entityNameSpinalCased = kebabCase(firstLower(name));
-        
+    private boolean haveFieldWithJavadoc;
+
+    private boolean upgrade;
+    
+    private String i18nKeyPrefix;
+
+    public BaseEntity(String name, String entityAngularSuffix, String appName, String clientRootFolder) {
+
         this.name = name;
+        String entityName = this.name;
+        String entityNamePluralizedAndSpinalCased = kebabCase(pluralize(entityName));
+
         this.entityNameCapitalized = firstUpper(name);
         this.entityClass = this.entityNameCapitalized;
         this.entityClassHumanized = startCase(this.entityNameCapitalized);
         this.entityClassPlural = pluralize(this.entityClass);
         this.entityClassPluralHumanized = startCase(this.entityClassPlural);
-        this.entityInstance = firstLower(name);
+        this.entityInstance = firstLower(entityName);
         this.entityInstancePlural = pluralize(this.entityInstance);
-        this.entityApiUrl = entityNameSpinalCased;// entityNamePluralizedAndSpinalCased;
-        this.entityFolderName = entityNameSpinalCased;
         
+        String entityNameSpinalCased = kebabCase(firstLower(name));
+        this.entityApiUrl = entityNameSpinalCased;// entityNamePluralizedAndSpinalCased; //make singular url
+        this.entityFileName = kebabCase(this.entityNameCapitalized + firstUpper(entityAngularSuffix));
+
+        this.entityFolderName = getEntityFolderName(clientRootFolder, this.entityFileName);
+        this.entityModelFileName = this.entityFolderName;
+        this.entityParentPathAddition = getEntityParentPathAddition(clientRootFolder);
+        this.entityPluralFileName = entityNamePluralizedAndSpinalCased + entityAngularSuffix;
+        this.entityServiceFileName = this.entityFileName;
+        this.entityTranslationKey = isNotEmpty(clientRootFolder) ? camelCase(clientRootFolder + "-" + entityInstance) : entityInstance;
+
         this.differentTypes.add(this.entityClass);
-        
-     }
-   
-       public void addRelationship(BaseRelationship relationship) {
+        this.i18nKeyPrefix = appName + "." + entityTranslationKey;
+    }
+
+    public static String getEntityFolderName(String clientRootFolder, String entityFileName) {
+        if (StringUtils.isNotEmpty(clientRootFolder)) {
+            return clientRootFolder + "/" + entityFileName;
+        }
+        return entityFileName;
+    }
+
+    public static String getEntityParentPathAddition(String clientRootFolder) {
+        if (StringUtils.isNotEmpty(clientRootFolder)) {
+            return "../";
+        }
+        return "";
+    }
+
+    public void addRelationship(BaseRelationship relationship) {
         getRelationships().add(relationship);
         // Load in-memory data for root
         if (MANY_TO_MANY.equals(relationship.getRelationshipType()) && relationship.isOwnerSide()) {
@@ -112,15 +145,16 @@ public abstract class BaseEntity {
             relationship.setRelationshipRequired(true);
             setValidation(true);
         }
-       }
+    }
+
     public void removeRelationship(BaseRelationship relationship) {
         getRelationships().remove(relationship);
     }
 
     public void addField(BaseField field) {
-        if (!StringUtils.isEmpty(field.getJavadoc())) {
-            haveFieldWithJavadoc = true;
-        }
+//        if (!StringUtils.isEmpty(field.getJavadoc())) {
+//            haveFieldWithJavadoc = true;
+//        }
         fields.add(field);
     }
 
@@ -226,6 +260,14 @@ public abstract class BaseEntity {
         this.entityClassPluralHumanized = entityClassPluralHumanized;
     }
 
+    public String getEntityModelFileName() {
+        return entityModelFileName;
+    }
+
+    public String getEntityParentPathAddition() {
+        return entityParentPathAddition;
+    }
+
     /**
      * @return the entityInstance
      */
@@ -323,7 +365,7 @@ public abstract class BaseEntity {
     public void setEntityServiceFileName(String entityServiceFileName) {
         this.entityServiceFileName = entityServiceFileName;
     }
-    
+
     /**
      * @return the entityStateName
      */
@@ -379,7 +421,15 @@ public abstract class BaseEntity {
     public void setEntityTranslationKeyMenu(String entityTranslationKeyMenu) {
         this.entityTranslationKeyMenu = entityTranslationKeyMenu;
     }
+    
+    public boolean isFieldsContainDate() {
+        return fieldsContainDate;
+    }
 
+    public void setFieldsContainDate(boolean fieldsContainDate) {
+        this.fieldsContainDate = fieldsContainDate;
+    }
+    
     /**
      * @return the fieldsContainInstant
      */
@@ -464,6 +514,13 @@ public abstract class BaseEntity {
         this.fieldsContainImageBlob = fieldsContainImageBlob;
     }
 
+    public boolean isFieldsContainBlobOrImage() {
+        return fieldsContainBlobOrImage;
+    }
+
+    public void setFieldsContainBlobOrImage(boolean fieldsContainBlobOrImage) {
+        this.fieldsContainBlobOrImage = fieldsContainBlobOrImage;
+    }
 
     /**
      * @return the validation
@@ -558,7 +615,7 @@ public abstract class BaseEntity {
         return differentTypes;
     }
 
-        /**
+    /**
      * @return the pkType
      */
     public String getPkType() {
@@ -571,7 +628,8 @@ public abstract class BaseEntity {
     public void setPkType(String pkType) {
         this.pkType = pkType;
     }
-        /**
+
+    /**
      * @return the entityName
      */
     public abstract String getEntityName();
@@ -597,4 +655,7 @@ public abstract class BaseEntity {
         return haveFieldWithJavadoc;
     }
 
+    public String getI18nKeyPrefix() {
+        return i18nKeyPrefix;
+    }
 }

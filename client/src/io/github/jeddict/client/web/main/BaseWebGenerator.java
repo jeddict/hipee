@@ -26,12 +26,10 @@ import io.github.jeddict.jcode.util.JavaUtil;
 import static io.github.jeddict.jcode.util.ProjectHelper.getProjectWebRoot;
 import io.github.jeddict.jcode.util.SourceGroupSupport;
 import static io.github.jeddict.jcode.util.StringHelper.pluralize;
-import io.github.jeddict.jcode.layer.ConfigData;
-import io.github.jeddict.jcode.layer.Generator;
+import io.github.jeddict.jcode.Generator;
 import io.github.jeddict.jcode.parser.ejs.EJSParser;
 import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicFile;
-import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicResource;
-import io.github.jeddict.jcode.stack.config.data.ApplicationConfigData;
+import io.github.jeddict.jcode.ApplicationConfigData;
 import io.github.jeddict.jcode.task.progress.ProgressHandler;
 import io.github.jeddict.jpa.spec.DefaultAttribute;
 import io.github.jeddict.jpa.spec.ElementCollection;
@@ -67,8 +65,13 @@ import static io.github.jeddict.client.web.main.domain.BaseApplicationConfig.MON
 import io.github.jeddict.client.web.main.domain.BaseEntity;
 import io.github.jeddict.client.web.main.domain.BaseField;
 import io.github.jeddict.client.web.main.domain.BaseRelationship;
+import io.github.jeddict.jcode.annotation.ConfigData;
+import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicResource;
+import static io.github.jeddict.jpa.spec.extend.BlobContentType.TEXT;
 import io.github.jeddict.rest.controller.RESTData;
+import javax.script.ScriptException;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
 /**
@@ -104,6 +107,9 @@ public abstract class BaseWebGenerator implements Generator {
 
     protected List<String> entityScriptFiles;
     protected List<String> scriptFiles;
+    
+    public static final String I18N_TEMPLATE = "io/github/jeddict/client/i18n/template/";
+    
     public abstract String getTemplatePath();
 
     @Override
@@ -131,18 +137,18 @@ public abstract class BaseWebGenerator implements Generator {
         Function<String, String> pathResolver = (templatePath) -> {
             String simpleFileName = getSimpleFileName(templatePath);
             String[] pathSplitter = simpleFileName.split("_");
-            String type = pathSplitter[1];
+            String type = pathSplitter[0];
             if (!"entity".equals(type)){
                  return null;
             }
-            String lang = pathSplitter[2];
+            String lang = pathSplitter[1];
             if (!languages.contains(lang)) {
                 return null;
             }
             templatePath = String.format("i18n/%s/%s.json", lang, entity.getEntityTranslationKey());
             return templatePath;
         };
-        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resource-i18n.zip", webRoot, pathResolver, handler);
+        copyDynamicResource(parser.getParserManager(), I18N_TEMPLATE + "entity-resource-i18n.zip", webRoot, pathResolver, handler);
     }
     
     protected void generateEnumi18nResource(BaseApplicationConfig applicationConfig, ApplicationSourceFilter fileFilter) throws IOException {
@@ -158,7 +164,7 @@ public abstract class BaseWebGenerator implements Generator {
             parser.addContext(applicationConfig);
             for (String lang : languages) {
                 String templatePath = String.format("i18n/%s/%s.json", lang, enumType.toLowerCase());
-                copyDynamicFile(parser.getParserManager(), getTemplatePath() + "enum-resource-i18n/i18n/_enum.json", webRoot, templatePath, handler);               
+                copyDynamicFile(parser.getParserManager(), I18N_TEMPLATE + "enum-resource-i18n/i18n/enum.json.ejs", webRoot, templatePath, handler);               
             }
         }
     }
@@ -184,7 +190,7 @@ public abstract class BaseWebGenerator implements Generator {
             //path modification not required
             return templatePath;
         };
-        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "web-resources-i18n.zip", webRoot, pathResolver, handler);
+        copyDynamicResource(parser.getParserManager(), I18N_TEMPLATE + "web-resources-i18n.zip", webRoot, pathResolver, handler);
     }
 
     protected EntityConfig getEntityConfig(Entity entity) {
@@ -200,7 +206,6 @@ public abstract class BaseWebGenerator implements Generator {
             return applicationConfig;
         }
         applicationConfig = getApplicationConfig(webData.getModule(), "maven");
-        applicationConfig.setEnableTranslation(true);
         applicationConfig.setJhiPrefix(webData.getPrefix());
         applicationConfig.setUseSass(webData.isSass());
         
@@ -217,6 +222,12 @@ public abstract class BaseWebGenerator implements Generator {
         applicationConfig.setEnableLogs(restData.isLogger());
         applicationConfig.setRestPackage(restData.getPackage());
         applicationConfig.setEnableDocs(restData.isDocsEnable());
+        applicationConfig.setEnableHealth(true);
+        applicationConfig.setEnableConfiguration(false);
+        applicationConfig.setEnableAudits(false);
+        applicationConfig.setEnableProfile(false);
+        applicationConfig.setServiceDiscoveryType(appConfigData.getRegistryType().name().toLowerCase());
+        
         applicationConfig.setClientFramework(getClientFramework());
         applicationConfig.setClientPackageManager(webData.getClientPackager().toString());
         applicationConfig.setProtractorTests(webData.isProtractorTest());
@@ -233,14 +244,15 @@ public abstract class BaseWebGenerator implements Generator {
     
     public abstract BaseApplicationConfig getApplicationConfig(String baseName, String buildTool);
 
-    public abstract BaseEntity getEntity(String appName, String entitySuffix);
+    public abstract BaseEntity getEntity(String entityClass, String entitySuffix, String appName, String clientRootFolder);
 
-    public abstract BaseRelationship getRelationship(String appName, String entitySuffix, Entity entity, RelationAttribute relation);
+    public abstract BaseRelationship getRelationship(String appName, String entitySuffix, Entity entity, RelationAttribute relation, String clientRootFolder);
 
     public abstract BaseField getField(BaseAttribute attribute);
  
 
     protected BaseEntity getEntity(BaseApplicationConfig applicationConfig, Entity entity) {
+        String clientRootFolder = appConfigData.isMicroservice() ?appConfigData.getTargetContextPath() : null;
         String appName = applicationConfig.getAppName();
         Attribute idAttribute = entity.getAttributes().getIdField();
         if (idAttribute instanceof EmbeddedId || idAttribute instanceof DefaultAttribute) {
@@ -253,7 +265,7 @@ public abstract class BaseWebGenerator implements Generator {
             return null;
         }
         String entitySuffix = "";
-        BaseEntity webEntity = getEntity(entity.getClazz(), entitySuffix);
+        BaseEntity webEntity = getEntity(entity.getClazz(), entitySuffix, appName, clientRootFolder);
         if(StringUtils.isNotBlank(entity.getLabel())){
             webEntity.setEntityClassHumanized(entity.getLabel());
             webEntity.setEntityClassPluralHumanized(pluralize(entity.getLabel()));
@@ -279,7 +291,7 @@ public abstract class BaseWebGenerator implements Generator {
 
             if (attribute instanceof RelationAttribute) {
                 RelationAttribute relationAttribute = (RelationAttribute) attribute;
-                BaseRelationship webRelationship = getRelationship(appName, entitySuffix, entity, relationAttribute);
+                BaseRelationship webRelationship = getRelationship(appName, entitySuffix, entity, relationAttribute, clientRootFolder);
                 Entity mappedEntity = relationAttribute.getConnectedEntity();
                 if (mappedEntity.getLabelAttribute() == null && !mappedEntity.getAttributes().getBasic().isEmpty()){
                     mappedEntity.setLabelAttribute(mappedEntity.getAttributes().getBasic().get(0));
@@ -330,10 +342,13 @@ public abstract class BaseWebGenerator implements Generator {
                 if (null != webField.getFieldType()) {
                     if (INSTANT.contains(webField.getFieldType())) {
                         webEntity.setFieldsContainInstant(true);
+                        webEntity.setFieldsContainDate(true);
                     } else if (ZONED_DATE_TIME.contains(webField.getFieldType())) {
                         webEntity.setFieldsContainZonedDateTime(true);
+                        webEntity.setFieldsContainDate(true);
                     } else if (LOCAL_DATE.contains(webField.getFieldType())) {
                         webEntity.setFieldsContainLocalDate(true);
+                        webEntity.setFieldsContainDate(true);
                     } else if (BIGDECIMAL.contains(webField.getFieldType())) {
                         webEntity.setFieldsContainBigDecimal(true);
                     } else if (((BaseAttribute) attribute).isBlobAttributeType()) {
@@ -342,6 +357,9 @@ public abstract class BaseWebGenerator implements Generator {
                             webField.setFieldTypeBlobContent(attribute.getBlobContentType().getValue());
                             if (attribute.getBlobContentType() == IMAGE) {
                                 webEntity.setFieldsContainImageBlob(true);
+                            }
+                            if (attribute.getBlobContentType() != TEXT) {
+                                webEntity.setFieldsContainBlobOrImage(true);
                             }
                         }
                     } else if (attribute instanceof EnumTypeHandler && ((EnumTypeHandler) attribute).getEnumerated() != null) {

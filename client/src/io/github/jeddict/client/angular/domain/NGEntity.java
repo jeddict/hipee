@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import org.openide.util.Exceptions;
 
 /**
@@ -36,22 +37,16 @@ import org.openide.util.Exceptions;
  */
 public class NGEntity extends BaseEntity {
 
-    private String entityAngularName;
+    private final String entityAngularName;
+    
     private final Map<String, List<BaseRelationship>> differentRelationships = new HashMap<>();
 
-    public NGEntity(String name, String entityAngularSuffix) {
-        super(name, entityAngularSuffix);
-        String entityNameSpinalCased = kebabCase(firstLower(name));
-        String entityNamePluralizedAndSpinalCased = kebabCase(firstLower(pluralize(name)));
-
-        this.entityFileName = kebabCase(this.entityNameCapitalized + firstUpper(entityAngularSuffix));
-        this.entityPluralFileName = entityNamePluralizedAndSpinalCased + entityAngularSuffix;
-        this.entityServiceFileName = this.entityFileName;
+    public NGEntity(String name, String entityAngularSuffix, String appName, String clientRootFolder) {
+        super(name, entityAngularSuffix, appName, clientRootFolder);
         this.entityAngularName = this.entityClass + firstUpper(camelCase(entityAngularSuffix));
         this.entityStateName = kebabCase(entityAngularName);
         this.entityUrl = this.entityStateName;
-        this.entityTranslationKey = this.entityInstance;
-        this.entityTranslationKeyMenu = camelCase(this.entityStateName);
+        this.entityTranslationKeyMenu = camelCase(isNotEmpty(clientRootFolder) ? clientRootFolder+"-"+entityStateName : entityStateName);
     }
 
     @Override

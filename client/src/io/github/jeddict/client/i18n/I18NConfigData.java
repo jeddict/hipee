@@ -15,13 +15,13 @@
  */
 package io.github.jeddict.client.i18n;
 
-import io.github.jeddict.jcode.stack.config.data.LayerConfigData;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 import static io.github.jeddict.client.i18n.LanguageUtil.getDefaultLanguage;
+import io.github.jeddict.jcode.LayerConfigData;
 
 /**
  *

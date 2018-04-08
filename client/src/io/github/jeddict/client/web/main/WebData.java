@@ -16,12 +16,12 @@
 package io.github.jeddict.client.web.main;
 
 import static io.github.jeddict.jcode.util.StringHelper.camelCase;
-import io.github.jeddict.jcode.stack.config.data.LayerConfigData;
 import java.util.Arrays;
 import java.util.List;
 import io.github.jeddict.client.web.main.domain.ClientPackager;
-import static io.github.jeddict.client.web.main.domain.ClientPackager.NPM;
+import static io.github.jeddict.client.web.main.domain.ClientPackager.YARN;
 import io.github.jeddict.client.web.main.domain.EntityConfig;
+import io.github.jeddict.jcode.LayerConfigData;
 import io.github.jeddict.rest.controller.RESTData;
 
 /**
@@ -111,7 +111,7 @@ public class WebData extends LayerConfigData<RESTData> {
      */
     public ClientPackager getClientPackager() {
         if(clientPackager == null){
-            return NPM;
+            return YARN;
         }
         return clientPackager;
     }

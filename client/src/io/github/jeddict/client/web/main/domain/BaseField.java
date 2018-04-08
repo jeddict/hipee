@@ -40,9 +40,9 @@ public abstract class BaseField {
     protected String fieldType;
     private String javadoc;
     
-    private String fieldNameCapitalized;
+    private final String fieldNameCapitalized;
     private String fieldNameHumanized;
-    private String fieldNameUnderscored;
+    private final String fieldNameUnderscored;
 
     private boolean fieldIsEnum;
     private String fieldTypeBlobContent;//any , image, text
@@ -58,13 +58,28 @@ public abstract class BaseField {
     private boolean fieldValidate;
 
     private String fieldValues;
-    private String fieldInJavaBeanMethod;
+    private final String fieldInJavaBeanMethod;
 
     public BaseField(BaseAttribute attribute) {
         this.fieldName = StringUtils.isEmpty(attribute.getJsonbProperty())
                 ? attribute.getName() : attribute.getJsonbProperty();
-        this.javadoc = attribute.getDescription();
+//        this.javadoc = attribute.getDescription();
         loadValidation(attribute.getAttributeConstraintsMap());
+        
+                    fieldNameCapitalized = firstUpper(fieldName);
+            fieldNameUnderscored = snakeCase(fieldName);
+            fieldNameHumanized = startCase(fieldName);
+            if (fieldName.length() > 1) {
+                Character firstLetter = fieldName.charAt(0);
+                Character secondLetter = fieldName.charAt(1);
+                if (firstLetter == Character.toLowerCase(firstLetter) && secondLetter == Character.toUpperCase(secondLetter)) {
+                    fieldInJavaBeanMethod = Character.toLowerCase(firstLetter) + fieldName.substring(1);
+                } else {
+                    fieldInJavaBeanMethod = firstUpper(fieldName);
+                }
+            } else {
+                fieldInJavaBeanMethod = firstUpper(fieldName);
+            }
     }
 
     //['required', 'max', 'min', 'maxlength', 'minlength', 'maxbytes', 'minbytes', 'pattern'];
@@ -135,26 +150,13 @@ public abstract class BaseField {
      * @return the fieldNameCapitalized
      */
     public String getFieldNameCapitalized() {
-        if (fieldNameCapitalized == null) {
-            fieldNameCapitalized = firstUpper(fieldName);
-        }
         return fieldNameCapitalized;
-    }
-
-    /**
-     * @param fieldNameCapitalized the fieldNameCapitalized to set
-     */
-    public void setFieldNameCapitalized(String fieldNameCapitalized) {
-        this.fieldNameCapitalized = fieldNameCapitalized;
     }
 
     /**
      * @return the fieldNameHumanized
      */
     public String getFieldNameHumanized() {
-        if (fieldNameHumanized == null) {
-            fieldNameHumanized = startCase(fieldName);
-        }
         return fieldNameHumanized;
     }
 
@@ -169,18 +171,9 @@ public abstract class BaseField {
      * @return the fieldNameUnderscored
      */
     public String getFieldNameUnderscored() {
-        if (fieldNameUnderscored == null) {
-            fieldNameUnderscored = snakeCase(fieldName);
-        }
         return fieldNameUnderscored;
     }
 
-    /**
-     * @param fieldNameUnderscored the fieldNameUnderscored to set
-     */
-    public void setFieldNameUnderscored(String fieldNameUnderscored) {
-        this.fieldNameUnderscored = fieldNameUnderscored;
-    }
 
     /**
      * @return the fieldTypeBlobContent
@@ -294,7 +287,6 @@ public abstract class BaseField {
     }
 
     public void setFieldValidate(List<String> fieldValidateRules) {
-
         if (fieldValidateRules != null && fieldValidateRules.size() >= 1) {
             fieldValidate = true;
         } else {
@@ -324,27 +316,7 @@ public abstract class BaseField {
      * @return the fieldInJavaBeanMethod
      */
     public String getFieldInJavaBeanMethod() {
-        if (fieldInJavaBeanMethod == null) {
-            if (fieldName.length() > 1) {
-                Character firstLetter = fieldName.charAt(0);
-                Character secondLetter = fieldName.charAt(1);
-                if (firstLetter == Character.toLowerCase(firstLetter) && secondLetter == Character.toUpperCase(secondLetter)) {
-                    fieldInJavaBeanMethod = Character.toLowerCase(firstLetter) + fieldName.substring(1);
-                } else {
-                    fieldInJavaBeanMethod = firstUpper(fieldName);
-                }
-            } else {
-                fieldInJavaBeanMethod = firstUpper(fieldName);
-            }
-        }
         return fieldInJavaBeanMethod;
-    }
-
-    /**
-     * @param fieldInJavaBeanMethod the fieldInJavaBeanMethod to set
-     */
-    public void setFieldInJavaBeanMethod(String fieldInJavaBeanMethod) {
-        this.fieldInJavaBeanMethod = fieldInJavaBeanMethod;
     }
 
     /**
@@ -364,9 +336,3 @@ public abstract class BaseField {
     public abstract void setFieldType(String fieldType, String databaseType);
 
 }
-//
-//if (_.isUndefined(field.fieldValidateRulesPatternJava)) {
-//                    field.fieldValidateRulesPatternJava = field.fieldValidateRulesPattern ?
-//                        field.fieldValidateRulesPattern.replace(/\\/g, '\\\\').replace(/"/g, '\\"') : field.fieldValidateRulesPattern;
-//                }
-//

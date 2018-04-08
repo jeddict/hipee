@@ -15,43 +15,14 @@
  */
 package io.github.jeddict.client.angular.domain;
 
-import static io.github.jeddict.jcode.util.StringHelper.kebabCase;
 import io.github.jeddict.jpa.spec.Entity;
 import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.client.web.main.domain.BaseRelationship;
 
 public class NGRelationship extends BaseRelationship {
 
-    private String otherEntityStateName;
-    private String otherEntityRelationshipNamePlural;
-
-    public NGRelationship(String appName, String entitySuffix, Entity entity, RelationAttribute relation) {
-      super(appName, entitySuffix, entity, relation);
+    public NGRelationship(String appName, String entitySuffix, Entity entity, RelationAttribute relation, String clientRootFolder) {
+      super(appName, entitySuffix, entity, relation, clientRootFolder);
     }
-
-    /**
-     * @return the otherEntityStateName
-     */
-    @Override
-    public String getOtherEntityStateName() {
-        if (otherEntityStateName == null) {
-            otherEntityStateName = kebabCase(getOtherEntityAngularName());
-        }
-        return otherEntityStateName;
-    }
-
-    /**
-     * @return the otherEntityRelationshipNamePlural
-     */
-    @Override
-    public String getOtherEntityRelationshipNamePlural() {
-        if (otherEntityRelationshipNamePlural == null
-                && (ONE_TO_MANY.equals(getRelationshipType())
-                || (MANY_TO_MANY.equals(getRelationshipType()) && isOwnerSide() == false)
-                || (ONE_TO_ONE.equals(getRelationshipType()) && "user".equals(getOtherEntityName().toLowerCase())))) {
-            otherEntityRelationshipNamePlural = pluralize(getOtherEntityRelationshipName());
-        }
-        return otherEntityRelationshipNamePlural;
-    }
-
+    
 }

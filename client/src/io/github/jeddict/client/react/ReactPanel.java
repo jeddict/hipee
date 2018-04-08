@@ -18,7 +18,6 @@ package io.github.jeddict.client.react;
 import static io.github.jeddict.jcode.util.StringHelper.firstLower;
 import static io.github.jeddict.jcode.util.StringHelper.kebabCase;
 import static io.github.jeddict.jcode.util.StringHelper.startCase;
-import io.github.jeddict.jcode.stack.config.panel.LayerConfigPanel;
 import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.netbeans.api.project.Project;
@@ -26,6 +25,7 @@ import org.netbeans.api.project.SourceGroup;
 import io.github.jeddict.client.web.main.WebData;
 import static io.github.jeddict.client.web.main.WebData.DEFAULT_PREFIX;
 import io.github.jeddict.client.web.main.domain.ClientPackager;
+import io.github.jeddict.jcode.LayerConfigPanel;
 import org.netbeans.modeler.properties.spec.ComboBoxValue;
 import org.openide.util.NbBundle;
 

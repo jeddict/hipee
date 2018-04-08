@@ -18,7 +18,6 @@ package io.github.jeddict.client.angular;
 import static io.github.jeddict.jcode.util.StringHelper.firstLower;
 import static io.github.jeddict.jcode.util.StringHelper.kebabCase;
 import static io.github.jeddict.jcode.util.StringHelper.startCase;
-import io.github.jeddict.jcode.stack.config.panel.LayerConfigPanel;
 import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.netbeans.api.project.Project;
@@ -26,6 +25,7 @@ import org.netbeans.api.project.SourceGroup;
 import io.github.jeddict.client.web.main.WebData;
 import static io.github.jeddict.client.web.main.WebData.DEFAULT_PREFIX;
 import io.github.jeddict.client.web.main.domain.ClientPackager;
+import io.github.jeddict.jcode.LayerConfigPanel;
 import org.netbeans.modeler.properties.spec.ComboBoxValue;
 import org.openide.util.NbBundle;
 
@@ -104,7 +104,7 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
         for (ClientPackager clientPackager : ClientPackager.values()) {
             clientPackagerComboBox.addItem(new ComboBoxValue(clientPackager, clientPackager.toString()));
         }
-
+        clientPackagerPanel.setVisible(false);
     }
     
     private void setClientPackager(ClientPackager clientPackager) {
@@ -187,12 +187,12 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
         titleStartLabel = new javax.swing.JLabel();
         appTitleTextField = new javax.swing.JTextField();
         titleEndLabel = new javax.swing.JLabel();
-        wrapperPanel3 = new javax.swing.JPanel();
-        clientPackagerLabel = new javax.swing.JLabel();
-        clientPackagerComboBox = new javax.swing.JComboBox();
         wrapperPanel4 = new javax.swing.JPanel();
         protractorTest_CheckBox = new javax.swing.JCheckBox();
         sass_CheckBox = new javax.swing.JCheckBox();
+        clientPackagerPanel = new javax.swing.JPanel();
+        clientPackagerLabel = new javax.swing.JLabel();
+        clientPackagerComboBox = new javax.swing.JComboBox();
 
         warningPanel.setLayout(new java.awt.BorderLayout(10, 0));
 
@@ -251,16 +251,6 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
 
         jPanel1.add(wrapperPanel1);
 
-        wrapperPanel3.setLayout(new java.awt.BorderLayout());
-
-        org.openide.awt.Mnemonics.setLocalizedText(clientPackagerLabel, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.clientPackagerLabel.text")); // NOI18N
-        clientPackagerLabel.setPreferredSize(new java.awt.Dimension(92, 14));
-        wrapperPanel3.add(clientPackagerLabel, java.awt.BorderLayout.LINE_START);
-
-        wrapperPanel3.add(clientPackagerComboBox, java.awt.BorderLayout.CENTER);
-
-        jPanel1.add(wrapperPanel3);
-
         org.openide.awt.Mnemonics.setLocalizedText(protractorTest_CheckBox, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.protractorTest_CheckBox.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(sass_CheckBox, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.sass_CheckBox.text")); // NOI18N
@@ -285,6 +275,15 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
         );
 
         jPanel1.add(wrapperPanel4);
+
+        clientPackagerPanel.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(clientPackagerLabel, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.clientPackagerLabel.text")); // NOI18N
+        clientPackagerPanel.add(clientPackagerLabel, java.awt.BorderLayout.LINE_START);
+
+        clientPackagerPanel.add(clientPackagerComboBox, java.awt.BorderLayout.CENTER);
+
+        jPanel1.add(clientPackagerPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -321,6 +320,7 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
     private javax.swing.JTextField appTitleTextField;
     private javax.swing.JComboBox clientPackagerComboBox;
     private javax.swing.JLabel clientPackagerLabel;
+    private javax.swing.JPanel clientPackagerPanel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -334,7 +334,6 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
     private javax.swing.JLabel warningLabel;
     private javax.swing.JPanel warningPanel;
     private javax.swing.JPanel wrapperPanel1;
-    private javax.swing.JPanel wrapperPanel3;
     private javax.swing.JPanel wrapperPanel4;
     // End of variables declaration//GEN-END:variables
 

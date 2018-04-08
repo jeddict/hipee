@@ -18,17 +18,17 @@ package io.github.jeddict.client.i18n;
 import static io.github.jeddict.jcode.util.FileUtil.getSimpleFileName;
 import io.github.jeddict.jcode.util.POMManager;
 import io.github.jeddict.jcode.util.ProjectHelper;
-import io.github.jeddict.jcode.layer.ConfigData;
-import io.github.jeddict.jcode.layer.Generator;
-import io.github.jeddict.jcode.layer.Technology;
+import io.github.jeddict.jcode.Generator;
 import io.github.jeddict.jcode.parser.ejs.EJSParser;
 import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicResource;
-import io.github.jeddict.jcode.stack.config.data.ApplicationConfigData;
+import io.github.jeddict.jcode.ApplicationConfigData;
 import io.github.jeddict.jcode.task.progress.ProgressHandler;
 import java.io.IOException;
 import java.util.function.Function;
 import org.netbeans.api.project.Project;
 import io.github.jeddict.client.angular.domain.NGApplicationConfig;
+import io.github.jeddict.jcode.annotation.ConfigData;
+import io.github.jeddict.jcode.annotation.Technology;
 import io.github.jeddict.rest.controller.RESTGenerator;
 import org.openide.filesystems.FileObject;
 import org.openide.util.lookup.ServiceProvider;
@@ -37,7 +37,11 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Gaurav Gupta
  */
 @ServiceProvider(service = Generator.class)
-@Technology(label = "i18n", panel = I18NConfigPanel.class, sibling = {RESTGenerator.class})
+@Technology(
+        label = "i18n", 
+        panel = I18NConfigPanel.class, 
+        sibling = {RESTGenerator.class}
+)
 public final class I18NGenerator implements Generator {
 
     private static final String TEMPLATE = "io/github/jeddict/client/i18n/template/";

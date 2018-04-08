@@ -41,156 +41,161 @@ public class NGSourceFilter extends ApplicationSourceFilter {
             dataFilter = new HashMap<>();
 
             //AuthenticationType
-            dataFilter.put("_auth-oauth2.service.ts", () -> OAUTH2_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_base64.service.ts", () -> OAUTH2_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_auth-jwt.service.ts", () -> JWT_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()) || UAA_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_auth.interceptor.ts", () -> OAUTH2_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()) || JWT_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()) || UAA_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_auth-session.service.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-
-            dataFilter.put("_session.model.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_sessions.service.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_sessions.route.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_sessions.component.html", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_sessions.component.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("auth-jwt.service.ts", () -> 
+                    JWT_AUTHENTICATION_TYPE.equals(config.getAuthenticationType())
+                    || UAA_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("auth.interceptor.ts", () -> JWT_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("auth-session.service.ts", () -> 
+                    SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType())
+                    || OAUTH2_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            
+            // session specific
+            dataFilter.put("session.model.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("sessions.service.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("sessions.route.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("sessions.component.html", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("sessions.component.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("sessions.component.spec.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
             dataFilter.put("sessions.json", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_sessions.component.spec.ts", () -> SESSION_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
 
             
             //ApplicationType
-            dataFilter.put("_gateway.component.html", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
-            dataFilter.put("_gateway.component.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
-            dataFilter.put("_gateway.route.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
-            dataFilter.put("_gateway-route.model.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
-            dataFilter.put("_gateway-routes.service.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("gateway.component.html", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("gateway.component.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("gateway.route.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("gateway-route.model.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
+            dataFilter.put("gateway-routes.service.ts", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
             dataFilter.put("gateway.json", () -> GATEWAY_APPLICATION_TYPE.equals(config.getApplicationType()));
 
             //Social Login
-            dataFilter.put("_social-register.component.html", () -> config.isEnableSocialSignIn());
-            dataFilter.put("_social-register.component.ts", () -> config.isEnableSocialSignIn());
-            dataFilter.put("_social-auth.component.ts", () -> config.isEnableSocialSignIn() && JWT_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
-            dataFilter.put("_social.route.ts", () -> config.isEnableSocialSignIn());
-            dataFilter.put("_social.service.ts", () -> config.isEnableSocialSignIn());
-            dataFilter.put("_social.component.ts", () -> config.isEnableSocialSignIn());
-            dataFilter.put("_social.component.html", () -> config.isEnableSocialSignIn());
-            dataFilter.put("social.json", () -> config.isEnableSocialSignIn());  
+//            dataFilter.put("social-register.component.html", () -> config.isEnableSocialSignIn());
+//            dataFilter.put("social-register.component.ts", () -> config.isEnableSocialSignIn());
+//            dataFilter.put("social-auth.component.ts", () -> config.isEnableSocialSignIn() && JWT_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+//            dataFilter.put("social.route.ts", () -> config.isEnableSocialSignIn());
+//            dataFilter.put("social.service.ts", () -> config.isEnableSocialSignIn());
+//            dataFilter.put("social.component.ts", () -> config.isEnableSocialSignIn());
+//            dataFilter.put("social.component.html", () -> config.isEnableSocialSignIn());
+//            dataFilter.put("social.json", () -> config.isEnableSocialSignIn());  
 
             //WebSocket
-            dataFilter.put("_tracker.component.html", () -> WEBSOCKET.equals(config.getWebsocket()));//admin
-            dataFilter.put("_tracker.component.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//admin
-            dataFilter.put("_tracker.route.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//admin
-            dataFilter.put("_tracker.service.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
-            dataFilter.put("_window.service.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
+            dataFilter.put("tracker.component.html", () -> WEBSOCKET.equals(config.getWebsocket()));//admin
+            dataFilter.put("tracker.component.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//admin
+            dataFilter.put("tracker.route.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//admin
+            dataFilter.put("tracker.service.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
+            dataFilter.put("window.service.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
+            dataFilter.put("mock-tracker.service.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
             dataFilter.put("tracker.json", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
-            dataFilter.put("_mock-tracker.service.ts", () -> WEBSOCKET.equals(config.getWebsocket()));//shared
 
             //Language
-            dataFilter.put("_jhi-translate.directive.ts", () -> config.isEnableTranslation());//shared/language
-            dataFilter.put("_translate-partial-loader.provider.ts", () -> config.isEnableTranslation());//shared/language
-            dataFilter.put("_find-language-from-key.pipe.ts", () -> config.isEnableTranslation());//shared/language
-            dataFilter.put("_language.constants.ts", () -> config.isEnableTranslation());//shared/language
-            dataFilter.put("_language.service.ts", () -> config.isEnableTranslation());//shared/language
-            dataFilter.put("_jhi-missing-translation.config.ts", () -> config.isEnableTranslation());//shared/language
-            dataFilter.put("_language.helper.ts", () -> config.isEnableTranslation());//shared/language            
-            dataFilter.put("_translation.config.ts", () -> config.isEnableTranslation());
-            dataFilter.put("_translation-storage.provider.ts", () -> config.isEnableTranslation());
-            dataFilter.put("_active-menu.directive.ts", () -> config.isEnableTranslation());//layouts/navbar
-
+            dataFilter.put("jhi-translate.directive.ts", () -> config.isEnableTranslation());//shared/language
+            dataFilter.put("translate-partial-loader.provider.ts", () -> config.isEnableTranslation());//shared/language
+            dataFilter.put("find-language-from-key.pipe.ts", () -> config.isEnableTranslation());//shared/language
+            dataFilter.put("language.constants.ts", () -> config.isEnableTranslation());//shared/language
+            dataFilter.put("language.service.ts", () -> config.isEnableTranslation());//shared/language
+            dataFilter.put("jhi-missing-translation.config.ts", () -> config.isEnableTranslation());//shared/language
+            dataFilter.put("language.helper.ts", () -> config.isEnableTranslation());//shared/language            
+            dataFilter.put("translation.config.ts", () -> config.isEnableTranslation());
+            dataFilter.put("translation-storage.provider.ts", () -> config.isEnableTranslation());
+            dataFilter.put("active-menu.directive.ts", () -> config.isEnableTranslation());//layouts/navbar
+            dataFilter.put("i18n.constants.ts", () -> config.isEnableTranslation());
+            
             //Metrics
-            dataFilter.put("_metrics.component.ts", () -> config.isEnableMetrics());
-            dataFilter.put("_metrics-modal.component.ts", () -> config.isEnableMetrics());
-            dataFilter.put("_metrics.service.ts", () -> config.isEnableMetrics());
-            dataFilter.put("_metrics.component.html", () -> config.isEnableMetrics());
-            dataFilter.put("_metrics-modal.component.html", () -> config.isEnableMetrics());
-            dataFilter.put("_metrics.route.ts", () -> config.isEnableMetrics());
+            dataFilter.put("metrics.component.ts", () -> config.isEnableMetrics());
+            dataFilter.put("metrics.component.html", () -> config.isEnableMetrics());
+            dataFilter.put("metrics-modal.component.ts", () -> config.isEnableMetrics());
+            dataFilter.put("metrics-modal.component.html", () -> config.isEnableMetrics());
+            dataFilter.put("metrics.service.ts", () -> config.isEnableMetrics());
+            dataFilter.put("metrics.route.ts", () -> config.isEnableMetrics());
             dataFilter.put("metrics.json", () -> config.isEnableMetrics());
 
             //Logs
-            dataFilter.put("_logs.component.ts", () -> config.isEnableLogs());
-            dataFilter.put("_log.model.ts", () -> config.isEnableLogs());
-            dataFilter.put("_logs.service.ts", () -> config.isEnableLogs());
-            dataFilter.put("_logs.component.html", () -> config.isEnableLogs());
-            dataFilter.put("_logs.route.ts", () -> config.isEnableLogs());
+            dataFilter.put("logs.component.ts", () -> config.isEnableLogs());
+            dataFilter.put("logs.component.html", () -> config.isEnableLogs());
+            dataFilter.put("logs.service.ts", () -> config.isEnableLogs());
+            dataFilter.put("logs.route.ts", () -> config.isEnableLogs());
+            dataFilter.put("log.model.ts", () -> config.isEnableLogs());
             dataFilter.put("logs.json", () -> config.isEnableLogs());
 
             //Health
-            dataFilter.put("_health.component.ts", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("_health-modal.component.ts", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("_health.service.ts", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("_health.component.html", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("_health-modal.component.html", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("_health.route.ts", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("_health.json", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("_health.component.spec.ts", () -> config.isEnableHealth());//test
+            dataFilter.put("health.component.ts", () -> config.isEnableHealth());//admin/health
+            dataFilter.put("health.component.html", () -> config.isEnableHealth());//admin/health
+            dataFilter.put("health-modal.component.ts", () -> config.isEnableHealth());//admin/health
+            dataFilter.put("health-modal.component.html", () -> config.isEnableHealth());//admin/health
+            dataFilter.put("health.service.ts", () -> config.isEnableHealth());//admin/health
+            dataFilter.put("health.route.ts", () -> config.isEnableHealth());//admin/health
+            dataFilter.put("health.component.spec.ts", () -> config.isEnableHealth());//test
+            dataFilter.put("health.json", () -> config.isEnableHealth());//admin/health
             
-            
-
             //Configuration
-            dataFilter.put("_configuration.component.ts", () -> config.isEnableConfiguration());
-            dataFilter.put("_configuration.component.html", () -> config.isEnableConfiguration());
-            dataFilter.put("_configuration.route.ts", () -> config.isEnableConfiguration());
-            dataFilter.put("_configuration.service.ts", () -> config.isEnableConfiguration());
+            dataFilter.put("configuration.component.ts", () -> config.isEnableConfiguration());
+            dataFilter.put("configuration.component.html", () -> config.isEnableConfiguration());
+            dataFilter.put("configuration.route.ts", () -> config.isEnableConfiguration());
+            dataFilter.put("configuration.service.ts", () -> config.isEnableConfiguration());
             dataFilter.put("configuration.json", () -> config.isEnableConfiguration());
 
             //Audit
-            dataFilter.put("_audit-data.model.ts", () -> config.isEnableAudits());//admin/audits/
-            dataFilter.put("_audit.model.ts", () -> config.isEnableAudits());//admin/audits/
-            dataFilter.put("_audits.component.ts", () -> config.isEnableAudits());//admin/audits/
-            dataFilter.put("_audits.component.html", () -> config.isEnableAudits());//admin/audits/
-            dataFilter.put("_audits.route.ts", () -> config.isEnableAudits());//admin/audits/
-            dataFilter.put("_audits.service.ts", () -> config.isEnableAudits());//admin/audits/
+            dataFilter.put("audits.component.ts", () -> config.isEnableAudits());//admin/audits/
+            dataFilter.put("audits.component.html", () -> config.isEnableAudits());//admin/audits/
+            dataFilter.put("audits.route.ts", () -> config.isEnableAudits());//admin/audits/
+            dataFilter.put("audits.service.ts", () -> config.isEnableAudits());//admin/audits/
+            dataFilter.put("audit-data.model.ts", () -> config.isEnableAudits());//admin/audits/
+            dataFilter.put("audit.model.ts", () -> config.isEnableAudits());//admin/audits/
+            dataFilter.put("audits.component.spec.ts", () -> config.isEnableAudits());
+            dataFilter.put("audits.service.spec.ts", () -> config.isEnableAudits());
             dataFilter.put("audits.json", () -> config.isEnableAudits());//admin/audits/
-            dataFilter.put("_audits.component.spec.ts", () -> config.isEnableAudits());
-
 
             //Docs
-            dataFilter.put("_docs.component.ts", () -> config.isEnableDocs());
-            dataFilter.put("_docs.component.html", () -> config.isEnableDocs());
-            dataFilter.put("_docs.route.ts", () -> config.isEnableDocs());
+            dataFilter.put("docs.component.ts", () -> config.isEnableDocs());
+            dataFilter.put("docs.component.html", () -> config.isEnableDocs());
+            dataFilter.put("docs.route.ts", () -> config.isEnableDocs());
             dataFilter.put("swagger-ui/_index.html", () -> config.isEnableDocs());
             dataFilter.put("swagger-ui/images/throbber.gif", () -> config.isEnableDocs());
             dataFilter.put("swagger-ui/config/resource.json", () -> config.isEnableDocs());
             dataFilter.put("swagger-ui/config/ui.json", () -> config.isEnableDocs());
 
             //SCSS
-            dataFilter.put("content/scss/__bootstrap-variables.scss", () -> config.isUseSass());
-            dataFilter.put("content/scss/_global.scss", () -> config.isUseSass());
-            dataFilter.put("content/scss/_vendor.scss", () -> config.isUseSass());
-            dataFilter.put("content/scss/_rtl.scss", () -> config.isUseSass() && config.isEnableI18nRTL());
-            dataFilter.put("app/layouts/profiles/_page-ribbon.scss", () -> config.isEnableProfile() && config.isUseSass());
-            dataFilter.put("app/layouts/navbar/_navbar.scss", () -> config.isUseSass());
-            dataFilter.put("app/home/_home.scss", () -> config.isUseSass());
-            dataFilter.put("app/account/password/_password-strength-bar.scss", () -> config.isUseSass());
+            dataFilter.put("_bootstrap-variables.scss", () -> config.isUseSass());
+            dataFilter.put("global.scss", () -> config.isUseSass());
+            dataFilter.put("vendor.scss", () -> config.isUseSass());
+            dataFilter.put("rtl.scss", () -> config.isUseSass() && config.isEnableI18nRTL());
+            dataFilter.put("page-ribbon.scss", () -> config.isEnableProfile() && config.isUseSass());
+            dataFilter.put("navbar.scss", () -> config.isUseSass());
+            dataFilter.put("home.scss", () -> config.isUseSass());
+            dataFilter.put("password-strength-bar.scss", () -> config.isUseSass() && !OAUTH2_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
 
             //css
-            dataFilter.put("content/css/_documentation.css", () -> !config.isUseSass());
-            dataFilter.put("content/css/_global.css", () -> !config.isUseSass());
-            dataFilter.put("content/css/_vendor.css", () -> !config.isUseSass());
-            dataFilter.put("content/css/_rtl.css", () -> !config.isUseSass() && config.isEnableI18nRTL());
-            dataFilter.put("app/layouts/profiles/_page-ribbon.css", () -> config.isEnableProfile() && !config.isUseSass());
-            dataFilter.put("app/layouts/navbar/_navbar.css", () -> !config.isUseSass());
-            dataFilter.put("app/home/_home.css", () -> !config.isUseSass());
-            dataFilter.put("app/account/password/_password-strength-bar.css", () -> !config.isUseSass());
+            dataFilter.put("documentation.css", () -> !config.isUseSass());
+            dataFilter.put("global.css", () -> !config.isUseSass());
+            dataFilter.put("vendor.css", () -> !config.isUseSass());
+            dataFilter.put("rtl.css", () -> !config.isUseSass() && config.isEnableI18nRTL());
+            dataFilter.put("page-ribbon.css", () -> config.isEnableProfile() && !config.isUseSass());
+            dataFilter.put("navbar.css", () -> !config.isUseSass());
+            dataFilter.put("home.css", () -> !config.isUseSass());
+            dataFilter.put("password-strength-bar.css", () -> !config.isUseSass() && !OAUTH2_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
 
             //Profile
-            dataFilter.put("_profile.service.ts", () -> config.isEnableProfile());//layouts/profiles
-            dataFilter.put("_profile-info.model.ts", () -> config.isEnableProfile());//layouts/profiles
-            dataFilter.put("_page-ribbon.component.ts", () -> config.isEnableProfile());//layouts/profiles
+            dataFilter.put("profile.service.ts", () -> config.isEnableProfile());//layouts/profiles
+            dataFilter.put("profile-info.model.ts", () -> config.isEnableProfile());//layouts/profiles
+            dataFilter.put("page-ribbon.component.ts", () -> config.isEnableProfile());//layouts/profiles
             
-            //Search Engine
-//            dataFilter.put("_entity-search.service.ts", () -> ELASTIC_SEARCH_ENGINE.equals(config.getSearchEngine()));
-
             //Skip UserManagement
-            dataFilter.put("_user-management.component.ts", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user-management-detail.component.ts", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user-management-dialog.component.ts", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user-management-delete-dialog.component.ts", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user.model.ts", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user.service.ts", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user-management.state.ts", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user-management.component.html", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user-management-detail.component.html", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user-management-dialog.component.html", () -> !config.isSkipUserManagement());
-            dataFilter.put("_user-management-delete-dialog.component.html", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management-detail.component.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management-detail.component.html", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management-dialog.component.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management-dialog.component.html", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management-delete-dialog.component.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management-delete-dialog.component.html", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management.component.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management.component.html", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management.route.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-modal.service.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-route-access-service.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user.model.ts", () -> !config.isSkipUserManagement() || OAUTH2_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("user.service.ts", () -> !config.isSkipUserManagement() || OAUTH2_AUTHENTICATION_TYPE.equals(config.getAuthenticationType()));
+            dataFilter.put("user-management-detail.component.spec.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management-dialog.component.spec.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management-delete-dialog.component.spec.ts", () -> !config.isSkipUserManagement());
+            dataFilter.put("user-management.component.spec.ts", () -> !config.isSkipUserManagement());
             dataFilter.put("user-management.json", () -> !config.isSkipUserManagement());
         }
         return dataFilter;
