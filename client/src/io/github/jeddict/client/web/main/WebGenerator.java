@@ -202,7 +202,9 @@ public abstract class WebGenerator extends BaseWebGenerator {
 
     @Override
     public void postExecute() {
-        appConfigData.addProfileAndActivate(project, "webpack");
+        if (appConfigData.isMonolith() || appConfigData.isGateway()) {
+            appConfigData.addProfileAndActivate(project, "webpack");
+        }
     }
         
     protected void generateHome(BaseApplicationConfig applicationConfig, EJSParser parser) throws IOException {

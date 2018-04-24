@@ -69,9 +69,7 @@ import io.github.jeddict.jcode.annotation.ConfigData;
 import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicResource;
 import static io.github.jeddict.jpa.spec.extend.BlobContentType.TEXT;
 import io.github.jeddict.rest.controller.RESTData;
-import javax.script.ScriptException;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
 /**
@@ -101,6 +99,7 @@ public abstract class BaseWebGenerator implements Generator {
     private BaseApplicationConfig applicationConfig;
     
     protected Project project;
+    protected Project javaProject;
     protected FileObject projectRoot;
     protected FileObject testRoot;
     protected FileObject webRoot;
@@ -116,6 +115,7 @@ public abstract class BaseWebGenerator implements Generator {
     public void execute() throws IOException {
         project = appConfigData.isMicroservice() || appConfigData.isGateway()? 
                     appConfigData.getGatewayProject(): appConfigData.getTargetProject();
+        javaProject =  appConfigData.getTargetProject();
         testRoot = SourceGroupSupport.getTestSourceGroup(project).getRootFolder().getParent();//test/java => ../java
         webRoot = getProjectWebRoot(project);
         projectRoot = project.getProjectDirectory();
@@ -366,7 +366,7 @@ public abstract class BaseWebGenerator implements Generator {
                         webField.setFieldIsEnum(true);
                         String enumType = ((BaseAttribute) attribute).getAttributeType();
                         try {
-                          List elements = JavaSourceHelper.getEnumVariableElements(project, enumType);
+                          List elements = JavaSourceHelper.getEnumVariableElements(javaProject, enumType);
                           String enumElement = (String) elements.stream()
                                     .map(var -> var.toString())
                                     .collect(Collectors.joining(","));
