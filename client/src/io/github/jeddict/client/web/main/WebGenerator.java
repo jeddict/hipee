@@ -28,6 +28,7 @@ import io.github.jeddict.jcode.parser.ejs.EJSParser;
 import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicResource;
 import static io.github.jeddict.jcode.parser.ejs.EJSUtil.getResource;
 import static io.github.jeddict.jcode.parser.ejs.EJSUtil.insertNeedle;
+import io.github.jeddict.jcode.util.BuildManager;
 import static io.github.jeddict.jcode.util.FileUtil.loadResource;
 import io.github.jeddict.jcode.util.POMManager;
 import static io.github.jeddict.jcode.util.ProjectHelper.getProjectDisplayName;
@@ -140,13 +141,10 @@ public abstract class WebGenerator extends BaseWebGenerator {
         copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resources.zip", webRoot, getEntityPathResolver(entity), handler);
     }
 
-    protected void addMavenDependencies(Reader pom) {
-        if (POMManager.isMavenProject(project)) {
-            POMManager pomManager = new POMManager(pom, project);
-            pomManager.commit();
-        } else {
-            handler.warning(NbBundle.getMessage(this.getClass(), "TITLE_Maven_Project_Not_Found"), NbBundle.getMessage(this.getClass(), "MSG_Maven_Project_Not_Found"));
-        }
+    protected void addDependencies(Reader pom) {
+        BuildManager.getInstance(project)
+                .copy(pom)
+                .commit();
     }
 
     protected void updateNeedle(BaseApplicationConfig applicationConfig, List<BaseEntity> webEntities) {
@@ -213,7 +211,7 @@ public abstract class WebGenerator extends BaseWebGenerator {
 //        parser.setDelimiter('#');//nested template
         try (Reader sourceReader = new InputStreamReader(loadResource(getPomPath()))) {
             try (Reader targetReader = new StringReader(parser.parse(sourceReader))) {
-                addMavenDependencies(targetReader);
+                addDependencies(targetReader);
             } catch (ScriptException ex) {
                 Exceptions.printStackTrace(ex);
                 System.out.println("Error in template : " + getPomPath());
