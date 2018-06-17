@@ -139,6 +139,15 @@ public abstract class WebGenerator extends BaseWebGenerator {
         parser.eval(IOUtils.toString(getClass().getResourceAsStream(getExtScriptPath() + "custom-entity.js"), "UTF-8"));
 
         copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resources.zip", webRoot, getEntityPathResolver(entity), handler);
+        
+        
+        try {
+            parser.parse("sdsa");
+        } catch (ScriptException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+        
     }
 
     protected void addDependencies(Reader pom) {
@@ -185,16 +194,16 @@ public abstract class WebGenerator extends BaseWebGenerator {
         parser.addContext(entity);
         parser.addContext(config);
         parser.eval(IOUtils.toString(getClass().getResourceAsStream(getExtScriptPath() + "custom-entity.js"), "UTF-8"));
-        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-karma-test.zip", testRoot, getEntityPathResolver(entity), handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-unit-test.zip", testRoot, getEntityPathResolver(entity), handler);
         if (webData.isProtractorTest()) {
-            copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-protractor-test.zip", testRoot, getEntityPathResolver(entity), handler);
+            copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-e2e-test.zip", testRoot, getEntityPathResolver(entity), handler);
         }
     }
 
     protected void generateTest(EJSParser parser) throws IOException {
-        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "karma-test.zip", testRoot, PATH_RESOLVER, handler);
+        copyDynamicResource(parser.getParserManager(), getTemplatePath() + "unit-test.zip", testRoot, PATH_RESOLVER, handler);
         if (webData.isProtractorTest()) {
-            copyDynamicResource(parser.getParserManager(), getTemplatePath() + "protractor-test.zip", testRoot, PATH_RESOLVER, handler);
+            copyDynamicResource(parser.getParserManager(), getTemplatePath() + "e2e-test.zip", testRoot, PATH_RESOLVER, handler);
         }
     }
 

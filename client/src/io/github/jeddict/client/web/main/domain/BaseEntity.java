@@ -65,13 +65,15 @@ public abstract class BaseEntity {
     private boolean fieldsContainBlob;
     private boolean fieldsContainImageBlob;
     private boolean fieldsContainBlobOrImage;
+    private boolean fieldsContainBoolean;
     private boolean validation;
     private boolean fieldsContainOwnerManyToMany;
     private boolean fieldsContainNoOwnerOneToOne;
     private boolean fieldsContainOwnerOneToOne;
     private boolean fieldsContainOneToMany;
     private boolean fieldsContainManyToOne;
-    private List<String> differentTypes = new ArrayList<>();
+    private final List<String> blobFields = new ArrayList<>();
+    private final List<String> differentTypes = new ArrayList<>();
     private final List<BaseField> fields = new ArrayList<>();
     private final List<BaseRelationship> relationships = new ArrayList<>();
     private String pkType;
@@ -522,6 +524,14 @@ public abstract class BaseEntity {
         this.fieldsContainBlobOrImage = fieldsContainBlobOrImage;
     }
 
+    public boolean isFieldsContainBoolean() {
+        return fieldsContainBoolean;
+    }
+
+    public void setFieldsContainBoolean(boolean fieldsContainBoolean) {
+        this.fieldsContainBoolean = fieldsContainBoolean;
+    }
+
     /**
      * @return the validation
      */
@@ -615,6 +625,21 @@ public abstract class BaseEntity {
         return differentTypes;
     }
 
+    /**
+     * @return the blobFields
+     */
+    public List<String> getBlobFields() {
+        return blobFields;
+    }
+
+    public boolean addBlobField(String blobField) {
+        return getBlobFields().add(blobField);
+    }
+
+    public boolean removeBlobField(String blobField) {
+        return getBlobFields().remove(blobField);
+    }
+    
     /**
      * @return the pkType
      */

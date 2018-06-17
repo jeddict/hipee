@@ -38,6 +38,7 @@ import org.openide.util.Exceptions;
 public class ReactEntity extends BaseEntity {
 
     private final String entityReactName;
+    private boolean fieldsIsReactAvField;
     private final Map<String, List<BaseRelationship>> differentRelationships = new HashMap<>();
 
     public ReactEntity(String name, String entityReactSuffix, String appName, String clientRootFolder) {
@@ -86,6 +87,10 @@ public class ReactEntity extends BaseEntity {
             Exceptions.printStackTrace(ex);
         }
         return "{}";
+    }
+
+    public boolean getFieldsIsReactAvField() {
+        return !(isFieldsContainZonedDateTime() && isFieldsContainInstant() && isFieldsContainBoolean());
     }
 
 }

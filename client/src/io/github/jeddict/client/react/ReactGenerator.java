@@ -23,7 +23,6 @@ import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import io.github.jeddict.client.react.domain.ReactApplicationConfig;
 import io.github.jeddict.client.react.domain.ReactField;
 import io.github.jeddict.client.react.domain.ReactRelationship;

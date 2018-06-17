@@ -67,6 +67,7 @@ import io.github.jeddict.client.web.main.domain.BaseField;
 import io.github.jeddict.client.web.main.domain.BaseRelationship;
 import io.github.jeddict.jcode.annotation.ConfigData;
 import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicResource;
+import static io.github.jeddict.jcode.util.AttributeType.BOOLEAN;
 import static io.github.jeddict.jpa.spec.extend.BlobContentType.TEXT;
 import io.github.jeddict.rest.controller.RESTData;
 import org.openide.filesystems.FileObject;
@@ -221,7 +222,7 @@ public abstract class BaseWebGenerator implements Generator {
         applicationConfig.setEnableMetrics(restData.isMetrics());
         applicationConfig.setEnableLogs(restData.isLogger());
         applicationConfig.setRestPackage(restData.getPackage());
-        applicationConfig.setEnableDocs(restData.isDocsEnable());
+        applicationConfig.setEnableDocs(false);//restData.isOpenAPI());
         applicationConfig.setEnableHealth(true);
         applicationConfig.setEnableConfiguration(false);
         applicationConfig.setEnableAudits(false);
@@ -340,11 +341,11 @@ public abstract class BaseWebGenerator implements Generator {
                 }
                 
                 if (null != webField.getFieldType()) {
-                    if (INSTANT.contains(webField.getFieldType())) {
-                        webEntity.setFieldsContainInstant(true);
-                        webEntity.setFieldsContainDate(true);
-                    } else if (ZONED_DATE_TIME.contains(webField.getFieldType())) {
+                     if (ZONED_DATE_TIME.contains(webField.getFieldType())) {
                         webEntity.setFieldsContainZonedDateTime(true);
+                        webEntity.setFieldsContainDate(true);
+                    } else if (INSTANT.contains(webField.getFieldType())) {
+                        webEntity.setFieldsContainInstant(true);
                         webEntity.setFieldsContainDate(true);
                     } else if (LOCAL_DATE.contains(webField.getFieldType())) {
                         webEntity.setFieldsContainLocalDate(true);
@@ -352,6 +353,7 @@ public abstract class BaseWebGenerator implements Generator {
                     } else if (BIGDECIMAL.contains(webField.getFieldType())) {
                         webEntity.setFieldsContainBigDecimal(true);
                     } else if (((BaseAttribute) attribute).isBlobAttributeType()) {
+                        webEntity.addBlobField(attribute.getName());
                         webEntity.setFieldsContainBlob(true);
                         if (attribute.getBlobContentType() != null) {
                             webField.setFieldTypeBlobContent(attribute.getBlobContentType().getValue());
@@ -362,6 +364,8 @@ public abstract class BaseWebGenerator implements Generator {
                                 webEntity.setFieldsContainBlobOrImage(true);
                             }
                         }
+                    }  else if (BOOLEAN.equalsIgnoreCase(webField.getFieldType())) {
+                        webEntity.setFieldsContainBoolean(true);
                     } else if (attribute instanceof EnumTypeHandler && ((EnumTypeHandler) attribute).getEnumerated() != null) {
                         webField.setFieldIsEnum(true);
                         String enumType = ((BaseAttribute) attribute).getAttributeType();

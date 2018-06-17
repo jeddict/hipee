@@ -50,7 +50,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = Generator.class)
 @Technology(
         type = VIEWER,
-        label = "Angular 5",
+        label = "Angular 6",
         panel = AngularPanel.class,
         parents = {RESTGenerator.class},
         microservice = true,
