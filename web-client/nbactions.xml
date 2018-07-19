@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName>run</actionName>
+        <goals>
+            <goal>install</goal>
+            <goal>nbm:run-ide</goal>
+        </goals>
+    </action>
+    <action>
+        <actionName>debug</actionName>
+        <goals>
+            <goal>install</goal>
+            <goal>nbm:run-ide</goal>
+        </goals>
+        <properties>
+            <netbeans.run.params.debug>true</netbeans.run.params.debug>
+        </properties>
+    </action>
+</actions>

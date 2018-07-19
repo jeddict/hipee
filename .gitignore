@@ -1,6 +1,3 @@
-/nbproject/private/
-/client/nbproject/private/
-/cloud/nbproject/private/
-/client/build/
-/cloud/build/
-/build/
+/target/
+/web-client/target/
+/cloud-provider/target/
