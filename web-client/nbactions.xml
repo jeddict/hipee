@@ -3,18 +3,17 @@
     <action>
         <actionName>run</actionName>
         <goals>
-            <goal>install</goal>
-            <goal>nbm:run-ide</goal>
+            <goal>nbm:run-ide</goal>  
         </goals>
     </action>
     <action>
         <actionName>debug</actionName>
         <goals>
-            <goal>install</goal>
-            <goal>nbm:run-ide</goal>
+            <goal>nbm:run-ide</goal>  
         </goals>
         <properties>
-            <netbeans.run.params.debug>true</netbeans.run.params.debug>
+            <jpda.listen>true</jpda.listen>
+            <netbeans.run.params.debug>-J-agentlib:jdwp=transport=dt_socket,suspend=n,server=n,address=${jpda.address}</netbeans.run.params.debug>
         </properties>
     </action>
 </actions>

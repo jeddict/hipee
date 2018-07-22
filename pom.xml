@@ -13,9 +13,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.version>RELEASE82</netbeans.version>
-        <root.dir>${basedir}/../</root.dir>
+        <root.dir>${basedir}</root.dir>
         <nbm.cluster>jeddict</nbm.cluster>
-        <nbm.build.dir>${root.dir}/../jeddict-cluster/target/nbm</nbm.build.dir>
+        <nbm.build.dir>${root.dir}/../jeddict-cluster</nbm.build.dir>
     </properties>
     
     <build>

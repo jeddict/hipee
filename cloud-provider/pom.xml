@@ -10,6 +10,10 @@
     <name>Cloud Provider</name>
     <packaging>nbm</packaging>
 
+    <properties>
+        <root.dir>${basedir}/../</root.dir>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

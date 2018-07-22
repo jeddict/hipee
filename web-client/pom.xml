@@ -8,7 +8,12 @@
     </parent>
     <artifactId>web-client</artifactId>
     <name>Web Client</name>
-    <packaging>nbm</packaging>   
+    <packaging>nbm</packaging>
+    
+    <properties>
+        <root.dir>${basedir}/../</root.dir>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
