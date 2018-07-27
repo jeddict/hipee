@@ -15,7 +15,25 @@
  */
 package io.github.jeddict.client.web.main;
 
+import io.github.jeddict.client.i18n.I18NConfigData;
+import static io.github.jeddict.client.i18n.LanguageUtil.isI18nRTLSupportNecessary;
+import io.github.jeddict.client.web.main.domain.ApplicationSourceFilter;
+import io.github.jeddict.client.web.main.domain.BaseApplicationConfig;
+import io.github.jeddict.client.web.main.domain.BaseEntity;
+import io.github.jeddict.client.web.main.domain.BaseField;
+import io.github.jeddict.client.web.main.domain.BaseRelationship;
+import static io.github.jeddict.client.web.main.domain.Constant.GATEWAY_APPLICATION_TYPE;
+import static io.github.jeddict.client.web.main.domain.Constant.MONOLITH_APPLICATION_TYPE;
+import io.github.jeddict.client.web.main.domain.EntityConfig;
+import io.github.jeddict.jcode.ApplicationConfigData;
+import io.github.jeddict.jcode.Generator;
+import io.github.jeddict.jcode.annotation.ConfigData;
+import io.github.jeddict.jcode.parser.ejs.EJSParser;
+import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicFile;
+import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicResource;
+import io.github.jeddict.jcode.task.progress.ProgressHandler;
 import static io.github.jeddict.jcode.util.AttributeType.BIGDECIMAL;
+import static io.github.jeddict.jcode.util.AttributeType.BOOLEAN;
 import static io.github.jeddict.jcode.util.AttributeType.INSTANT;
 import static io.github.jeddict.jcode.util.AttributeType.LOCAL_DATE;
 import static io.github.jeddict.jcode.util.AttributeType.ZONED_DATE_TIME;
@@ -24,13 +42,8 @@ import io.github.jeddict.jcode.util.JavaSourceHelper;
 import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
 import io.github.jeddict.jcode.util.JavaUtil;
 import static io.github.jeddict.jcode.util.ProjectHelper.getProjectWebRoot;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
+import static io.github.jeddict.jcode.util.ProjectHelper.getTestSourceGroup;
 import static io.github.jeddict.jcode.util.StringHelper.pluralize;
-import io.github.jeddict.jcode.Generator;
-import io.github.jeddict.jcode.parser.ejs.EJSParser;
-import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicFile;
-import io.github.jeddict.jcode.ApplicationConfigData;
-import io.github.jeddict.jcode.task.progress.ProgressHandler;
 import io.github.jeddict.jpa.spec.DefaultAttribute;
 import io.github.jeddict.jpa.spec.ElementCollection;
 import io.github.jeddict.jpa.spec.Embedded;
@@ -42,8 +55,10 @@ import io.github.jeddict.jpa.spec.Version;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 import static io.github.jeddict.jpa.spec.extend.BlobContentType.IMAGE;
+import static io.github.jeddict.jpa.spec.extend.BlobContentType.TEXT;
 import io.github.jeddict.jpa.spec.extend.EnumTypeHandler;
 import io.github.jeddict.jpa.spec.extend.RelationAttribute;
+import io.github.jeddict.rest.controller.RESTData;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,21 +70,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.project.Project;
-import io.github.jeddict.client.i18n.I18NConfigData;
-import static io.github.jeddict.client.i18n.LanguageUtil.isI18nRTLSupportNecessary;
-import io.github.jeddict.client.web.main.domain.ApplicationSourceFilter;
-import io.github.jeddict.client.web.main.domain.EntityConfig;
-import io.github.jeddict.client.web.main.domain.BaseApplicationConfig;
-import io.github.jeddict.client.web.main.domain.BaseEntity;
-import io.github.jeddict.client.web.main.domain.BaseField;
-import io.github.jeddict.client.web.main.domain.BaseRelationship;
-import static io.github.jeddict.client.web.main.domain.Constant.GATEWAY_APPLICATION_TYPE;
-import static io.github.jeddict.client.web.main.domain.Constant.MONOLITH_APPLICATION_TYPE;
-import io.github.jeddict.jcode.annotation.ConfigData;
-import static io.github.jeddict.jcode.parser.ejs.EJSUtil.copyDynamicResource;
-import static io.github.jeddict.jcode.util.AttributeType.BOOLEAN;
-import static io.github.jeddict.jpa.spec.extend.BlobContentType.TEXT;
-import io.github.jeddict.rest.controller.RESTData;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 
@@ -117,7 +117,7 @@ public abstract class BaseWebGenerator implements Generator {
         project = appConfigData.isMicroservice() || appConfigData.isGateway()? 
                     appConfigData.getGatewayProject(): appConfigData.getTargetProject();
         javaProject =  appConfigData.getTargetProject();
-        testRoot = SourceGroupSupport.getTestSourceGroup(project).getRootFolder().getParent();//test/java => ../java
+        testRoot = getTestSourceGroup(project).getRootFolder().getParent();//test/java => ../java
         webRoot = getProjectWebRoot(project);
         projectRoot = project.getProjectDirectory();
         entityScriptFiles = new ArrayList<>();
