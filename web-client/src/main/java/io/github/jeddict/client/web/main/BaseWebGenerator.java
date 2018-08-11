@@ -68,7 +68,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.Project;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;

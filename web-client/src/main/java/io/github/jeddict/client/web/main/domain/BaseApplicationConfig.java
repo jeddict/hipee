@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import io.github.jeddict.client.i18n.Language;
 import static io.github.jeddict.client.web.main.domain.Constant.MONOLITH_APPLICATION_TYPE;
 import static io.github.jeddict.client.web.main.domain.Constant.SQL_DATABASE_TYPE;

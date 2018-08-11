@@ -31,8 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 public abstract class BaseField {
 

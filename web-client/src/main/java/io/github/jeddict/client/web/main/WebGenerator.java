@@ -30,7 +30,6 @@ import static io.github.jeddict.jcode.parser.ejs.EJSUtil.getResource;
 import static io.github.jeddict.jcode.parser.ejs.EJSUtil.insertNeedle;
 import io.github.jeddict.jcode.util.BuildManager;
 import static io.github.jeddict.jcode.util.FileUtil.loadResource;
-import io.github.jeddict.jcode.util.POMManager;
 import static io.github.jeddict.jcode.util.ProjectHelper.getProjectDisplayName;
 import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.jpa.spec.Entity;
@@ -48,16 +47,14 @@ import java.util.function.Function;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import javax.script.ScriptException;
-import org.openide.util.Exceptions;
-import org.openide.filesystems.FileUtil;
-import org.openide.util.NbBundle;
-import org.netbeans.api.extexecution.base.ProcessBuilder;
-//import org.apache.commons.io.IOUtils;
-//import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.IOUtils;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExecutionService;
+import org.netbeans.api.extexecution.base.ProcessBuilder;
 import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
+
 public abstract class WebGenerator extends BaseWebGenerator {
 
     protected ApplicationSourceFilter fileFilter;
