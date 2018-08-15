@@ -15,6 +15,10 @@
  */
 package io.github.jeddict.client.angular;
 
+import io.github.jeddict.client.web.main.WebData;
+import static io.github.jeddict.client.web.main.WebData.DEFAULT_PREFIX;
+import io.github.jeddict.client.web.main.domain.ClientPackager;
+import io.github.jeddict.jcode.LayerConfigPanel;
 import static io.github.jeddict.jcode.util.StringHelper.firstLower;
 import static io.github.jeddict.jcode.util.StringHelper.kebabCase;
 import static io.github.jeddict.jcode.util.StringHelper.startCase;
@@ -22,10 +26,6 @@ import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
-import io.github.jeddict.client.web.main.WebData;
-import static io.github.jeddict.client.web.main.WebData.DEFAULT_PREFIX;
-import io.github.jeddict.client.web.main.domain.ClientPackager;
-import io.github.jeddict.jcode.LayerConfigPanel;
 import org.netbeans.modeler.properties.spec.ComboBoxValue;
 import org.openide.util.NbBundle;
 
@@ -188,6 +188,7 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
         appTitleTextField = new javax.swing.JTextField();
         titleEndLabel = new javax.swing.JLabel();
         wrapperPanel4 = new javax.swing.JPanel();
+        gap = new javax.swing.JLayeredPane();
         protractorTest_CheckBox = new javax.swing.JCheckBox();
         sass_CheckBox = new javax.swing.JCheckBox();
         clientPackagerPanel = new javax.swing.JPanel();
@@ -208,7 +209,7 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
         jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.LINE_AXIS));
 
         org.openide.awt.Mnemonics.setLocalizedText(prefixLabel, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.prefixLabel.text")); // NOI18N
-        prefixLabel.setPreferredSize(new java.awt.Dimension(92, 14));
+        prefixLabel.setPreferredSize(new java.awt.Dimension(132, 14));
         jPanel5.add(prefixLabel);
 
         prefixTextField.setText(org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.prefixTextField.text")); // NOI18N
@@ -219,7 +220,7 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
 
         org.openide.awt.Mnemonics.setLocalizedText(angularModuleLabel, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.angularModuleLabel.text")); // NOI18N
-        angularModuleLabel.setPreferredSize(new java.awt.Dimension(92, 14));
+        angularModuleLabel.setPreferredSize(new java.awt.Dimension(132, 14));
         jPanel3.add(angularModuleLabel);
 
         angularModuleTextField.setText(org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.angularModuleTextField.text")); // NOI18N
@@ -232,47 +233,48 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
         org.openide.awt.Mnemonics.setLocalizedText(appTitleLabel, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.appTitleLabel.text")); // NOI18N
         wrapperPanel1.add(appTitleLabel, java.awt.BorderLayout.LINE_START);
 
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
+        jPanel2.setLayout(new java.awt.BorderLayout());
 
         titleStartLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         org.openide.awt.Mnemonics.setLocalizedText(titleStartLabel, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.titleStartLabel.text")); // NOI18N
-        titleStartLabel.setPreferredSize(new java.awt.Dimension(45, 14));
-        jPanel2.add(titleStartLabel);
+        titleStartLabel.setMaximumSize(new java.awt.Dimension(80, 20));
+        titleStartLabel.setPreferredSize(new java.awt.Dimension(60, 14));
+        jPanel2.add(titleStartLabel, java.awt.BorderLayout.WEST);
 
         appTitleTextField.setText(org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.appTitleTextField.text")); // NOI18N
-        jPanel2.add(appTitleTextField);
+        appTitleTextField.setPreferredSize(new java.awt.Dimension(6, 16));
+        jPanel2.add(appTitleTextField, java.awt.BorderLayout.CENTER);
 
         titleEndLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         org.openide.awt.Mnemonics.setLocalizedText(titleEndLabel, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.titleEndLabel.text")); // NOI18N
-        titleEndLabel.setPreferredSize(new java.awt.Dimension(45, 14));
-        jPanel2.add(titleEndLabel);
+        titleEndLabel.setPreferredSize(new java.awt.Dimension(60, 14));
+        jPanel2.add(titleEndLabel, java.awt.BorderLayout.EAST);
 
         wrapperPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
 
         jPanel1.add(wrapperPanel1);
 
+        wrapperPanel4.setLayout(new java.awt.GridLayout());
+
+        javax.swing.GroupLayout gapLayout = new javax.swing.GroupLayout(gap);
+        gap.setLayout(gapLayout);
+        gapLayout.setHorizontalGroup(
+            gapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 194, Short.MAX_VALUE)
+        );
+        gapLayout.setVerticalGroup(
+            gapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 22, Short.MAX_VALUE)
+        );
+
+        wrapperPanel4.add(gap);
+
         org.openide.awt.Mnemonics.setLocalizedText(protractorTest_CheckBox, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.protractorTest_CheckBox.text")); // NOI18N
+        wrapperPanel4.add(protractorTest_CheckBox);
 
         org.openide.awt.Mnemonics.setLocalizedText(sass_CheckBox, org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.sass_CheckBox.text")); // NOI18N
         sass_CheckBox.setToolTipText(org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.sass_CheckBox.toolTipText")); // NOI18N
-
-        javax.swing.GroupLayout wrapperPanel4Layout = new javax.swing.GroupLayout(wrapperPanel4);
-        wrapperPanel4.setLayout(wrapperPanel4Layout);
-        wrapperPanel4Layout.setHorizontalGroup(
-            wrapperPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, wrapperPanel4Layout.createSequentialGroup()
-                .addGap(86, 86, 86)
-                .addComponent(protractorTest_CheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(sass_CheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(126, 126, 126))
-        );
-        wrapperPanel4Layout.setVerticalGroup(
-            wrapperPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, wrapperPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(protractorTest_CheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(sass_CheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        wrapperPanel4.add(sass_CheckBox);
 
         jPanel1.add(wrapperPanel4);
 
@@ -321,6 +323,7 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
     private javax.swing.JComboBox clientPackagerComboBox;
     private javax.swing.JLabel clientPackagerLabel;
     private javax.swing.JPanel clientPackagerPanel;
+    private javax.swing.JLayeredPane gap;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
