@@ -222,7 +222,7 @@ public abstract class BaseWebGenerator implements Generator {
         applicationConfig.setEnableMetrics(restData.isMetrics());
         applicationConfig.setEnableLogs(restData.isLogger());
         applicationConfig.setRestPackage(restData.getPackage());
-        applicationConfig.setEnableDocs(false);//restData.isOpenAPI());
+        applicationConfig.setEnableDocs(restData.isOpenAPI());
         applicationConfig.setEnableHealth(true);
         applicationConfig.setEnableConfiguration(false);
         applicationConfig.setEnableAudits(false);
