@@ -15,9 +15,6 @@
  */
 package io.github.jeddict.client.angular;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 import io.github.jeddict.client.web.main.domain.ApplicationSourceFilter;
 import io.github.jeddict.client.web.main.domain.BaseApplicationConfig;
 import static io.github.jeddict.client.web.main.domain.Constant.GATEWAY_APPLICATION_TYPE;
@@ -26,6 +23,9 @@ import static io.github.jeddict.client.web.main.domain.Constant.OAUTH2_AUTHENTIC
 import static io.github.jeddict.client.web.main.domain.Constant.SESSION_AUTHENTICATION_TYPE;
 import static io.github.jeddict.client.web.main.domain.Constant.UAA_AUTHENTICATION_TYPE;
 import static io.github.jeddict.client.web.main.domain.Constant.WEBSOCKET;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class NGSourceFilter extends ApplicationSourceFilter {
 
@@ -104,6 +104,9 @@ public class NGSourceFilter extends ApplicationSourceFilter {
             dataFilter.put("metrics.component.html", () -> config.isEnableMetrics());
             dataFilter.put("metrics-modal.component.ts", () -> config.isEnableMetrics());
             dataFilter.put("metrics-modal.component.html", () -> config.isEnableMetrics());
+            dataFilter.put("metrics-modal.component.spec.ts", () -> config.isEnableMetrics());
+            dataFilter.put("metrics.component.spec.ts", () -> false);
+            dataFilter.put("metrics.service.spec.ts", () -> config.isEnableMetrics());
             dataFilter.put("metrics.service.ts", () -> config.isEnableMetrics());
             dataFilter.put("metrics.route.ts", () -> config.isEnableMetrics());
             dataFilter.put("metrics.json", () -> config.isEnableMetrics());
@@ -115,16 +118,18 @@ public class NGSourceFilter extends ApplicationSourceFilter {
             dataFilter.put("logs.route.ts", () -> config.isEnableLogs());
             dataFilter.put("log.model.ts", () -> config.isEnableLogs());
             dataFilter.put("logs.json", () -> config.isEnableLogs());
+            dataFilter.put("logs.component.spec.ts", () -> config.isEnableLogs());
+            dataFilter.put("logs.service.spec.ts", () -> config.isEnableLogs());
 
             //Health
-            dataFilter.put("health.component.ts", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("health.component.html", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("health-modal.component.ts", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("health-modal.component.html", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("health.service.ts", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("health.route.ts", () -> config.isEnableHealth());//admin/health
-            dataFilter.put("health.component.spec.ts", () -> config.isEnableHealth());//test
-            dataFilter.put("health.json", () -> config.isEnableHealth());//admin/health
+            dataFilter.put("health.component.ts", () -> config.isEnableHealth());
+            dataFilter.put("health.component.html", () -> config.isEnableHealth());
+            dataFilter.put("health-modal.component.ts", () -> config.isEnableHealth());
+            dataFilter.put("health-modal.component.html", () -> config.isEnableHealth());
+            dataFilter.put("health.service.ts", () -> config.isEnableHealth());
+            dataFilter.put("health.route.ts", () -> config.isEnableHealth());
+            dataFilter.put("health.component.spec.ts", () -> false);
+            dataFilter.put("health.json", () -> config.isEnableHealth());
             
             //Configuration
             dataFilter.put("configuration.component.ts", () -> config.isEnableConfiguration());
@@ -132,6 +137,8 @@ public class NGSourceFilter extends ApplicationSourceFilter {
             dataFilter.put("configuration.route.ts", () -> config.isEnableConfiguration());
             dataFilter.put("configuration.service.ts", () -> config.isEnableConfiguration());
             dataFilter.put("configuration.json", () -> config.isEnableConfiguration());
+            dataFilter.put("configuration.component.spec.ts", () -> config.isEnableConfiguration());
+            dataFilter.put("configuration.service.spec.ts", () -> config.isEnableConfiguration());
 
             //Audit
             dataFilter.put("audits.component.ts", () -> config.isEnableAudits());//admin/audits/

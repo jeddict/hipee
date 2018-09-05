@@ -132,11 +132,11 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
     }
     
     public String getModule() {
-        return angularModuleTextField.getText().trim();
+        return moduleTextField.getText().trim();
     }
     
     private void setModule(String module) {
-        angularModuleTextField.setText(module);
+        moduleTextField.setText(module);
     }
     
     public String getApplicationTitle() {
@@ -180,7 +180,7 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
         prefixTextField = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         angularModuleLabel = new javax.swing.JLabel();
-        angularModuleTextField = new javax.swing.JTextField();
+        moduleTextField = new javax.swing.JTextField();
         wrapperPanel1 = new javax.swing.JPanel();
         appTitleLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -223,8 +223,8 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
         angularModuleLabel.setPreferredSize(new java.awt.Dimension(132, 14));
         jPanel3.add(angularModuleLabel);
 
-        angularModuleTextField.setText(org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.angularModuleTextField.text")); // NOI18N
-        jPanel3.add(angularModuleTextField);
+        moduleTextField.setText(org.openide.util.NbBundle.getMessage(AngularPanel.class, "AngularPanel.moduleTextField.text")); // NOI18N
+        jPanel3.add(moduleTextField);
 
         jPanel1.add(jPanel3);
 
@@ -254,7 +254,7 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
 
         jPanel1.add(wrapperPanel1);
 
-        wrapperPanel4.setLayout(new java.awt.GridLayout());
+        wrapperPanel4.setLayout(new java.awt.GridLayout(1, 0));
 
         javax.swing.GroupLayout gapLayout = new javax.swing.GroupLayout(gap);
         gap.setLayout(gapLayout);
@@ -317,7 +317,6 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel angularModuleLabel;
-    private javax.swing.JTextField angularModuleTextField;
     private javax.swing.JLabel appTitleLabel;
     private javax.swing.JTextField appTitleTextField;
     private javax.swing.JComboBox clientPackagerComboBox;
@@ -328,6 +327,7 @@ public class AngularPanel extends LayerConfigPanel<WebData> {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JTextField moduleTextField;
     private javax.swing.JLabel prefixLabel;
     private javax.swing.JTextField prefixTextField;
     private javax.swing.JCheckBox protractorTest_CheckBox;
