@@ -221,7 +221,7 @@ public abstract class WebGenerator extends BaseWebGenerator {
         }
 
         String clientPackageManagerTitle = StringHelper.firstUpper(applicationConfig.getClientPackageManager());
-        handler.info("Installation prerequisites", "Node.js and " + clientPackageManagerTitle);
+        handler.info("Installation prerequisites", "Maven v3.5.0, Node.js, " + clientPackageManagerTitle);
         handler.info(clientPackageManagerTitle + " Build", Console.wrap(applicationConfig.getClientPackageManager() + " install", BOLD));
         handler.info("Format", Console.wrap(applicationConfig.getClientPackageManager() + " prettier:format", BOLD));
     }
