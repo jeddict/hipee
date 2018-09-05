@@ -121,8 +121,7 @@ public abstract class WebGenerator extends BaseWebGenerator {
         processBuilder.setArguments(asList("install"));
         processBuilder.setWorkingDirectory(FileUtil.toFile(project.getProjectDirectory()).getAbsolutePath());
         ExecutionDescriptor executionDescriptor = ExternalExecutable.DEFAULT_EXECUTION_DESCRIPTOR;//getExecutionDescriptor(executionDescriptor, outProcessorFactory);
-         Future<Integer> task = ExecutionService.newService(processBuilder, executionDescriptor, displayName).run();
-        
+        Future<Integer> task = ExecutionService.newService(processBuilder, executionDescriptor, displayName).run();
     }
     
     protected void generateEntity(BaseApplicationConfig applicationConfig,
@@ -131,20 +130,17 @@ public abstract class WebGenerator extends BaseWebGenerator {
         parser.addContext(applicationConfig);
         parser.addContext(entity);
         parser.addContext(config);
-
         parser.setImportTemplate(templateLib);
         parser.eval(IOUtils.toString(getClass().getResourceAsStream(getExtScriptPath() + "custom-entity.js"), "UTF-8"));
 
         copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resources.zip", webRoot, getEntityPathResolver(entity), handler);
-        
-        
+
         try {
-            parser.parse("sdsa");
+            parser.parse("mock");
         } catch (ScriptException ex) {
             Exceptions.printStackTrace(ex);
         }
-        
-        
+
     }
 
     protected void addDependencies(Reader pom) {

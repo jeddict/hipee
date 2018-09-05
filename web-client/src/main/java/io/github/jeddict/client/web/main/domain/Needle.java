@@ -15,13 +15,13 @@
  */
 package io.github.jeddict.client.web.main.domain;
 
+import io.github.jeddict.client.angular.domain.NGApplicationConfig;
 import static io.github.jeddict.jcode.util.FileUtil.expandTemplateContent;
 import static io.github.jeddict.jcode.util.StringHelper.camelCase;
 import static io.github.jeddict.jcode.util.StringHelper.startCase;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import io.github.jeddict.client.angular.domain.NGApplicationConfig;
 
 /**
  *
@@ -51,10 +51,10 @@ public class Needle {
         return template;
     }
     
-    public String getTemplate(BaseApplicationConfig applicationConfig, List<BaseEntity> ngEntities) {
+    public String getTemplate(BaseApplicationConfig applicationConfig, List<BaseEntity> entities) {
         StringBuilder content = new StringBuilder();
-        if (ngEntities != null) {
-            for (BaseEntity entity : ngEntities) {
+        if (entities != null) {
+            for (BaseEntity entity : entities) {
                 if(entity.isUpgrade()){
                     continue;
                 }

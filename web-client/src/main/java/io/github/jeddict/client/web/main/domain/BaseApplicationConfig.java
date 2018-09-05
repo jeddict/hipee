@@ -15,6 +15,9 @@
  */
 package io.github.jeddict.client.web.main.domain;
 
+import io.github.jeddict.client.i18n.Language;
+import static io.github.jeddict.client.web.main.domain.Constant.MONOLITH_APPLICATION_TYPE;
+import static io.github.jeddict.client.web.main.domain.Constant.SQL_DATABASE_TYPE;
 import static io.github.jeddict.jcode.util.StringHelper.camelCase;
 import static io.github.jeddict.jcode.util.StringHelper.firstUpper;
 import static io.github.jeddict.jcode.util.StringHelper.kebabCase;
@@ -26,9 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import io.github.jeddict.client.i18n.Language;
-import static io.github.jeddict.client.web.main.domain.Constant.MONOLITH_APPLICATION_TYPE;
-import static io.github.jeddict.client.web.main.domain.Constant.SQL_DATABASE_TYPE;
 
 /**
  *
@@ -110,7 +110,7 @@ public abstract class BaseApplicationConfig {
     
     private final Map<String,List<String>> enumTypes = new HashMap<>();
     
-    public List<String> otherModules = Collections.<String>emptyList();
+    private List<Module> otherModules = Collections.emptyList();
 
     public BaseApplicationConfig(String baseName, String buildTool) {
         this.baseName = baseName;
@@ -757,6 +757,14 @@ public abstract class BaseApplicationConfig {
     
     public void addEnumType(String enumType, List<String> varTypes){
         enumTypes.put(enumType, varTypes);
+    }
+
+    public List<Module> getOtherModules() {
+        return otherModules;
+    }
+
+    public void setOtherModules(List<Module> otherModules) {
+        this.otherModules = otherModules;
     }
     
     public abstract String getJsType();

@@ -226,7 +226,7 @@ public abstract class BaseWebGenerator implements Generator {
         applicationConfig.setEnableHealth(true);
         applicationConfig.setEnableConfiguration(false);
         applicationConfig.setEnableAudits(false);
-        applicationConfig.setEnableProfile(false);
+        applicationConfig.setEnableProfile(true);
         applicationConfig.setServiceDiscoveryType(appConfigData.getRegistryType().name().toLowerCase());
         
         applicationConfig.setClientFramework(getClientFramework());

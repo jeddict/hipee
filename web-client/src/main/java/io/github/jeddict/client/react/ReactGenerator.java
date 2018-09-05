@@ -16,16 +16,12 @@
 package io.github.jeddict.client.react;
 
 import static io.github.jeddict.client.angular.AngularGenerator.ANGULAR_TEMPLATE;
-import io.github.jeddict.jcode.Generator;
-import io.github.jeddict.jpa.spec.Entity;
-import io.github.jeddict.jpa.spec.extend.BaseAttribute;
-import io.github.jeddict.jpa.spec.extend.RelationAttribute;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import io.github.jeddict.client.angular.AngularPanel;
 import io.github.jeddict.client.react.domain.ReactApplicationConfig;
+import io.github.jeddict.client.react.domain.ReactEntity;
 import io.github.jeddict.client.react.domain.ReactField;
 import io.github.jeddict.client.react.domain.ReactRelationship;
+import io.github.jeddict.client.web.main.WebGenerator;
 import io.github.jeddict.client.web.main.domain.ApplicationSourceFilter;
 import io.github.jeddict.client.web.main.domain.BaseApplicationConfig;
 import io.github.jeddict.client.web.main.domain.BaseEntity;
@@ -33,25 +29,31 @@ import io.github.jeddict.client.web.main.domain.BaseField;
 import io.github.jeddict.client.web.main.domain.BaseRelationship;
 import io.github.jeddict.client.web.main.domain.Needle;
 import io.github.jeddict.client.web.main.domain.NeedleFile;
-import io.github.jeddict.client.react.domain.ReactEntity;
-import io.github.jeddict.client.web.main.WebGenerator;
+import io.github.jeddict.jcode.Generator;
 import io.github.jeddict.jcode.annotation.Technology;
 import static io.github.jeddict.jcode.annotation.Technology.Type.VIEWER;
+import io.github.jeddict.jpa.spec.Entity;
+import io.github.jeddict.jpa.spec.extend.BaseAttribute;
+import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.rest.controller.RESTGenerator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Gaurav Gupta
  */
-//@ServiceProvider(service = Generator.class)
-//@Technology(type = VIEWER,
-//        label = "React",
-//        panel = ReactPanel.class,
-//        parents = {RESTGenerator.class},
-//        microservice = true,
-//        listIndex = 2
-//)
+@ServiceProvider(service = Generator.class)
+@Technology(
+        type = VIEWER,
+        label = "React",
+        panel = AngularPanel.class,
+        parents = {RESTGenerator.class},
+        microservice = true,
+        listIndex = 2
+)
 public class ReactGenerator extends WebGenerator {
 
     public static final String REACT_TEMPLATE = "io/github/jeddict/client/react/template/";
@@ -64,29 +66,38 @@ public class ReactGenerator extends WebGenerator {
         NeedleFile NAVBAR_ROUTE = new NeedleFile("app/entities/index.tsx");
         NAVBAR_ROUTE.setNeedles(Arrays.asList(
                 new Needle("needle-add-route-import", "import ${entityReactName} from './${entityFolderName}';\n"),
-                new Needle("needle-add-route-path", "<Route path={'/${entityFileName}'} component={${entityReactName}}/>\n")
+                new Needle("needle-add-route-path", "<ErrorBoundaryRoute path={`${r\"${match.url}\"}/${entityFileName}`} component={${entityReactName}} />\n")
         ));
         needleFiles.add(NAVBAR_ROUTE);
 
-        NeedleFile NAVBAR_COMPONENT_HTML = new NeedleFile("app/shared/layout/header/header.tsx");
+        NeedleFile NAVBAR_COMPONENT_HTML = new NeedleFile("app/shared/layout/header/menus/entities.tsx");
         NAVBAR_COMPONENT_HTML.setNeedles(Arrays.asList(
                 new Needle("needle-add-entity-to-menu",
-                            "(\n" +
-                            "        <DropdownItem tag={Link} key=\"${routerName}\" to=\"/${routerName}\">\n" +
-                            "        <FaAsterisk />&nbsp;\n" +
-                            "        ${startCase_routerName}\n" +
-                            "        </DropdownItem>\n" +
-                            "      ),\n")
+                        "        <DropdownItem tag={Link} to=\"/entity/${routerName}\">\n"
+                        + "             <FontAwesomeIcon icon=\"asterisk\" />&nbsp;"
+                        + (applicationConfig.isEnableTranslation() ? "<Translate contentKey=\"global.menu.entities.${entityTranslationKeyMenu}\" />" : "${startCase_routerName}")
+                        + "\n"
+                        + "        </DropdownItem>\n")
         ));
         needleFiles.add(NAVBAR_COMPONENT_HTML);
         
         NeedleFile NAVBAR_REDUCER = new NeedleFile("app/shared/reducers/index.ts");
         NAVBAR_REDUCER.setNeedles(Arrays.asList(
-                new Needle("needle-add-reducer-combine", "  ${entityInstance},\n"),
-                new Needle("needle-add-reducer-import", "import ${entityInstance} from 'app/entities/${entityFolderName}/${entityFileName}.reducer';\n")
+                new Needle(
+                        "needle-add-reducer-import",
+                        "import ${entityInstance}, { ${entityReactName}State } from 'app/entities/${entityFolderName}/${entityFileName}.reducer';\n"
+                ),
+                new Needle(
+                        "needle-add-reducer-type",
+                        "  readonly ${entityInstance}: ${entityReactName}State;\n"
+                ),
+                new Needle(
+                        "needle-add-reducer-combine",
+                        "  ${entityInstance},\n"
+                )
         ));
         needleFiles.add(NAVBAR_REDUCER);
- 
+
         if (applicationConfig.isEnableTranslation()) {
             for (String language : applicationConfig.getLanguages()) {
                 NeedleFile GLOBAL_JSON = new NeedleFile("i18n/" + language + "/global.json");
