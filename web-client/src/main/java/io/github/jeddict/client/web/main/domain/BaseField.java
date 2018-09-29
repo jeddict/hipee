@@ -38,27 +38,27 @@ public abstract class BaseField {
 
     protected String fieldName;
     protected String fieldType;
-    private String javadoc;
+    protected String javadoc;
     
-    private final String fieldNameCapitalized;
-    private String fieldNameHumanized;
-    private final String fieldNameUnderscored;
+    protected final String fieldNameCapitalized;
+    protected String fieldNameHumanized;
+    protected final String fieldNameUnderscored;
 
-    private boolean fieldIsEnum;
-    private String fieldTypeBlobContent;//any , image, text
+    protected boolean fieldIsEnum;
+    protected String fieldTypeBlobContent;//any , image, text
 
-    private String fieldValidateRulesMax;
-    private String fieldValidateRulesMin;
-    private String fieldValidateRulesMaxlength;
-    private String fieldValidateRulesMinlength;
-    private String fieldValidateRulesMaxbytes;
-    private String fieldValidateRulesMinbytes;
-    private String fieldValidateRulesPattern;
-    private List<String> fieldValidateRules;
-    private boolean fieldValidate;
+    protected String fieldValidateRulesMax;
+    protected String fieldValidateRulesMin;
+    protected String fieldValidateRulesMaxlength;
+    protected String fieldValidateRulesMinlength;
+    protected String fieldValidateRulesMaxbytes;
+    protected String fieldValidateRulesMinbytes;
+    protected String fieldValidateRulesPattern;
+    protected List<String> fieldValidateRules;
+    protected boolean fieldValidate;
 
-    private String fieldValues;
-    private final String fieldInJavaBeanMethod;
+    protected String fieldValues;
+    protected final String fieldInJavaBeanMethod;
 
     public BaseField(BaseAttribute attribute) {
         this.fieldName = StringUtils.isEmpty(attribute.getJsonbProperty())

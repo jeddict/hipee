@@ -24,11 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbException;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -67,7 +63,7 @@ public class ReactEntity extends BaseEntity {
         return getEntityReactName();
     }
     
-    public String getEntityAngularName() { //remove after stable
+    public String getEntityAngularName() {
         return getEntityReactName();
     }
     
@@ -75,18 +71,8 @@ public class ReactEntity extends BaseEntity {
         return entityReactName;
     }
 
-    /**
-     * @return the differentRelationships
-     */
-    public String getDifferentRelationshipsJSON() {
-        try {
-            //map issue in nashorn
-            Jsonb jsonb = JsonbBuilder.create();
-            return jsonb.toJson(differentRelationships);
-        } catch (JsonbException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return "{}";
+    public Map<String, List<BaseRelationship>> getDifferentRelationships() {
+        return differentRelationships;
     }
 
     public boolean getFieldsIsReactAvField() {

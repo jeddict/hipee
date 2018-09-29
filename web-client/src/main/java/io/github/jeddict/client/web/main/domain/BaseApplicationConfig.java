@@ -47,70 +47,70 @@ public abstract class BaseApplicationConfig {
     public final String BUILD_DIR;
     public final String DIST_DIR;
 
-    private String applicationPath;//rest path
-    private final String buildTool;
-    private String clientPackageManager;
-    private String applicationType;
-    private String microserviceName;
-    private String serviceDiscoveryType;
+    protected String applicationPath;//rest path
+    protected final String buildTool;
+    protected String clientPackageManager;
+    protected String applicationType;
+    protected String microserviceName;
+    protected String serviceDiscoveryType;
     
-    private final Map<String,String> locals = new HashMap<>();
+    protected final Map<String, String> locals = new HashMap<>();
 
     protected String baseName;
-    private String capitalizedBaseName;
-    private String camelizedBaseName;
-    private String dasherizedBaseName;
-    private String lowercaseBaseName;
-    private List<BaseEntity> entities;
-    private String restPackage;
-    private String authenticationType;
-    private String uaaBaseName;
+    protected String capitalizedBaseName;
+    protected String camelizedBaseName;
+    protected String dasherizedBaseName;
+    protected String lowercaseBaseName;
+    protected List<BaseEntity> entities;
+    protected String restPackage;
+    protected String authenticationType;
+    protected String uaaBaseName;
 
     //i18n
-    private boolean enableTranslation;
-    private String nativeLanguage;
-    private Set<String> languages;
-    private Set<Language> languageInstances;
-    private boolean enableI18nRTL;
+    protected boolean enableTranslation;
+    protected String nativeLanguage;
+    protected Set<String> languages;
+    protected Set<Language> languageInstances;
+    protected boolean enableI18nRTL;
 
-    private String jhiPrefix;
-    private String jhiPrefixCapitalized;
-    private String jhiPrefixDashed;
+    protected String jhiPrefix;
+    protected String jhiPrefixCapitalized;
+    protected String jhiPrefixDashed;
 
     //Persistence
-    private String searchEngine;
-    private String databaseType;
-    private String devDatabaseType;
-    private String prodDatabaseType;
-    private String hibernateCache;//ehcache2
+    protected String searchEngine;
+    protected String databaseType;
+    protected String devDatabaseType;
+    protected String prodDatabaseType;
+    protected String hibernateCache;//ehcache2
 
-    private String websocket;
-    private String messageBroker;//kafka
-    private String clientFramework;// angular1
-    private boolean useSass;
+    protected String websocket;
+    protected String messageBroker;//kafka
+    protected String clientFramework;// angular1
+    protected boolean useSass;
 
     //test
-    private String[] testFrameworks = {};//protractor
-    private boolean protractorTests;
+    protected String[] testFrameworks = {};//protractor
+    protected boolean protractorTests;
 
     //filter    
-    private boolean enableSocialSignIn;
-    private boolean skipUserManagement;
-    private boolean skipClient;
-    private boolean skipServer;
-    private boolean skipCommitHook;
+    protected boolean enableSocialSignIn;
+    protected boolean skipUserManagement;
+    protected boolean skipClient;
+    protected boolean skipServer;
+    protected boolean skipCommitHook;
 
-    private boolean enableMetrics;
-    private boolean enableLogs;
-    private boolean enableHealth;
-    private boolean enableConfiguration;
-    private boolean enableAudits;
-    private boolean enableProfile;
-    private boolean enableDocs;
+    protected boolean enableMetrics;
+    protected boolean enableLogs;
+    protected boolean enableHealth;
+    protected boolean enableConfiguration;
+    protected boolean enableAudits;
+    protected boolean enableProfile;
+    protected boolean enableDocs;
     
-    private final Map<String,List<String>> enumTypes = new HashMap<>();
+    protected final Map<String, List<String>> enumTypes = new HashMap<>();
     
-    private List<Module> otherModules = Collections.emptyList();
+    protected List<Module> otherModules = Collections.emptyList();
 
     public BaseApplicationConfig(String baseName, String buildTool) {
         this.baseName = baseName;

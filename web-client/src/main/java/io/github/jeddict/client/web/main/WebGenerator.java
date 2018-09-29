@@ -30,6 +30,7 @@ import static io.github.jeddict.jcode.parser.ejs.EJSUtil.getResource;
 import static io.github.jeddict.jcode.parser.ejs.EJSUtil.insertNeedle;
 import io.github.jeddict.jcode.util.BuildManager;
 import static io.github.jeddict.jcode.util.FileUtil.loadResource;
+import static io.github.jeddict.jcode.util.FileUtil.readString;
 import static io.github.jeddict.jcode.util.ProjectHelper.getProjectDisplayName;
 import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.jpa.spec.Entity;
@@ -47,7 +48,6 @@ import java.util.function.Function;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import javax.script.ScriptException;
-import org.apache.commons.io.IOUtils;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExecutionService;
 import org.netbeans.api.extexecution.base.ProcessBuilder;
@@ -70,7 +70,7 @@ public abstract class WebGenerator extends BaseWebGenerator {
                 if (appConfigData.isCompleteApplication()) {
                     EJSParser parser = new EJSParser();
                     parser.addContext(applicationConfig);
-                    parser.eval(IOUtils.toString(getClass().getResourceAsStream(getExtScriptPath() + "custom-web.js"), "UTF-8"));
+                    parser.eval(readString(getClass().getResourceAsStream(getExtScriptPath() + "custom-web.js")));
                     generateHome(applicationConfig, parser);
                     generateApplication(parser);
                     generateTest(parser);
@@ -131,7 +131,7 @@ public abstract class WebGenerator extends BaseWebGenerator {
         parser.addContext(entity);
         parser.addContext(config);
         parser.setImportTemplate(templateLib);
-        parser.eval(IOUtils.toString(getClass().getResourceAsStream(getExtScriptPath() + "custom-entity.js"), "UTF-8"));
+        parser.eval(readString(getClass().getResourceAsStream(getExtScriptPath() + "custom-entity.js")));
 
         copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-resources.zip", webRoot, getEntityPathResolver(entity), handler);
 
@@ -186,7 +186,7 @@ public abstract class WebGenerator extends BaseWebGenerator {
         parser.addContext(applicationConfig);
         parser.addContext(entity);
         parser.addContext(config);
-        parser.eval(IOUtils.toString(getClass().getResourceAsStream(getExtScriptPath() + "custom-entity.js"), "UTF-8"));
+        parser.eval(readString(getClass().getResourceAsStream(getExtScriptPath() + "custom-entity.js")));
         copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-unit-test.zip", testRoot, getEntityPathResolver(entity), handler);
         if (webData.isProtractorTest()) {
             copyDynamicResource(parser.getParserManager(), getTemplatePath() + "entity-e2e-test.zip", testRoot, getEntityPathResolver(entity), handler);
@@ -203,14 +203,14 @@ public abstract class WebGenerator extends BaseWebGenerator {
     @Override
     public void postExecute() {
         if (appConfigData.isMonolith() || appConfigData.isGateway()) {
-            appConfigData.addProfileAndActivate(project, "webpack");
+            appConfigData.getEnvironment("dev")
+                    .addProfileAndActivate("webpack", project);
         }
     }
         
     protected void generateHome(BaseApplicationConfig applicationConfig, EJSParser parser) throws IOException {
         copyDynamicResource(parser.getParserManager(), getTemplatePath() + "project-resources.zip", projectRoot, identity(), handler);
 //        installYarn();
-//        parser.setDelimiter('#');//nested template
         try (Reader sourceReader = new InputStreamReader(loadResource(getPomPath()))) {
             try (Reader targetReader = new StringReader(parser.parse(sourceReader))) {
                 addDependencies(targetReader);
@@ -222,8 +222,8 @@ public abstract class WebGenerator extends BaseWebGenerator {
 
         String clientPackageManagerTitle = StringHelper.firstUpper(applicationConfig.getClientPackageManager());
         handler.info("Installation prerequisites", "Maven v3.5.0, Node.js, " + clientPackageManagerTitle);
-        handler.info(clientPackageManagerTitle + " Build", Console.wrap(applicationConfig.getClientPackageManager() + " install", BOLD));
-        handler.info("Format", Console.wrap(applicationConfig.getClientPackageManager() + " prettier:format", BOLD));
+        appConfigData.getEnvironment("dev")
+                .addPreCommand(applicationConfig.getClientPackageManager() + " install");
     }
 
     protected Function<String, String> getEntityPathResolver(BaseEntity entity) {

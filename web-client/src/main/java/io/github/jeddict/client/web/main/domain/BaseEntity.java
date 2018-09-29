@@ -36,18 +36,18 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
  */
 public abstract class BaseEntity {
 
-    private String name;
+    protected String name;
     protected String entityNameCapitalized;
     protected String entityClass;
-    private String entityClassHumanized;
-    private String entityClassPlural;
-    private String entityClassPluralHumanized;
+    protected String entityClassHumanized;
+    protected String entityClassPlural;
+    protected String entityClassPluralHumanized;
     protected String entityInstance;
-    private String entityInstancePlural;
-    private String entityApiUrl;
-    private String entityFolderName;
-    private final String entityModelFileName;
-    private final String entityParentPathAddition;
+    protected String entityInstancePlural;
+    protected String entityApiUrl;
+    protected String entityFolderName;
+    protected final String entityModelFileName;
+    protected final String entityParentPathAddition;
 
     protected String entityFileName;
     protected String entityPluralFileName;
@@ -57,32 +57,32 @@ public abstract class BaseEntity {
     protected String entityTranslationKey;
     protected String entityTranslationKeyMenu;
 
-    private boolean fieldsContainDate;
-    private boolean fieldsContainInstant;
-    private boolean fieldsContainZonedDateTime;
-    private boolean fieldsContainLocalDate;
-    private boolean fieldsContainBigDecimal;
-    private boolean fieldsContainBlob;
-    private boolean fieldsContainImageBlob;
-    private boolean fieldsContainBlobOrImage;
-    private boolean fieldsContainBoolean;
-    private boolean validation;
-    private boolean fieldsContainOwnerManyToMany;
-    private boolean fieldsContainNoOwnerOneToOne;
-    private boolean fieldsContainOwnerOneToOne;
-    private boolean fieldsContainOneToMany;
-    private boolean fieldsContainManyToOne;
-    private final List<String> blobFields = new ArrayList<>();
-    private final List<String> differentTypes = new ArrayList<>();
-    private final List<BaseField> fields = new ArrayList<>();
-    private final List<BaseRelationship> relationships = new ArrayList<>();
-    private String pkType;
+    protected boolean fieldsContainDate;
+    protected boolean fieldsContainInstant;
+    protected boolean fieldsContainZonedDateTime;
+    protected boolean fieldsContainLocalDate;
+    protected boolean fieldsContainBigDecimal;
+    protected boolean fieldsContainBlob;
+    protected boolean fieldsContainImageBlob;
+    protected boolean fieldsContainBlobOrImage;
+    protected boolean fieldsContainBoolean;
+    protected boolean validation;
+    protected boolean fieldsContainOwnerManyToMany;
+    protected boolean fieldsContainNoOwnerOneToOne;
+    protected boolean fieldsContainOwnerOneToOne;
+    protected boolean fieldsContainOneToMany;
+    protected boolean fieldsContainManyToOne;
+    protected final List<String> blobFields = new ArrayList<>();
+    protected final List<String> differentTypes = new ArrayList<>();
+    protected final List<BaseField> fields = new ArrayList<>();
+    protected final List<BaseRelationship> relationships = new ArrayList<>();
+    protected String pkType;
 
-    private boolean haveFieldWithJavadoc;
+    protected boolean haveFieldWithJavadoc;
 
-    private boolean upgrade;
+    protected boolean upgrade;
     
-    private String i18nKeyPrefix;
+    protected String i18nKeyPrefix;
 
     public BaseEntity(String name, String entityAngularSuffix, String appName, String clientRootFolder) {
 

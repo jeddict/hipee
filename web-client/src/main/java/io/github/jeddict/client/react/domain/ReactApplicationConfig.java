@@ -25,6 +25,7 @@ import io.github.jeddict.client.web.main.domain.BaseApplicationConfig;
  */
 public class ReactApplicationConfig extends BaseApplicationConfig {
 
+    // templates depends on angularAppName variable
     private String angularAppName;
     private String angularXAppName;
     private String serverPort = "8080";

@@ -28,29 +28,25 @@
                         <artifactId>frontend-maven-plugin</artifactId>
                         <version>${version.frontend-maven-plugin}</version>
                         <executions>
-                            <%_ if (clientPackageManager === 'yarn') { _%>
                             <execution>
-                                <id>install node and yarn</id>
+                                <id>install node and <%= clientPackageManager %></id>
                                 <goals>
-                                    <goal>install-node-and-yarn</goal>
+                                    <goal>install-node-and-<%= clientPackageManager %></goal>
                                 </goals>
                                 <configuration>
                                     <nodeVersion>${version.node}</nodeVersion>
-                                    <yarnVersion>${version.yarn}</yarnVersion>
+                                    <yarnVersion>${version.<%= clientPackageManager %>}</yarnVersion>
                                 </configuration>
                             </execution>
-                            <%_ } else if (clientPackageManager === 'npm') { _%>
                             <execution>
-                                <id>install node and npm</id>
                                 <goals>
-                                    <goal>install-node-and-npm</goal>
+                                    <goal><%= clientPackageManager %></goal>
                                 </goals>
                                 <configuration>
-                                    <nodeVersion>${version.node}</nodeVersion>
-                                    <npmVersion>${version.npm}</npmVersion>
+                                    <arguments>prettier:format</arguments>
                                 </configuration>
+                                <id><%= clientPackageManager %> prettier:format</id>
                             </execution>
-                            <%_ } _%>
                             <execution>
                                 <id>webpack build dev</id>
                                 <goals>
@@ -109,17 +105,17 @@
                         <artifactId>frontend-maven-plugin</artifactId>
                         <version>${version.frontend-maven-plugin}</version>
                         <executions>
-                            <%_ if (clientPackageManager === 'yarn') { _%>
                             <execution>
-                                <id>install node and yarn</id>
+                                <id>install node and <%= clientPackageManager %></id>
                                 <goals>
-                                    <goal>install-node-and-yarn</goal>
+                                    <goal>install-node-and-<%= clientPackageManager %></goal>
                                 </goals>
                                 <configuration>
                                     <nodeVersion>${version.node}</nodeVersion>
-                                    <yarnVersion>${version.yarn}</yarnVersion>
+                                    <yarnVersion>${version.<%= clientPackageManager %>}</yarnVersion>
                                 </configuration>
                             </execution>
+                            <%_ if (clientPackageManager === 'yarn') { _%>
                             <execution>
                                 <id>yarn install</id>
                                 <goals>
@@ -134,16 +130,6 @@
                                 </configuration>
                             </execution>
                             <%_ } else if (clientPackageManager === 'npm') { _%>
-                            <execution>
-                                <id>install node and npm</id>
-                                <goals>
-                                    <goal>install-node-and-npm</goal>
-                                </goals>
-                                <configuration>
-                                    <nodeVersion>${version.node}</nodeVersion>
-                                    <npmVersion>${version.npm}</npmVersion>
-                                </configuration>
-                            </execution>
                             <execution>
                                 <id>npm install</id>
                                 <goals>
@@ -165,6 +151,15 @@
                             </execution>
                                 <%_ } _%>
                             <%_ } _%>
+                            <execution>
+                                <id><%= clientPackageManager %> prettier:format</id>
+                                <goals>
+                                    <goal><%= clientPackageManager %></goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>prettier:format</arguments>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>webpack build test</id>
                                 <goals>
