@@ -250,10 +250,14 @@ public abstract class BaseWebGenerator implements Generator {
     public abstract BaseRelationship getRelationship(String appName, String entitySuffix, Entity entity, RelationAttribute relation, String clientRootFolder);
 
     public abstract BaseField getField(BaseAttribute attribute);
+
+    protected String getClientRootFolder() {
+        return appConfigData.isMicroservice() ? appConfigData.getTargetContextPath() : null;
+    }
  
 
     protected BaseEntity getEntity(BaseApplicationConfig applicationConfig, Entity entity) {
-        String clientRootFolder = appConfigData.isMicroservice() ?appConfigData.getTargetContextPath() : null;
+        String clientRootFolder = getClientRootFolder();
         String appName = applicationConfig.getAppName();
         Attribute idAttribute = entity.getAttributes().getIdField();
         if (idAttribute instanceof EmbeddedId || idAttribute instanceof DefaultAttribute) {
