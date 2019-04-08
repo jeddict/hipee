@@ -16,7 +16,7 @@
 package io.github.jeddict.cloud.generator;
 
 import java.io.Serializable;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 
 /**
  *

@@ -22,13 +22,13 @@ import static io.github.jeddict.jcode.util.StringHelper.pluralize;
 import static io.github.jeddict.jcode.util.StringHelper.startCase;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import static io.github.jeddict.client.web.main.domain.BaseRelationship.MANY_TO_MANY;
 import static io.github.jeddict.client.web.main.domain.BaseRelationship.MANY_TO_ONE;
 import static io.github.jeddict.client.web.main.domain.BaseRelationship.ONE_TO_MANY;
 import static io.github.jeddict.client.web.main.domain.BaseRelationship.ONE_TO_ONE;
 import static io.github.jeddict.jcode.util.StringHelper.camelCase;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static io.github.jeddict.util.StringUtils.isNotEmpty;
 
 /**
  *

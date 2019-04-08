@@ -31,8 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import io.github.jeddict.util.StringUtils;
+import static io.github.jeddict.util.StringUtils.EMPTY;
 
 public abstract class BaseField {
 

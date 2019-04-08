@@ -16,7 +16,7 @@
 package io.github.jeddict.cloud.generator;
 
 import io.github.jeddict.jcode.ui.GenericDialog;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import org.openide.util.NbBundle;
 
 /**
