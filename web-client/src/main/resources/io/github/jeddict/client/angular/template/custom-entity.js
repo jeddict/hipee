@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2018 the original author or authors from the JHipster project.
+ * Copyright 2013-2019 the original author or authors from the JHipster project.
  *
  * This file is part of the JHipster project, see https://www.jhipster.tech/
  * for more information.
@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * 
- * Portions Copyright 2013-2018 Gaurav Gupta
+ * Portions Copyright 2013-2019 Gaurav Gupta
  */
 
 function generateEntityQueries(relationships, entityInstance, dto) {

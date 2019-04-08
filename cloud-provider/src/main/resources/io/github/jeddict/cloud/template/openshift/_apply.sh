@@ -17,7 +17,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Portions Copyright 2013-2018 Gaurav Gupta
+ Portions Copyright 2013-2019 Gaurav Gupta
 -%>
 # Use this script to run oc commands to create resources in the selected namespace. Files are ordered
 # in proper order. 'oc process' processes the template as resources which is again piped to
