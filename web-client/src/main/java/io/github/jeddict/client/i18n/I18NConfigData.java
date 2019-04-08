@@ -22,7 +22,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 import static io.github.jeddict.client.i18n.LanguageUtil.getDefaultLanguage;
 import io.github.jeddict.jcode.LayerConfigData;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.json.bind.annotation.JsonbTransient;
 import static java.util.Collections.emptyList;
 
 /**
@@ -85,7 +85,7 @@ public class I18NConfigData extends LayerConfigData {
         this.otherLanguages = otherLanguages;
     }
     
-    @JsonIgnore
+    @JsonbTransient
     public Set<String> getOtherLanguagesKeyword(){
         return getOtherLanguages()
                 .stream()
@@ -93,7 +93,7 @@ public class I18NConfigData extends LayerConfigData {
                 .collect(toSet());
     }
     
-    @JsonIgnore
+    @JsonbTransient
     public Set<Language> getLanguageInstances() {
         Set<Language> languages = new HashSet<>(getOtherLanguages());
         languages.add(getNativeLanguage());
