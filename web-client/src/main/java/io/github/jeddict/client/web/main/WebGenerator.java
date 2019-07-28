@@ -31,7 +31,6 @@ import static io.github.jeddict.jcode.parser.ejs.EJSUtil.insertNeedle;
 import io.github.jeddict.jcode.util.BuildManager;
 import static io.github.jeddict.jcode.util.FileUtil.loadResource;
 import static io.github.jeddict.jcode.util.FileUtil.readString;
-import static io.github.jeddict.jcode.util.ProjectHelper.getProjectDisplayName;
 import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.jpa.spec.Entity;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
@@ -40,19 +39,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import javax.script.ScriptException;
-import org.netbeans.api.extexecution.ExecutionDescriptor;
-import org.netbeans.api.extexecution.ExecutionService;
-import org.netbeans.api.extexecution.base.ProcessBuilder;
-import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 
 public abstract class WebGenerator extends BaseWebGenerator {
@@ -113,16 +105,16 @@ public abstract class WebGenerator extends BaseWebGenerator {
         }
     }
 
-    public void installYarn(){
-        handler.append(Console.wrap(WebGenerator.class, "YARN_INSTALL", FG_DARK_RED, BOLD, UNDERLINE));
-        String displayName = String.format("yarn (%s)", getProjectDisplayName(project));
-        ProcessBuilder processBuilder = ProcessBuilder.getLocal();
-        processBuilder.setExecutable("yarn");
-        processBuilder.setArguments(asList("install"));
-        processBuilder.setWorkingDirectory(FileUtil.toFile(project.getProjectDirectory()).getAbsolutePath());
-        ExecutionDescriptor executionDescriptor = ExternalExecutable.DEFAULT_EXECUTION_DESCRIPTOR;//getExecutionDescriptor(executionDescriptor, outProcessorFactory);
-        Future<Integer> task = ExecutionService.newService(processBuilder, executionDescriptor, displayName).run();
-    }
+//    public void installYarn(){
+//        handler.append(Console.wrap(WebGenerator.class, "YARN_INSTALL", FG_DARK_RED, BOLD, UNDERLINE));
+//        String displayName = String.format("yarn (%s)", getProjectDisplayName(project));
+//        ProcessBuilder processBuilder = ProcessBuilder.getLocal();
+//        processBuilder.setExecutable("yarn");
+//        processBuilder.setArguments(asList("install"));
+//        processBuilder.setWorkingDirectory(FileUtil.toFile(project.getProjectDirectory()).getAbsolutePath());
+//        ExecutionDescriptor executionDescriptor = ExternalExecutable.DEFAULT_EXECUTION_DESCRIPTOR;//getExecutionDescriptor(executionDescriptor, outProcessorFactory);
+//        Future<Integer> task = ExecutionService.newService(processBuilder, executionDescriptor, displayName).run();
+//    }
     
     protected void generateEntity(BaseApplicationConfig applicationConfig,
             EntityConfig config, BaseEntity entity, Map<String, String> templateLib) throws IOException {

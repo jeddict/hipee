@@ -20,14 +20,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <configuration>
-                    <moduleDependencies>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-web-common-ui</id>
-                            <type>impl</type>
-                        </dependency>
-                    </moduleDependencies>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -36,11 +28,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>rest-generator</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-web-common-ui</artifactId>
-            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
