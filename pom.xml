@@ -4,7 +4,7 @@
     <groupId>io.github.jeddict</groupId>
     <artifactId>hipee</artifactId>
     <name>Hipee</name>
-    <version>5.3</version>
+    <version>5.4</version>
     <packaging>pom</packaging>
     <modules>
         <module>web-client</module>
@@ -112,13 +112,4 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>netbeans111</id>
-            <url>
-                https://repository.apache.org/content/repositories/orgapachenetbeans-1035
-            </url>
-        </repository>
-    </repositories>
 </project>
