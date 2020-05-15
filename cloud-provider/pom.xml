@@ -35,5 +35,10 @@
             <artifactId>org-openide-dialogs</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jeddict-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
