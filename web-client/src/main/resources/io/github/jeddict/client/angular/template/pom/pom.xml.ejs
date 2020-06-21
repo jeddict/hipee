@@ -8,13 +8,16 @@
     <name>webpack_pom</name>
 
     <properties>
-        <%_ if (clientPackageManager === 'yarn') { _%>
-        <version.yarn>v1.3.2</version.yarn>
-         <%_ } else if (clientPackageManager === 'npm') { _%>
-        <version.npm>v5.6.0</version.npm>
+        <%_ if (!skipClient) { _%>
+        <node.version>v12.16.1</node.version>
+            <%_ if (clientPackageManager === 'npm') { _%>
+        <npm.version>v5.6.0</npm.version>
+            <%_ } _%>
+            <%_ if (clientPackageManager === 'yarn') { _%>
+        <yarn.version>v1.3.2</yarn.version>
+            <%_ } _%>
         <%_ } _%>
-        <version.node>v8.9.4</version.node>
-        <version.frontend-maven-plugin>1.6</version.frontend-maven-plugin>
+        <version.frontend-maven-plugin>1.9.1</version.frontend-maven-plugin>
         <version.maven-clean-plugin>2.6.1</version.maven-clean-plugin>
         <version.maven-war-plugin>3.2.0</version.maven-war-plugin>
     </properties>
@@ -23,30 +26,47 @@
             <id>webpack</id>
             <build>
                 <plugins>
+                    
                     <plugin>
                         <groupId>com.github.eirslett</groupId>
                         <artifactId>frontend-maven-plugin</artifactId>
                         <version>${version.frontend-maven-plugin}</version>
                         <executions>
+    <%_ if (clientPackageManager === 'yarn') { _%>
                             <execution>
-                                <id>install node and <%= clientPackageManager %></id>
+                                <id>install node and yarn</id>
                                 <goals>
-                                    <goal>install-node-and-<%= clientPackageManager %></goal>
+                                    <goal>install-node-and-yarn</goal>
                                 </goals>
                                 <configuration>
-                                    <nodeVersion>${version.node}</nodeVersion>
-                                    <yarnVersion>${version.<%= clientPackageManager %>}</yarnVersion>
+                                    <nodeVersion>${node.version}</nodeVersion>
+                                    <yarnVersion>${yarn.version}</yarnVersion>
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>yarn install</id>
                                 <goals>
-                                    <goal><%= clientPackageManager %></goal>
+                                    <goal>yarn</goal>
+                                </goals>
+                            </execution>
+    <%_ } else if (clientPackageManager === 'npm') { _%>
+                            <execution>
+                                <id>install node and npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>prettier:format</arguments>
+                                    <nodeVersion>${node.version}</nodeVersion>
+                                    <npmVersion>${npm.version}</npmVersion>
                                 </configuration>
-                                <id><%= clientPackageManager %> prettier:format</id>
                             </execution>
+                            <execution>
+                                <id>npm install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                            </execution>
+    <%_ } _%>
                             <execution>
                                 <id>webpack build dev</id>
                                 <goals>
@@ -55,11 +75,14 @@
                                 <phase>generate-resources</phase>
                                 <configuration>
                                     <arguments>run webpack:build</arguments>
-                                    <%_ if (clientPackageManager === 'yarn') { _%>
+                                    <environmentVariables>
+                                        <APP_VERSION>${project.version}</APP_VERSION>
+                                    </environmentVariables>
+    <%_ if (clientPackageManager === 'yarn') { _%>
                                     <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                                    <%_ } else if (clientPackageManager === 'npm') { _%>
+    <%_ } else if (clientPackageManager === 'npm') { _%>
                                     <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
-                                    <%_ } _%>
+    <%_ } _%>
                                 </configuration>
                             </execution>
                         </executions>
@@ -99,37 +122,44 @@
                             <warSourceDirectory><%= CLIENT_DIST_DIR %></warSourceDirectory>
                             <failOnMissingWebXml>false</failOnMissingWebXml>
                         </configuration>
-                    </plugin>             
+                    </plugin>
+                    
                     <plugin>
                         <groupId>com.github.eirslett</groupId>
                         <artifactId>frontend-maven-plugin</artifactId>
                         <version>${version.frontend-maven-plugin}</version>
                         <executions>
+    <%_ if (clientPackageManager === 'yarn') { _%>
                             <execution>
-                                <id>install node and <%= clientPackageManager %></id>
+                                <id>install node and yarn</id>
                                 <goals>
-                                    <goal>install-node-and-<%= clientPackageManager %></goal>
+                                    <goal>install-node-and-yarn</goal>
                                 </goals>
                                 <configuration>
-                                    <nodeVersion>${version.node}</nodeVersion>
-                                    <yarnVersion>${version.<%= clientPackageManager %>}</yarnVersion>
+                                    <nodeVersion>${node.version}</nodeVersion>
+                                    <yarnVersion>${yarn.version}</yarnVersion>
                                 </configuration>
                             </execution>
-                            <%_ if (clientPackageManager === 'yarn') { _%>
                             <execution>
                                 <id>yarn install</id>
                                 <goals>
                                     <goal>yarn</goal>
                                 </goals>
                                 <configuration>
-                                    <%_ if (useSass) { _%>
-                                    <arguments>install --force</arguments>
-                                    <%_ } else { _%>
                                     <arguments>install</arguments>
-                                    <%_ } _%>
                                 </configuration>
                             </execution>
-                            <%_ } else if (clientPackageManager === 'npm') { _%>
+    <%_ } else if (clientPackageManager === 'npm') { _%>
+                            <execution>
+                                <id>install node and npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <configuration>
+                                    <nodeVersion>${node.version}</nodeVersion>
+                                    <npmVersion>${npm.version}</npmVersion>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>npm install</id>
                                 <goals>
@@ -139,27 +169,7 @@
                                     <arguments>install</arguments>
                                 </configuration>
                             </execution>
-                                <%_ if (useSass) { _%>
-                            <execution>
-                                <id>npm rebuild node-sass</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>rebuild node-sass</arguments>
-                                </configuration>
-                            </execution>
-                                <%_ } _%>
-                            <%_ } _%>
-                            <execution>
-                                <id><%= clientPackageManager %> prettier:format</id>
-                                <goals>
-                                    <goal><%= clientPackageManager %></goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>prettier:format</arguments>
-                                </configuration>
-                            </execution>
+    <%_ } _%>
                             <execution>
                                 <id>webpack build test</id>
                                 <goals>
@@ -168,11 +178,11 @@
                                 <phase>test</phase>
                                 <configuration>
                                     <arguments>run webpack:test</arguments>
-                                    <%_ if (clientPackageManager === 'yarn') { _%>
+    <%_ if (clientPackageManager === 'yarn') { _%>
                                     <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                                    <%_ } else if (clientPackageManager === 'npm') { _%>
+    <%_ } else if (clientPackageManager === 'npm') { _%>
                                     <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
-                                    <%_ } _%>
+    <%_ } _%>
                                 </configuration>
                             </execution>
                             <execution>
@@ -183,17 +193,18 @@
                                 <phase>generate-resources</phase>
                                 <configuration>
                                     <arguments>run webpack:prod</arguments>
-                                    <%_ if (clientPackageManager === 'yarn') { _%>
+                                    <environmentVariables>
+                                        <APP_VERSION>${project.version}</APP_VERSION>
+                                    </environmentVariables>
+    <%_ if (clientPackageManager === 'yarn') { _%>
                                     <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                                    <%_ } else if (clientPackageManager === 'npm') { _%>
+    <%_ } else if (clientPackageManager === 'npm') { _%>
                                     <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
-                                    <%_ } _%>
+    <%_ } _%>
                                 </configuration>
                             </execution>
-                      
                         </executions>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
