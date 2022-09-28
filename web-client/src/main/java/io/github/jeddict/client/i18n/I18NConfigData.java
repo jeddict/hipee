@@ -22,7 +22,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 import static io.github.jeddict.client.i18n.LanguageUtil.getDefaultLanguage;
 import io.github.jeddict.jcode.LayerConfigData;
-import javax.json.bind.annotation.JsonbTransient;
+import jakarta.json.bind.annotation.JsonbTransient;
 import static java.util.Collections.emptyList;
 
 /**
